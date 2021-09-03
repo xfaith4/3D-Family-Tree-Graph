@@ -159,7 +159,7 @@ Camera:
   m_GameObject: {fileID: 221459543}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0, g: 0.47058827, b: 0.8431373, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -200,13 +200,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 221459543}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 18200, y: 0, z: 1780}
+  m_LocalRotation: {x: 0.3420201, y: 0, z: 0, w: 0.9396927}
+  m_LocalPosition: {x: 170, y: 30, z: 1794}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 40, y: 0, z: 0}
 --- !u!114 &221459547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,6 +254,7 @@ MonoBehaviour:
   personPrefab: {fileID: 4664796352529360708, guid: 19ad8fb955b8c5b49ac14b95be498ada, type: 3}
   edgepf: {fileID: 2006701754031461468, guid: 285eaa547166bce5bbdeb2d0d90b4b4c, type: 3}
   bubblepf: {fileID: 557405875712316749, guid: a27690feb6cc0e74c95759bc7baff389, type: 3}
+  capsuleBubblepf: {fileID: 557405875712316749, guid: 4cb9e513d2f90084c942a0eb65d8eaaf, type: 3}
   numberOfNodes: 5
   chanceOfAnEdge: 1
   graphSize: 40

@@ -11,15 +11,16 @@ public class PersonNode : MonoBehaviour
     
     GameObject edgePrefabObject;
     GameObject bubblePrefabObject;
+    GameObject capsuleBubblePrefabObject;
     GameObject leftConnection;
     GameObject rightConnection;
 
     const int PlatformChildIndex = 0;
 
-    private Color[] personGenderBubbleColors = {
-            new Color(0.4f, 0.4f, 0.4f, 0.2f),   // notset
-            new Color(0.4f, 0.7f, 0.9f, 0.2f),   // male
-            new Color(0.8f, 0.5f, 0.8f, 0.2f)    // female
+    private Color[] personGenderCapsuleBubbleColors = {
+            new Color(0.4f, 0.4f, 0.4f, 0.7f),   // notset
+            new Color(0.4f, 0.7f, 0.9f, 0.7f),   // male
+            new Color(0.8f, 0.5f, 0.8f, 0.7f)    // female
         };
     private Color clearWhite = new Color(1.0f, 1.0f, 1.0f, 0.2f);
     private Color[] personGenderPlatformColors = {
@@ -44,10 +45,11 @@ public class PersonNode : MonoBehaviour
        
     }
 
-    public void SetEdgePrefab(GameObject edge, GameObject bubble)
+    public void SetEdgePrefab(GameObject edge, GameObject bubble, GameObject capsuleBubble)
     {
         this.edgePrefabObject = edge;
         this.bubblePrefabObject = bubble;
+        this.capsuleBubblePrefabObject = capsuleBubble;
     }
 
     public void Freeze()
@@ -88,10 +90,10 @@ public class PersonNode : MonoBehaviour
         sj.connectedBody = childRidgidbodyComponent;
 
         leftConnection = //GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            Instantiate(this.bubblePrefabObject, Vector3.zero, Quaternion.identity);
+            Instantiate(this.capsuleBubblePrefabObject, Vector3.zero, Quaternion.identity);
         //TODO Twins born at the same time are not handled well if one is a boy and the other a girl
         leftConnection.transform.GetChild(PlatformChildIndex).GetComponent<Renderer>().material.SetColor("_Color", 
-            personGenderBubbleColors[(int)childPersonNode.personGender]);
+            personGenderCapsuleBubbleColors[(int)childPersonNode.personGender]);
 
 
         leftConnection.transform.localScale = Vector3.one * 2f;

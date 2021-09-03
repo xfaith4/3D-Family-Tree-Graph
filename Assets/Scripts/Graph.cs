@@ -13,6 +13,7 @@ public class Graph : MonoBehaviour
 	public GameObject personPrefab;
 	public GameObject edgepf;
 	public GameObject bubblepf;
+	public GameObject capsuleBubblepf;
 	public int numberOfNodes = 5;
 	[SerializeField] [Tooltip("0.0 to 1.0")] public float chanceOfAnEdge = 0.5f;
 	public float graphSize = 10f;	
@@ -53,8 +54,8 @@ public class Graph : MonoBehaviour
 		var currentYear = DateTime.Now.Year;
 		var age = livingFlag ? currentYear - birthEventDate : deathEventDate - birthEventDate;
 
-		var x = (float)birthEventDate * 10f;
-		var y = generation *10f;
+		var x = (float)birthEventDate / 10;
+		var y = generation;
 		
 		var newPersonGameObject = Instantiate(personPrefab, new Vector3(x, y, birthEventDate), Quaternion.identity);		
 		newPersonGameObject.transform.parent = transform;
@@ -63,7 +64,7 @@ public class Graph : MonoBehaviour
 
 		personObjectScript.SetLifeSpan(birthEventDate, age);
 		personObjectScript.SetPersonGender(personGender);
-		personObjectScript.SetEdgePrefab(edgepf, bubblepf);
+		personObjectScript.SetEdgePrefab(edgepf, bubblepf, capsuleBubblepf);
 		//TODO use gender to set the color of the platform	
 		//
 		return newPersonGameObject;	
@@ -145,7 +146,7 @@ public class Graph : MonoBehaviour
 					GameObject go = Instantiate(personPrefab, Random.insideUnitSphere * graphSize, Quaternion.identity);
 					n = go.GetComponent<PersonNode>();
 					n.transform.parent = transform;
-					n.SetEdgePrefab(edgepf, bubblepf);
+					n.SetEdgePrefab(edgepf, bubblepf, capsuleBubblepf);
 					continue;
 				}
 				if (word == "]")
