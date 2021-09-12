@@ -1,7 +1,36 @@
-3D Family Tree Graph TODOs:
+  +++++++++++++++++++++++++++++++
+  + 3D Family Tree Graph TODOs: +
+  +++++++++++++++++++++++++++++++
+		  
+XXXXXXXXXXXXXX		  
+X COMPLETED: X
+XXXXXXXXXXXXXX
+
 X Get spring physics right
 X Drag and or friction - yes add drag to Node Prefab
 X Bring in "Adam and Eve" family generator
+X Bring in RootMagic DB Reader:
+
+X Get and create all individuals Join of PersonTable NameTable and EventTable  ** Generation may not be known **
+X --->CreatePerson(string name, PersonGenderType personGender, int birthEventDate, bool livingFlag = true, int deathEventDate = 0, int generation = 0)
+
+X Tag the above individuals or store in an array with 
+
+--------------->
+> Still To Do ->
+--------------->
+
+--->Foreach individual, get Marriages for that person - get other person, event type (marriage/divorce) and event Date
+ 
+--->CreateMarriage(GameObject wifePerson, GameObject husbandPerson, int marriageEventDate, bool divorcedFlag= false,int divorcedEventDate=0)
+Get Marriages for Husband
+  for each wifePerson
+	get Divorces for (husband + wife)
+	   CreateMarriage platform for them
+
+--->AssignParents(GameObject childPerson, GameObject motherPerson, GameObject fatherPerson,
+		ChildRelationshipType motherChildRelationshipType = ChildRelationshipType.Biological,
+		ChildRelationshipType fatherChildRelationshipType = ChildRelationshipType.Biological)
  	
 Specialize Edges - different spring attractions:
  - Marrage Edges (tightest coupling)
@@ -28,14 +57,19 @@ EventDate associated with a person
 		Inferred earliest Date (orange), or (future story)
 		null - not availabe (black) (inferred also returns null)  - Use todays date
 	
----- Future Story ----- Date Range
+	
+**********************
+*** Future Stories ***
+**********************
+
+*** Future Story ----- Date Range
 Another type of date, is a date range, this would include two EventDates as defined above: (Start, End) examples
 (Unknown, specific Date) "before"
 (specific Date, unknown) "after"
 (Rough Date, Rough Date) "Range"
 (Specific, Specific) "range" or an "OR"
 
----- Future Story ------ Inferred Dates ----
+*** Future Story ------ Inferred Dates ----
 The caluculated date, or date range can be used when a specific date is unknown,
 or can be used as a validation of a specific date that is also given
 Calculated Date from Age in Records list (when a date is unkown)
@@ -45,13 +79,13 @@ Calculated Date from Age in Records list (when a date is unkown)
 	Date of record (specific date)
 	Name of Record
 			
----- Future Story ------ Inferred Dates Range ----			
+*** Future Story ------ Inferred Dates Range ----			
 Ask person object for Inferred Birthdate range		(Future Story)
 	an Inferred date range (evidences from family connections)
 	Rough date start, Rough date end
 	or Null, not available
 
----- Future Story ------ Validate Dates ----				
+*** Future Story ------ Validate Dates ----				
 Future Story: Ask person to evaluate Birth Date Evidences - colors are 'evidence quality colors' perhaps checkmarks - only shown when asked for
 	Green Check - all dates match
 	Yellow Check - some data point in dissagreement

@@ -5,11 +5,13 @@ using UnityEngine;
 using Assets.Scripts.Enums;
 using System;
 using Random = UnityEngine.Random;
+using Assets.Scripts.DataObjects;
+using Assets.Scripts.DataProviders;
 
-public class Graph : MonoBehaviour
+public class Tribe : MonoBehaviour
 {
 
-	public TextAsset file;
+	public String rootsMagicFileName;
 	public GameObject personPrefab;
 	public GameObject edgepf;
 	public GameObject bubblepf;
@@ -18,16 +20,17 @@ public class Graph : MonoBehaviour
 	[SerializeField] [Tooltip("0.0 to 1.0")] public float chanceOfAnEdge = 0.5f;
 	public float graphSize = 10f;	
 	private List<PersonNode> gameObjectNodes = new List<PersonNode>();
+	private ListOfPersonsFromDataBase myTribeOfPeople;
 
 	void Start()
 	{
 		var fruitnames = new string[] { "Apple", "Apricot", "Avocado", "Banana", "Bilberry", "Blackberry", "Blackcurrant", "Blueberry", "Boysenberry", "Currant", "Cherry", "Cherimoya", "Chico fruit", "Cloudberry", "Coconut", "Cranberry", "Cucumber", "Custard apple", "Damson", "Date", "Dragonfruit", "Durian", "Elderberry", "Feijoa", "Fig", "Goji berry", "Gooseberry", "Grape", "Raisin", "Grapefruit", "Guava", "Honeyberry", "Huckleberry", "Jabuticaba", "Jackfruit", "Jambul", "Jujube", "Juniper berry", "Kiwano", "Kiwifruit", "Kumquat", "Lemon", "Lime", "Loquat", "Longan", "Lychee", "Mango", "Mangosteen", "Marionberry", "Melon", "Cantaloupe", "Honeydew", "Watermelon", "Miracle fruit", "Mulberry", "Nectarine", "Nance", "Olive", "Orange", "Blood orange", "Clementine", "Mandarine", "Tangerine", "Papaya", "Passionfruit", "Peach", "Pear", "Persimmon", "Physalis", "Plantain", "Plum", "Prune", "Pineapple", "Plumcot", "Pomegranate", "Pomelo", "Purple mangosteen", "Quince", "Raspberry", "Salmonberry", "Rambutan", "Redcurrant", "Salal berry", "Salak", "Satsuma", "Soursop", "Star fruit", "Solanum", "quitoense", "Strawberry", "Tamarillo", "Tamarind", "Ugli fruit", "Yuzu" };
 
-		if (file == null)
+		if (rootsMagicFileName == null)
 		{
 			var adam = CreatePerson("Adam", PersonGenderType.Male, 1800, false, 1870, generation: 0);
 			var eve = CreatePerson("Eve", PersonGenderType.Female, 1810, false, 1860, generation: 0);
-			CreateMarriage(eve, adam, 1830);
+			CreateMarriage(eve, adam, 1820);
 			var leisha = CreatePerson("Leisha", PersonGenderType.Female, 1832, false, 1900, generation: 1);
 			var bob = CreatePerson("Bob", PersonGenderType.Male, 1834, false, 1837, generation: 1);
 			var grace = CreatePerson("Grace", PersonGenderType.Female, 1836, false, 1910, generation: 1);
@@ -42,32 +45,61 @@ public class Graph : MonoBehaviour
 			AssignParents(laura, eve, adam);
 			AssignParents(emily, eve, adam);
 			AssignParents(gary, eve, null);
+
+			var vahe = CreatePerson("Vahe", PersonGenderType.Male, 1822, false, 1880, generation: 1);
+			CreateMarriage(leisha, vahe, 1840);
+			var kyah = CreatePerson("Kyah", PersonGenderType.Female, 1841, false, 1980, generation: 2);
+			var hanna = CreatePerson("Hannah", PersonGenderType.Female, 1843, false, 1960, generation: 2);
+			var jude = CreatePerson("Jude", PersonGenderType.Male, 1846, false, 1846, generation: 2);
+			var arie = CreatePerson("Arie", PersonGenderType.Male, 1848, false, 1930, generation: 2);
+			AssignParents(kyah, leisha, vahe);
+			AssignParents(hanna, leisha, vahe);
+			AssignParents(jude, leisha, vahe);
+			AssignParents(arie, leisha, vahe);
 		}
 		else
 		{
-			LoadGMLFromFile(file);
+			myTribeOfPeople = new ListOfPersonsFromDataBase(rootsMagicFileName);
+			myTribeOfPeople.GetListOfPersonsFromDataBase(1000);
+			int counter = 0;
+			int generationWith = 50;
+            foreach (var personToAdd in myTribeOfPeople.PersonsList)
+            {
+				CreatePerson(personToAdd, generation: counter / generationWith);
+				counter++;
+			}
 		}
 	}
 
-	GameObject CreatePerson(string name, PersonGenderType personGender, int birthEventDate, bool livingFlag = true, int deathEventDate = 0, int generation = 0)
+	GameObject CreatePerson(string name, PersonGenderType personGender, int birthEventDate,
+		bool livingFlag = true, int deathEventDate = 0, int generation = 0,
+		int databaseOwnerArry = 0, int tribeArrayIndex = 0)
     {
 		var currentYear = DateTime.Now.Year;
 		var age = livingFlag ? currentYear - birthEventDate : deathEventDate - birthEventDate;
 
 		var x = (float)birthEventDate / 10;
-		var y = generation;
+		var y = generation * 10;
 		
 		var newPersonGameObject = Instantiate(personPrefab, new Vector3(x, y, birthEventDate), Quaternion.identity);		
 		newPersonGameObject.transform.parent = transform;
 		newPersonGameObject.name = name;
 		var personObjectScript = newPersonGameObject.GetComponent<PersonNode>();
 
+		personObjectScript.SetIndexes(databaseOwnerArry, tribeArrayIndex);
 		personObjectScript.SetLifeSpan(birthEventDate, age);
 		personObjectScript.SetPersonGender(personGender);
 		personObjectScript.SetEdgePrefab(edgepf, bubblepf, capsuleBubblepf);
 		//TODO use gender to set the color of the platform	
 		//
 		return newPersonGameObject;	
+	}
+
+	GameObject CreatePerson(Person person, int generation = 0)
+	{
+		return CreatePerson($"{person.givenName} {person.surName}", person.gender, person.birthEventDate,
+			person.isLiving, person.deathEventDate, generation,
+			person.dataBaseOwnerId, person.tribeArrayIndex);
 	}
 
 	void CreateMarriage(GameObject wifePerson, GameObject husbandPerson, int marriageEventDate, bool divorcedFlag= false,int divorcedEventDate=0)
@@ -109,95 +141,4 @@ public class Graph : MonoBehaviour
 
 	void Update() { }
 
-	void LoadGMLFromFile(TextAsset f)
-	{
-		string[] lines = f.text.Split('\n');
-		int currentobject = -1; // 0 = graph, 1 = node, 2 = edge
-		int stage = -1; // 0 waiting to open, 1 = waiting for attribute, 2 = waiting for id, 3 = waiting for label, 4 = waiting for source, 5 = waiting for target
-		PersonNode n = null;
-		Dictionary<string, PersonNode> nodes = new Dictionary<string, PersonNode>();
-		foreach (string line in lines)
-		{
-			string l = line.Trim();
-			string[] words = l.Split(' ');
-			foreach (string word in words)
-			{
-				if (word == "graph" && stage == -1)
-				{
-					currentobject = 0;
-				}
-				if (word == "node" && stage == -1)
-				{
-					currentobject = 1;
-					stage = 0;
-				}
-				if (word == "edge" && stage == -1)
-				{
-					currentobject = 2;
-					stage = 0;
-				}
-				if (word == "[" && stage == 0 && currentobject == 2)
-				{
-					stage = 1;
-				}
-				if (word == "[" && stage == 0 && currentobject == 1)
-				{
-					stage = 1;
-					GameObject go = Instantiate(personPrefab, Random.insideUnitSphere * graphSize, Quaternion.identity);
-					n = go.GetComponent<PersonNode>();
-					n.transform.parent = transform;
-					n.SetEdgePrefab(edgepf, bubblepf, capsuleBubblepf);
-					continue;
-				}
-				if (word == "]")
-				{
-					stage = -1;
-				}
-				if (word == "id" && stage == 1 && currentobject == 1)
-				{
-					stage = 2;
-					continue;
-				}
-				if (word == "label" && stage == 1 && currentobject == 1)
-				{
-					stage = 3;
-					continue;
-				}
-				if (stage == 2)
-				{
-					nodes.Add(word, n);
-					stage = 1;
-					break;
-				}
-				if (stage == 3)
-				{
-					n.name = word;
-					stage = 1;
-					break;
-				}
-				if (word == "source" && stage == 1 && currentobject == 2)
-				{
-					stage = 4;
-					continue;
-				}
-				if (word == "target" && stage == 1 && currentobject == 2)
-				{
-					stage = 5;
-					continue;
-				}
-				if (stage == 4)
-				{
-					n = nodes[word];
-					stage = 1;
-					break;
-				}
-				if (stage == 5)
-				{
-					n.AddEdge(nodes[word]);
-					stage = 1;
-					break;
-				}
-			}
-		}
-	}
 }

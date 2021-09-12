@@ -8,6 +8,8 @@ public class PersonNode : MonoBehaviour
     public float lifeSpan;
     public int birthDate;
     public PersonGenderType personGender;
+    public int dataBaseOwnerID;
+    public int arrayIndex;
     
     GameObject edgePrefabObject;
     GameObject bubblePrefabObject;
@@ -55,6 +57,12 @@ public class PersonNode : MonoBehaviour
     public void Freeze()
     {        
         this.transform.GetChild(PlatformChildIndex).GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+    }
+
+    public void SetIndexes(int dataBaseOwnerId, int arrayIndex)
+    {
+        this.dataBaseOwnerID = dataBaseOwnerId;
+        this.arrayIndex = arrayIndex;
     }
 
     public void SetLifeSpan(int birthDate, float age)

@@ -200,13 +200,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 221459543}
-  m_LocalRotation: {x: 0.3420201, y: 0, z: 0, w: 0.9396927}
-  m_LocalPosition: {x: 170, y: 30, z: 1794}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 120, y: 60, z: 1794}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 40, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &221459547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,7 +232,7 @@ GameObject:
   - component: {fileID: 264391282}
   - component: {fileID: 264391281}
   m_Layer: 0
-  m_Name: graph
+  m_Name: MyTribe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -250,14 +250,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d4cc490207113000a9fc690bffcab7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  file: {fileID: 0}
+  rootsMagicFileName: Huskey08D.rmgc
   personPrefab: {fileID: 4664796352529360708, guid: 19ad8fb955b8c5b49ac14b95be498ada, type: 3}
   edgepf: {fileID: 2006701754031461468, guid: 285eaa547166bce5bbdeb2d0d90b4b4c, type: 3}
   bubblepf: {fileID: 557405875712316749, guid: a27690feb6cc0e74c95759bc7baff389, type: 3}
   capsuleBubblepf: {fileID: 557405875712316749, guid: 4cb9e513d2f90084c942a0eb65d8eaaf, type: 3}
   numberOfNodes: 5
-  chanceOfAnEdge: 1
-  graphSize: 40
+  chanceOfAnEdge: 0.5
+  graphSize: 10
 --- !u!4 &264391282
 Transform:
   m_ObjectHideFlags: 0
