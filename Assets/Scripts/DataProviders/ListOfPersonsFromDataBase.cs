@@ -13,13 +13,13 @@ namespace Assets.Scripts.DataProviders
 {
     class ListOfPersonsFromDataBase
     {
-        public List<Person> PersonsList;
+        public List<Person> personsList;
         private string _dataBaseFileName;
 
         public ListOfPersonsFromDataBase(string DataBaseFileName)           
         {
             _dataBaseFileName = DataBaseFileName;
-            PersonsList = new List<Person>();
+            personsList = new List<Person>();
         }
 
         public void GetListOfPersonsFromDataBase(int limitListSiZeTo)
@@ -29,11 +29,12 @@ namespace Assets.Scripts.DataProviders
             dbconn = (IDbConnection)new SqliteConnection(conn);
             dbconn.Open();
             IDbCommand dbcmd = dbconn.CreateCommand();
-            const string QUERYNAMES = "SELECT name.OwnerID," +
-                "case when Sex = 0 then 'M' when Sex = 1 then 'F' else 'U' end," +
-                "name.Given, name.Surname, name.BirthYear, name.DeathYear " +
-                "FROM NameTable name " +
-                "JOIN PersonTable person " +
+            const string QUERYNAMES =
+                "SELECT name.OwnerID \n" +
+                "    , case when Sex = 0 then 'M' when Sex = 1 then 'F' else 'U' end \n" +
+                "    , name.Given, name.Surname, name.BirthYear, name.DeathYear, person.Living \n" +
+                "FROM NameTable name \n" +
+                "JOIN PersonTable person \n" +
                 "on name.OwnerID = person.PersonID";
             string sqlQuery = QUERYNAMES;
             dbcmd.CommandText = sqlQuery;
@@ -48,9 +49,15 @@ namespace Assets.Scripts.DataProviders
                     given: reader.GetString(2),
                     surname: reader.GetString(3),
                     birthYear: reader.GetInt32(4),
-                    deathYear: reader.GetInt32(5));
+                    deathYear: reader.GetInt32(5),
+                    isLiving: reader.GetBoolean(6));
 
-                PersonsList.Add(nextName);
+                if (nextName.dataBaseOwnerId == 218)
+                    Debug.Log($"We just read in OwnerId {nextName.dataBaseOwnerId}");
+
+                nextName.FixUpDatesForViewing();
+
+                personsList.Add(nextName);
                 currentArrayIndex++;
             }
             reader.Close();
