@@ -89,25 +89,25 @@ public class Tribe : MonoBehaviour
 			}
             #endregion
             // time to hook up some marriages
-			//foreach (var potentialHusbandPerson in myTribeOfPeople.personsList)
-   //         {								
-			//	if (potentialHusbandPerson.gender == PersonGenderType.Male)
-   //             {
-			//		myListOfMarriages.marriageList.Clear();
-			//		myListOfMarriages.GetListOfMarriagesForPersonFromDataBase(potentialHusbandPerson.dataBaseOwnerId);
-   //                 foreach (var marriage in myListOfMarriages.marriageList)
-   //                 {
-			//			int marriageYearToUse = potentialHusbandPerson.FixUpAndReturnMarriageDate(marriage.marriageYear);
+            foreach (var potentialHusbandPerson in myTribeOfPeople.personsList)
+            {
+                if (potentialHusbandPerson.gender == PersonGenderType.Male)
+                {
+                    myListOfMarriages.marriageList.Clear();
+                    myListOfMarriages.GetListOfMarriagesForPersonFromDataBase(potentialHusbandPerson.dataBaseOwnerId);
+                    foreach (var marriage in myListOfMarriages.marriageList)
+                    {
+                        int marriageYearToUse = potentialHusbandPerson.FixUpAndReturnMarriageDate(marriage.marriageYear);
 
-			//			CreateMarriage(
-			//				getGameObjectForDataBaseOwnerId(marriage.wifeId),
-			//				getGameObjectForDataBaseOwnerId(marriage.husbandId),
-			//				marriageYearToUse);
-   //                 }
-   //             }
-   //         }
+                        CreateMarriage(
+                            getGameObjectForDataBaseOwnerId(marriage.wifeId),
+                            getGameObjectForDataBaseOwnerId(marriage.husbandId),
+                            marriageYearToUse);
+                    }
+                }
+            }
 
-			GameObject getGameObjectForDataBaseOwnerId(int ownerId) => 
+            GameObject getGameObjectForDataBaseOwnerId(int ownerId) => 
 				myTribeOfPeople.personsList.Find(x => x.dataBaseOwnerId == ownerId)?.personNodeGameObject;           
 		}
 	}
