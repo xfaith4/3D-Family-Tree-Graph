@@ -16,10 +16,11 @@ namespace Assets.Scripts.DataObjects
         public string givenName;
         public PersonGenderType gender;
         public int birthEventDate;   //TODO upgrade to EventDate in the future
-		private int originalBirthEventDate;
+		public int originalBirthEventDate;
         public int deathEventDate;   //TODO upgrade to EventDate in the future
-		private int originalDeathEventDate;
-        public bool isLiving;
+		public int originalDeathEventDate;
+		public string dateQualityInformationString;
+		public bool isLiving;
 		private bool originalIsLiving;
         public GameObject personNodeGameObject;
         List<(PersonRelationshipType Relationship, Person RelatedPerson)> familyRelationships;
@@ -34,13 +35,24 @@ namespace Assets.Scripts.DataObjects
             originalBirthEventDate = birthEventDate = birthYear;
             originalDeathEventDate = deathEventDate = deathYear;
             originalIsLiving = this.isLiving = isLiving;
-        }
+			dateQualityInformationString = $"For {givenName} {surName}. Original birthDate {originalBirthEventDate}, deathDate {originalDeathEventDate}. ";
+		}
 
 		public int FixUpAndReturnMarriageDate(int marriageEventDate)
         {
 			// zero or Bogus MarriageEventDate
-			return (marriageEventDate == 0 || marriageEventDate < birthEventDate ) ?
-				birthEventDate + 20 : marriageEventDate;
+			int dateToReturn = marriageEventDate;
+			dateQualityInformationString += $"MarriageDate is {marriageEventDate}. ";
+			if (marriageEventDate == 0)
+			{
+				dateToReturn = birthEventDate + 20;
+				dateQualityInformationString += $"Was zero, so setting to {birthEventDate} + 20. ";
+			} else if (marriageEventDate < birthEventDate) {
+				dateToReturn = birthEventDate + 20;
+				dateQualityInformationString += $"Was less than birthdate {birthEventDate}. ";
+			}
+			dateQualityInformationString += $"New MarriageDate {dateToReturn}. ";
+			return dateToReturn;
 		}
 
 		public void FixUpDatesForViewingWithMarriageDate(int marriageEventDate)
@@ -52,13 +64,22 @@ namespace Assets.Scripts.DataObjects
 
 			int fixedUpMarriageDate = FixUpAndReturnMarriageDate(marriageEventDate);
 
-			var deltaFromMarriageAtTwenty = fixedUpMarriageDate - birthEventDate + 20;
+			var deltaFromMarriageAtTwenty = fixedUpMarriageDate - birthEventDate - 20;
 			if (originalBirthEventDate == 0)
+			{
+				dateQualityInformationString += $"Fixing up birthDate using known marriageDate by adding {deltaFromMarriageAtTwenty}. ";
 				birthEventDate += deltaFromMarriageAtTwenty;
+			}
 			if (originalDeathEventDate == 0)
+			{
+				dateQualityInformationString += $"Fixing up deathDate using known marriageDate by adding {deltaFromMarriageAtTwenty}. ";
 				deathEventDate += deltaFromMarriageAtTwenty;
+			}
 			if (originalBirthEventDate != 0 && originalDeathEventDate == 0 && deathEventDate < fixedUpMarriageDate)
+			{
+				dateQualityInformationString += $"Fixing up deathDate because MarriageDate is after DeathDate.  New deathDate is {fixedUpMarriageDate + 5}. ";
 				deathEventDate = fixedUpMarriageDate + 5;
+			}
 		}
 
 		public void FixUpDatesForViewing()
@@ -70,14 +91,20 @@ namespace Assets.Scripts.DataObjects
 			//  0 (calc)    0 (calc)    0		  90			 - Make them born 100 years ago, and died 10 years ago
 			//  0 (calc)    given       0         90             - make them born 90 years before thier death
 			//  0           given       1 (calc)                 - death date indicates not living, so flip Isliving
-			if (birthEventDate == 0 || birthEventDate > deathEventDate)
+			if (birthEventDate == 0 || 
+				((birthEventDate > deathEventDate) &&
+				(deathEventDate != 0)))
 			{
 				if (deathEventDate == 0)
 				{
 					if (isLiving)
+					{
+						dateQualityInformationString += "BirthDate set to 100 years ago because, they are marked isLiving and birth and death dates are invalid.";
 						birthEventDate = currentYear - 100;
+					}
 					else
 					{
+						dateQualityInformationString += "BirthDate set to 100 years ago, deathDate to 10 years ago because, they are marked NOT isLiving and birth and death dates are invalid.";
 						birthEventDate = currentYear - 100;
 						deathEventDate = currentYear - 10;
 					}
@@ -85,6 +112,7 @@ namespace Assets.Scripts.DataObjects
 				else
 				{
 					birthEventDate = deathEventDate - 90;
+					dateQualityInformationString += "BirthDate set to 90 years ago because, they are marked isLiving and birth and death dates are invalid.";
 					if (isLiving)
 						isLiving = false;
 				}
@@ -99,16 +127,32 @@ namespace Assets.Scripts.DataObjects
 			else if (deathEventDate == 0)
 			{
 				if (isLiving && (currentYear - birthEventDate > 100))
+				{
+					dateQualityInformationString += $"isLiving is being set to false because it is currently true and this person is {currentYear - birthEventDate} years old. ";
 					isLiving = false;
+				}
 				if (!isLiving)
 				{
 					if ((currentYear - birthEventDate) > 100)
+					{
 						deathEventDate = birthEventDate + 90;
+						dateQualityInformationString += $"DeathDate set to {deathEventDate} (Death at age 90) because, deathDate is 0, they are marked Not isLiving, and birth was more than 100 years ago.";
+					}
 					else if ((currentYear - birthEventDate) > 10)
+					{
 						deathEventDate = currentYear - 10;
+						dateQualityInformationString += $"DeathDate set to {deathEventDate} (10 years ago) because, deathDate is 0, they are marked Not isLiving, and birth was more then 10 and less then 100 years ago..";
+					}
 					else if ((currentYear - birthEventDate) > 0)
+					{
 						deathEventDate = birthEventDate + 1;
-					else deathEventDate = birthEventDate;
+						dateQualityInformationString += $"DeathDate set to {deathEventDate} (Death at age 1) because, deathDate is 0, they are marked Not isLiving, and birth was within the last 9 years. ";
+					}
+					else
+					{
+						deathEventDate = birthEventDate;
+						dateQualityInformationString += $"DeathDate set to now because, deathDate is 0, they are marked as Not isLiving, and birth was this year. ";
+					}
 				}
 			}
 		}

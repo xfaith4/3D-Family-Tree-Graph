@@ -10,15 +10,19 @@ X Get spring physics right
 X Drag and or friction - yes add drag to Node Prefab
 X Bring in "Adam and Eve" family generator
 X Bring in RootMagic DB Reader:
-
 X Get and create all individuals Join of PersonTable NameTable and EventTable  ** Generation may not be known **
 X --->CreatePerson(string name, PersonGenderType personGender, int birthEventDate, bool livingFlag = true, int deathEventDate = 0, int generation = 0)
-
 X Tag the above individuals or store in an array with 
+X Give visual clues to estimated dates
 
 --------------->
 > Still To Do ->
 --------------->
+
+
+Add children connections
+Setup a "Date Horizon" Clip field at a specific Z location (date) and/or 
+Only populate X generations from a starting person.
 
 --->Foreach individual, get Marriages for that person - get other person, event type (marriage/divorce) and event Date
  

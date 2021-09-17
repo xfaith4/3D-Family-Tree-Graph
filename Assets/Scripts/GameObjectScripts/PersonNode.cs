@@ -7,9 +7,13 @@ public class PersonNode : MonoBehaviour
 {
     public float lifeSpan;
     public int birthDate;
+    public int deathDate;
     public PersonGenderType personGender;
     public int dataBaseOwnerID;
     public int arrayIndex;
+    public (int original, int updated) birthDateQuality;
+    public (int original, int updated) deathDateQuality;
+    public string dateQualityInformationString = "using original dates, all is good";
     
     GameObject edgePrefabObject;
     GameObject bubblePrefabObject;
@@ -23,6 +27,10 @@ public class PersonNode : MonoBehaviour
             new Color(0.4f, 0.4f, 0.4f, 0.7f),   // notset
             new Color(0.4f, 0.7f, 0.9f, 0.7f),   // male
             new Color(0.8f, 0.5f, 0.8f, 0.7f)    // female
+        };
+    private Color[] personDateQualityColors = {
+            new Color(0.4f, 0.4f, 0.4f),   // date = orig
+            new Color(0.9f, 0.1f, 0.1f)    // date != orig
         };
     private Color clearWhite = new Color(1.0f, 1.0f, 1.0f, 0.2f);
     private Color[] personGenderPlatformColors = {
@@ -72,6 +80,27 @@ public class PersonNode : MonoBehaviour
         myPlatformComponent.transform.localPosition = new Vector3(0, 0, age / 2f);
         lifeSpan = age;
         this.birthDate = birthDate;
+        this.deathDate = birthDate + (int)age;
+    }
+
+    public void AddDateQualityInformation((int updated, int original) birthDateQuality, (int updated, int original) deathDateQuality, string dateQualityInformationString)
+    {
+        this.dateQualityInformationString = dateQualityInformationString;
+        this.birthDateQuality = birthDateQuality;
+        this.deathDateQuality = deathDateQuality;
+    }
+
+    public void addMyBirthQualityBubble()
+    { 
+        var parentPlatformTransform = gameObject.transform.GetChild(PlatformChildIndex);
+
+        var birthConnection = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        var colorToSet = personDateQualityColors[birthDateQuality.original == birthDateQuality.updated ? 0 : 1];
+        birthConnection.GetComponent<Renderer>().material.SetColor("_Color", colorToSet);
+
+        birthConnection.transform.localScale = Vector3.one * 2f;
+        birthConnection.transform.parent = parentPlatformTransform;
+        birthConnection.transform.localPosition = new Vector3(0, 0, - 0.5f);
     }
 
     public void SetPersonGender(PersonGenderType personGender)

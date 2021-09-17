@@ -81,7 +81,7 @@ public class Tribe : MonoBehaviour
 			}
 			#region Create Person GameObjects
 			int counter = 0;
-			int generationWith = 500;
+			int generationWith = (int)Math.Sqrt((double)numberOfPeopleInTribe);
             foreach (var personToAdd in myTribeOfPeople.personsList)
             {
 				personToAdd.personNodeGameObject = CreatePersonGameObject(personToAdd, generation: counter / generationWith);
@@ -114,6 +114,7 @@ public class Tribe : MonoBehaviour
 
 	GameObject CreatePersonGameObject(string name, PersonGenderType personGender, int birthEventDate,
 		bool livingFlag = true, int deathEventDate = 0, int generation = 0,
+		int originalBirthDate = 0, int originalDeathDate = 0, string dateQualityInformationString = "",
 		int databaseOwnerArry = 0, int tribeArrayIndex = 0)
     {
 		var currentYear = DateTime.Now.Year;
@@ -130,8 +131,10 @@ public class Tribe : MonoBehaviour
 
 		personObjectScript.SetIndexes(databaseOwnerArry, tribeArrayIndex);
 		personObjectScript.SetLifeSpan(birthEventDate, age);
+		personObjectScript.AddDateQualityInformation((birthEventDate, originalBirthDate), (deathEventDate, originalDeathDate), dateQualityInformationString);
 		personObjectScript.SetPersonGender(personGender);
 		personObjectScript.SetEdgePrefab(edgepf, bubblepf, capsuleBubblepf);
+		personObjectScript.addMyBirthQualityBubble();
 		//TODO use gender to set the color of the platform	
 		//
 		return newPersonGameObject;
@@ -146,6 +149,8 @@ public class Tribe : MonoBehaviour
 	{
 		return CreatePersonGameObject($"{person.givenName} {person.surName}", person.gender, person.birthEventDate,
 			person.isLiving, person.deathEventDate, generation,
+			person.originalBirthEventDate, person.originalDeathEventDate,
+			person.dateQualityInformationString,
 			person.dataBaseOwnerId, person.tribeArrayIndex);
 	}
 
