@@ -23,10 +23,13 @@ namespace Assets.Scripts.DataObjects
 		public bool isLiving;
 		private bool originalIsLiving;
 		public int generation;
+		public float xOffset;  // assists in recursive ordering of descendency trees
+		public int spouseNumber;
         public GameObject personNodeGameObject;
         List<(PersonRelationshipType Relationship, Person RelatedPerson)> familyRelationships;
 
-        public Person(int arrayIndex, int ownerId, PersonGenderType gender, string given, string surname, int birthYear, int deathYear, bool isLiving, int generation)
+        public Person(int arrayIndex, int ownerId, PersonGenderType gender, string given, string surname, 
+			int birthYear, int deathYear, bool isLiving, int generation, float xOffset, int spouseNumber)
         {
             this.tribeArrayIndex = arrayIndex;
             this.dataBaseOwnerId = ownerId;
@@ -38,6 +41,8 @@ namespace Assets.Scripts.DataObjects
             originalIsLiving = this.isLiving = isLiving;
 			dateQualityInformationString = $"For {givenName} {surName}. Original birthDate {originalBirthEventDate}, deathDate {originalDeathEventDate}. ";
 			this.generation = generation;
+			this.xOffset = xOffset;
+			this.spouseNumber = spouseNumber;
 		}
 
 		public int FixUpAndReturnMarriageDate(int marriageEventDate)

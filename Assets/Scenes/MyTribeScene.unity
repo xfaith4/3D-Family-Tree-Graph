@@ -200,13 +200,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 221459543}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 60, z: 1750}
+  m_LocalRotation: {x: 0.12186928, y: 0, z: 0, w: 0.9925462}
+  m_LocalPosition: {x: 680, y: 36, z: 1883}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 14, y: 0, z: 0}
 --- !u!114 &221459547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,12 +253,15 @@ MonoBehaviour:
   tribeType: 3
   rootsMagicFileName: Huskey08D.rmgc
   startingIdForTree: 123
-  numberOfGenerations: 5
+  numberOfGenerations: 6
   personPrefab: {fileID: 4664796352529360708, guid: 19ad8fb955b8c5b49ac14b95be498ada, type: 3}
   edgepf: {fileID: 2006701754031461468, guid: 285eaa547166bce5bbdeb2d0d90b4b4c, type: 3}
   bubblepf: {fileID: 557405875712316749, guid: a27690feb6cc0e74c95759bc7baff389, type: 3}
   capsuleBubblepf: {fileID: 557405875712316749, guid: 4cb9e513d2f90084c942a0eb65d8eaaf, type: 3}
   numberOfPeopleInTribe: 25
+  crazySprings: 0
+  generationGap: 10
+  spouseGap: 2
 --- !u!4 &264391282
 Transform:
   m_ObjectHideFlags: 0

@@ -21,12 +21,13 @@ namespace Assets.Scripts.DataProviders
             _dataBaseFileName = DataBaseFileName;
             personsList = new List<Person>();
         }
-        public void GetSinglePersonFromDataBase(int ownerId, int generation)
+        public void GetSinglePersonFromDataBase(int ownerId, int generation, float xOffset, int spouseNumber)
         {
-            GetListOfPersonsFromDataBase(limitListSizeTo: 1, ownerId, generation);
+            GetListOfPersonsFromDataBase(limitListSizeTo: 1, ownerId, generation, xOffset, spouseNumber);
         }
 
-        public void GetListOfPersonsFromDataBase(int limitListSizeTo, int? JustThisOwnerId = null, int generation = 0)
+        public void GetListOfPersonsFromDataBase(int limitListSizeTo, int? JustThisOwnerId = null, int generation = 0, 
+            float xOffset = 0.0f, int spouseNumber = 0)
         {
             string conn = "URI=file:" + Application.dataPath + $"/RootsMagic/{_dataBaseFileName}";
             IDbConnection dbconn;
@@ -58,7 +59,9 @@ namespace Assets.Scripts.DataProviders
                     birthYear: reader.GetInt32(4),
                     deathYear: reader.GetInt32(5),
                     isLiving: reader.GetBoolean(6),
-                    generation: generation);
+                    generation: generation,
+                    xOffset: xOffset,
+                    spouseNumber: spouseNumber);
 
                 if (nextName.dataBaseOwnerId == 218)
                     Debug.Log($"We just read in OwnerId {nextName.dataBaseOwnerId}");

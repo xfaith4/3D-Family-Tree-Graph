@@ -17,14 +17,13 @@ X Give visual clues to estimated dates
 X Add children connections
 X Get all Children for a Family (FatherID + MotherID or FamilyID) - Decendants
 X Get parents for a Child (Ancesters)
+X Organize families better
 
 --------------->
 > Still To Do ->
 --------------->
+Fix some overlapping issues
 Add code for getting Ancesters recursivly
-
-Organize families better
-
 
 
 Setup a "Date Horizon" Clip field at a specific Z location (date) and/or 

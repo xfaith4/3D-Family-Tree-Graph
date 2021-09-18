@@ -62,9 +62,15 @@ public class PersonNode : MonoBehaviour
         this.capsuleBubblePrefabObject = capsuleBubble;
     }
 
-    public void Freeze()
-    {        
-        this.transform.GetChild(PlatformChildIndex).GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+    public void Freeze(bool crazySprings)
+    {    
+        if (crazySprings)
+            this.transform.GetChild(PlatformChildIndex).GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+        else
+            this.transform.GetChild(PlatformChildIndex).GetComponent<Rigidbody>().constraints = 
+              //  RigidbodyConstraints.FreezePositionY | 
+                RigidbodyConstraints.FreezePositionZ | 
+                RigidbodyConstraints.FreezeRotation;
     }
 
     public void SetIndexes(int dataBaseOwnerId, int arrayIndex)
