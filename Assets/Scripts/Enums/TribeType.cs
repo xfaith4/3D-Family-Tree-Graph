@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.Enums
 {
-    public enum ChildRelationshipType
+    public enum TribeType
     {
-        Biological,
-        Adopted
+        MadeUpData,
+        AllPersons,
+        Ancestry,
+        Descendancy
     }
 }

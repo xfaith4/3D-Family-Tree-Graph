@@ -10,8 +10,10 @@ using Assets.Scripts.DataProviders;
 
 public class Tribe : MonoBehaviour
 {
-
+	public TribeType tribeType;
 	public String rootsMagicFileName;
+	public int startingIdForTree;
+	public int numberOfGenerations = 5;
 	public GameObject personPrefab;
 	public GameObject edgepf;
 	public GameObject bubblepf;
@@ -23,9 +25,7 @@ public class Tribe : MonoBehaviour
 
 	void Start()
 	{
-		var fruitnames = new string[] { "Apple", "Apricot", "Avocado", "Banana", "Bilberry", "Blackberry", "Blackcurrant", "Blueberry", "Boysenberry", "Currant", "Cherry", "Cherimoya", "Chico fruit", "Cloudberry", "Coconut", "Cranberry", "Cucumber", "Custard apple", "Damson", "Date", "Dragonfruit", "Durian", "Elderberry", "Feijoa", "Fig", "Goji berry", "Gooseberry", "Grape", "Raisin", "Grapefruit", "Guava", "Honeyberry", "Huckleberry", "Jabuticaba", "Jackfruit", "Jambul", "Jujube", "Juniper berry", "Kiwano", "Kiwifruit", "Kumquat", "Lemon", "Lime", "Loquat", "Longan", "Lychee", "Mango", "Mangosteen", "Marionberry", "Melon", "Cantaloupe", "Honeydew", "Watermelon", "Miracle fruit", "Mulberry", "Nectarine", "Nance", "Olive", "Orange", "Blood orange", "Clementine", "Mandarine", "Tangerine", "Papaya", "Passionfruit", "Peach", "Pear", "Persimmon", "Physalis", "Plantain", "Plum", "Prune", "Pineapple", "Plumcot", "Pomegranate", "Pomelo", "Purple mangosteen", "Quince", "Raspberry", "Salmonberry", "Rambutan", "Redcurrant", "Salal berry", "Salak", "Satsuma", "Soursop", "Star fruit", "Solanum", "quitoense", "Strawberry", "Tamarillo", "Tamarind", "Ugli fruit", "Yuzu" };
-
-		if (rootsMagicFileName == null)
+		if (tribeType == TribeType.MadeUpData || rootsMagicFileName == null)
 		{
 			var adam = CreatePersonGameObject("Adam", PersonGenderType.Male, 1800, false, 1870, generation: 0);
 			var eve = CreatePersonGameObject("Eve", PersonGenderType.Female, 1810, false, 1860, generation: 0);
@@ -56,61 +56,185 @@ public class Tribe : MonoBehaviour
 			AssignParents(jude, leisha, vahe);
 			AssignParents(arie, leisha, vahe);
 		}
-		else
+		else if (tribeType == TribeType.AllPersons)
 		{
-			myTribeOfPeople = new ListOfPersonsFromDataBase(rootsMagicFileName);
+            myTribeOfPeople = new ListOfPersonsFromDataBase(rootsMagicFileName);
 			myTribeOfPeople.GetListOfPersonsFromDataBase(numberOfPeopleInTribe);
-			// Lets fixup some more PersonDates based off off Marriage Event Dates
-			var myListOfMarriages = new ListOfMarriagesForPersonFromDataBase(rootsMagicFileName);
-			foreach (var potentialMarriedPerson in myTribeOfPeople.personsList)
+
+			FixUpDatesBasedOffMarriageDates();
+
+			CreatePersonGameObjectForAllPeople(overridePersonGeneration: true);
+
+			HookUpTheMarriages();
+
+			NowAddChildren();
+		}
+		else if (tribeType == TribeType.Ancestry)
+		{
+		}
+		else if (tribeType == TribeType.Descendancy)
+        {
+			myTribeOfPeople = new ListOfPersonsFromDataBase(rootsMagicFileName);
+			GetNextLevelOfDescendancyForThisPersonIdDataBaseOnly(startingIdForTree, numberOfGenerations);
+
+			FixUpDatesBasedOffMarriageDates();
+
+			CreatePersonGameObjectForAllPeople();
+
+			HookUpTheMarriages();
+
+			NowAddChildren();
+		}
+	}
+
+	void GetNextLevelOfDescendancyForThisPersonIdDataBaseOnly(int personId, int depth)
+	{
+		myTribeOfPeople.GetSinglePersonFromDataBase(personId, depth);
+		var personWeAreAdding = getPersonForDataBaseOwnerId(personId);
+
+		var listOfFamilyIds = AddSpousesAndFixUpDates(personWeAreAdding, depth);
+
+		if (depth == 0)
+			return;
+
+		var myChildrenList = new ListOfChildrenFromDataBase(rootsMagicFileName);
+        foreach (var familyId  in listOfFamilyIds)
+        {
+			myChildrenList.GetListOfChildrenFromDataBase(familyId);
+            foreach (var child in myChildrenList.childList)
+            {
+				GetNextLevelOfDescendancyForThisPersonIdDataBaseOnly(child.childId, depth - 1);
+            }
+		}
+	}
+
+	List<int> AddSpousesAndFixUpDates(Person forThisPerson, int depth)
+    {
+		var listOfFamilyIdsToReturn = new List<int>();
+		var myListOfMarriages = new ListOfMarriagesForPersonFromDataBase(rootsMagicFileName);
+		if (forThisPerson.gender == PersonGenderType.Male)
+		{
+			myListOfMarriages.GetListOfMarriagesWithEventsForPersonFromDataBase(forThisPerson.dataBaseOwnerId, useHusbandQuery: true);
+			if (myListOfMarriages.marriageList.Count == 0)
+				myListOfMarriages.GetListOfMarriagesWithNoEventsForPersonFromDataBase(forThisPerson.dataBaseOwnerId, useHusbandQuery: true);
+			foreach (var marriage in myListOfMarriages.marriageList)
 			{
-				if (potentialMarriedPerson.gender == PersonGenderType.Male)
+				myTribeOfPeople.GetSinglePersonFromDataBase(marriage.wifeId, depth);
+				var wifePersonWeAreAdding = getPersonForDataBaseOwnerId(marriage.wifeId);
+				forThisPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
+				if (wifePersonWeAreAdding != null)
 				{
-					myListOfMarriages.marriageList.Clear();
-					myListOfMarriages.GetListOfMarriagesForPersonFromDataBase(potentialMarriedPerson.dataBaseOwnerId, useHusbandQuery: true);
-					foreach (var marriage in myListOfMarriages.marriageList)
-						potentialMarriedPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
+					wifePersonWeAreAdding.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
 				}
 				else
 				{
-					myListOfMarriages.marriageList.Clear();
-					myListOfMarriages.GetListOfMarriagesForPersonFromDataBase(potentialMarriedPerson.dataBaseOwnerId, useHusbandQuery: false);
-					foreach (var marriage in myListOfMarriages.marriageList)
-						potentialMarriedPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
+					var errorPersonId = marriage.wifeId;
 				}
+				listOfFamilyIdsToReturn.Add(marriage.familyId);
 			}
-			#region Create Person GameObjects
-			int counter = 0;
-			int generationWith = (int)Math.Sqrt((double)numberOfPeopleInTribe);
-            foreach (var personToAdd in myTribeOfPeople.personsList)
-            {
-				personToAdd.personNodeGameObject = CreatePersonGameObject(personToAdd, generation: counter / generationWith);
-				counter++;
+		}
+		else
+		{
+			myListOfMarriages.GetListOfMarriagesWithEventsForPersonFromDataBase(forThisPerson.dataBaseOwnerId, useHusbandQuery: false);
+			if (myListOfMarriages.marriageList.Count == 0)
+				myListOfMarriages.GetListOfMarriagesWithNoEventsForPersonFromDataBase(forThisPerson.dataBaseOwnerId, useHusbandQuery: false);
+			foreach (var marriage in myListOfMarriages.marriageList)
+			{
+				myTribeOfPeople.GetSinglePersonFromDataBase(marriage.husbandId, depth);
+				var husbandPersonWeAreAdding = getPersonForDataBaseOwnerId(marriage.husbandId);
+				forThisPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
+				husbandPersonWeAreAdding.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
+				listOfFamilyIdsToReturn.Add(marriage.familyId);
 			}
-            #endregion
-            // time to hook up some marriages
-            foreach (var potentialHusbandPerson in myTribeOfPeople.personsList)
-            {
-                if (potentialHusbandPerson.gender == PersonGenderType.Male)
-                {
-                    myListOfMarriages.marriageList.Clear();
-                    myListOfMarriages.GetListOfMarriagesForPersonFromDataBase(potentialHusbandPerson.dataBaseOwnerId);
-                    foreach (var marriage in myListOfMarriages.marriageList)
-                    {
-                        int marriageYearToUse = potentialHusbandPerson.FixUpAndReturnMarriageDate(marriage.marriageYear);
+		}
+		return listOfFamilyIdsToReturn;
+	}
 
-                        CreateMarriage(
-                            getGameObjectForDataBaseOwnerId(marriage.wifeId),
-                            getGameObjectForDataBaseOwnerId(marriage.husbandId),
-                            marriageYearToUse);
-                    }
-                }
-            }
-
-            GameObject getGameObjectForDataBaseOwnerId(int ownerId) => 
-				myTribeOfPeople.personsList.Find(x => x.dataBaseOwnerId == ownerId)?.personNodeGameObject;           
+	void FixUpDatesBasedOffMarriageDates()
+    {
+		// Lets fixup some more PersonDates based off off Marriage Event Dates
+		var myListOfMarriages = new ListOfMarriagesForPersonFromDataBase(rootsMagicFileName);
+		foreach (var potentialMarriedPerson in myTribeOfPeople.personsList)
+		{
+			if (potentialMarriedPerson.gender == PersonGenderType.Male)
+			{
+				myListOfMarriages.marriageList.Clear();
+				myListOfMarriages.GetListOfMarriagesWithEventsForPersonFromDataBase(potentialMarriedPerson.dataBaseOwnerId, useHusbandQuery: true);
+				foreach (var marriage in myListOfMarriages.marriageList)
+					potentialMarriedPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
+			}
+			else
+			{
+				myListOfMarriages.marriageList.Clear();
+				myListOfMarriages.GetListOfMarriagesWithEventsForPersonFromDataBase(potentialMarriedPerson.dataBaseOwnerId, useHusbandQuery: false);
+				foreach (var marriage in myListOfMarriages.marriageList)
+					potentialMarriedPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
+			}
 		}
 	}
+
+	void CreatePersonGameObjectForAllPeople(bool overridePersonGeneration = false)
+    {				
+		int counter = 0;
+		int generationWith = (int)Math.Sqrt((double)numberOfPeopleInTribe);
+		foreach (var personToAdd in myTribeOfPeople.personsList)
+		{
+			int? generationToUse = overridePersonGeneration ? (int?) (counter / generationWith) : null;
+			personToAdd.personNodeGameObject = CreatePersonGameObject(personToAdd, generation: generationToUse);
+			counter++;
+		}
+	}
+
+	void HookUpTheMarriages()
+	{
+		// time to hook up some marriages
+		var myListOfMarriages = new ListOfMarriagesForPersonFromDataBase(rootsMagicFileName);
+		foreach (var potentialHusbandPerson in myTribeOfPeople.personsList)
+		{
+			if (potentialHusbandPerson.gender == PersonGenderType.Male)
+			{
+				myListOfMarriages.marriageList.Clear();
+				myListOfMarriages.GetListOfMarriagesWithEventsForPersonFromDataBase(potentialHusbandPerson.dataBaseOwnerId);
+				if (myListOfMarriages.marriageList.Count == 0)
+					myListOfMarriages.GetListOfMarriagesWithNoEventsForPersonFromDataBase(potentialHusbandPerson.dataBaseOwnerId);
+				foreach (var marriage in myListOfMarriages.marriageList)
+				{
+					int marriageYearToUse = potentialHusbandPerson.FixUpAndReturnMarriageDate(marriage.marriageYear);
+
+					CreateMarriage(
+						getGameObjectForDataBaseOwnerId(marriage.wifeId),
+						getGameObjectForDataBaseOwnerId(marriage.husbandId),
+						marriageYearToUse);
+				}
+			}
+		}
+	}
+
+	void NowAddChildren()
+	{ 
+		// first came love, then came marriage, then came a baby in a baby carriage
+		var myListOfParents = new ListOfParentsFromDataBase(rootsMagicFileName);
+		foreach (var child in myTribeOfPeople.personsList)
+		{
+			myListOfParents.parentList.Clear();
+			myListOfParents.GetListOfParentsFromDataBase(child.dataBaseOwnerId);
+			foreach (var myParents in myListOfParents.parentList)
+			{
+				AssignParents(
+					getGameObjectForDataBaseOwnerId(child.dataBaseOwnerId),
+					getGameObjectForDataBaseOwnerId(myParents.motherId),
+					getGameObjectForDataBaseOwnerId(myParents.fatherId),
+					myParents.relationToMother,
+					myParents.relationToFather);
+			}
+		}
+	}
+
+	GameObject getGameObjectForDataBaseOwnerId(int ownerId) =>
+				myTribeOfPeople.personsList.Find(x => x.dataBaseOwnerId == ownerId)?.personNodeGameObject;
+	Person getPersonForDataBaseOwnerId(int ownerId) =>
+				myTribeOfPeople.personsList.Find(x => x.dataBaseOwnerId == ownerId);
+
 
 	GameObject CreatePersonGameObject(string name, PersonGenderType personGender, int birthEventDate,
 		bool livingFlag = true, int deathEventDate = 0, int generation = 0,
@@ -145,10 +269,11 @@ public class Tribe : MonoBehaviour
 
 	}
 
-	GameObject CreatePersonGameObject(Person person, int generation = 0)
+	GameObject CreatePersonGameObject(Person person, int? generation = null)
 	{
+		var generationToUse = (generation == null) ? person.generation : (int)generation;
 		return CreatePersonGameObject($"{person.givenName} {person.surName}", person.gender, person.birthEventDate,
-			person.isLiving, person.deathEventDate, generation,
+			person.isLiving, person.deathEventDate, generationToUse,
 			person.originalBirthEventDate, person.originalDeathEventDate,
 			person.dateQualityInformationString,
 			person.dataBaseOwnerId, person.tribeArrayIndex);

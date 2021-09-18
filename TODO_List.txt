@@ -14,13 +14,19 @@ X Get and create all individuals Join of PersonTable NameTable and EventTable  *
 X --->CreatePerson(string name, PersonGenderType personGender, int birthEventDate, bool livingFlag = true, int deathEventDate = 0, int generation = 0)
 X Tag the above individuals or store in an array with 
 X Give visual clues to estimated dates
+X Add children connections
+X Get all Children for a Family (FatherID + MotherID or FamilyID) - Decendants
+X Get parents for a Child (Ancesters)
 
 --------------->
 > Still To Do ->
 --------------->
+Add code for getting Ancesters recursivly
+
+Organize families better
 
 
-Add children connections
+
 Setup a "Date Horizon" Clip field at a specific Z location (date) and/or 
 Only populate X generations from a starting person.
 

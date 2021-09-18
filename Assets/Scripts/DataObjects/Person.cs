@@ -22,10 +22,11 @@ namespace Assets.Scripts.DataObjects
 		public string dateQualityInformationString;
 		public bool isLiving;
 		private bool originalIsLiving;
+		public int generation;
         public GameObject personNodeGameObject;
         List<(PersonRelationshipType Relationship, Person RelatedPerson)> familyRelationships;
 
-        public Person(int arrayIndex, int ownerId, PersonGenderType gender, string given, string surname, int birthYear, int deathYear, bool isLiving)
+        public Person(int arrayIndex, int ownerId, PersonGenderType gender, string given, string surname, int birthYear, int deathYear, bool isLiving, int generation)
         {
             this.tribeArrayIndex = arrayIndex;
             this.dataBaseOwnerId = ownerId;
@@ -36,6 +37,7 @@ namespace Assets.Scripts.DataObjects
             originalDeathEventDate = deathEventDate = deathYear;
             originalIsLiving = this.isLiving = isLiving;
 			dateQualityInformationString = $"For {givenName} {surName}. Original birthDate {originalBirthEventDate}, deathDate {originalDeathEventDate}. ";
+			this.generation = generation;
 		}
 
 		public int FixUpAndReturnMarriageDate(int marriageEventDate)

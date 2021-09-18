@@ -9,6 +9,7 @@ namespace Assets.Scripts.DataObjects
 {
     class Marriage
     {
+        public int familyId;
         public int husbandId;
         public int wifeId;
         public int marriageMonth;
@@ -17,8 +18,9 @@ namespace Assets.Scripts.DataObjects
         public int annulledYear;
         public int divorcedYear;
 
-        public Marriage(int husbandId, int wifeId, int marriageMonth, int marriageDay, int marriageYear, int annulledYear, int divorcedYear)
+        public Marriage(int familyId, int husbandId, int wifeId, int marriageMonth, int marriageDay, int marriageYear, int annulledYear, int divorcedYear)
         {
+            this.familyId = familyId;
             this.husbandId = husbandId;
             this.wifeId = wifeId;
             this.marriageMonth = marriageMonth;

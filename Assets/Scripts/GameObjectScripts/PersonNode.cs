@@ -111,7 +111,7 @@ public class PersonNode : MonoBehaviour
     }
 
     public void AddBirthEdge(PersonNode childPersonNode, float myAgeConnectionPointPercent = 0f, 
-        ChildRelationshipType childRelationshipType = ChildRelationshipType.NotSet)
+        ChildRelationshipType childRelationshipType = ChildRelationshipType.Biological)
     {
         var foo = new Color(0.3f, 0.4f, 0.6f);
         var childAgeConnectionPointPercent = 0f;
