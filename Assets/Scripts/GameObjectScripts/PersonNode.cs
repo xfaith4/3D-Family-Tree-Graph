@@ -35,13 +35,12 @@ public class PersonNode : MonoBehaviour
     private Color clearWhite = new Color(1.0f, 1.0f, 1.0f, 0.2f);
     private Color[] personGenderPlatformColors = {
             new Color(0.2f, 0.2f, 0.2f),   // notset
-            new Color(0.3f, 0.6f, 0.8f),   // male
-            new Color(0.7f, 0.4f, 0.7f)    // female
+            new Color(0.3f, 0.6f, 0.9f),   // male
+            new Color(0.7f, 0.4f, 0.9f)    // female
         };
-    private Color[] childRelationshipColors = {
-            new Color(0.4f, 0.0f, 0.0f, 0.2f),   // notset
-            new Color(0.9f, 0.9f, 0.9f, 0.2f),   // biological
-            new Color(0.0f, 0.0f, 0.0f, 0.2f)    // adopted
+    private Color[] childRelationshipColors = {            
+            new Color(0.9f, 0.9f, 0.9f, 0.9f),   // biological
+            new Color(0.0f, 0.0f, 0.0f, 0.9f)    // adopted
         };
 
     void Start()
@@ -68,7 +67,7 @@ public class PersonNode : MonoBehaviour
             this.transform.GetChild(PlatformChildIndex).GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
         else
             this.transform.GetChild(PlatformChildIndex).GetComponent<Rigidbody>().constraints = 
-              //  RigidbodyConstraints.FreezePositionY | 
+                RigidbodyConstraints.FreezePositionY | 
                 RigidbodyConstraints.FreezePositionZ | 
                 RigidbodyConstraints.FreezeRotation;
     }
@@ -104,7 +103,7 @@ public class PersonNode : MonoBehaviour
         var colorToSet = personDateQualityColors[birthDateQuality.original == birthDateQuality.updated ? 0 : 1];
         birthConnection.GetComponent<Renderer>().material.SetColor("_Color", colorToSet);
 
-        birthConnection.transform.localScale = Vector3.one * 2f;
+        birthConnection.transform.localScale = Vector3.one * 1.5f;
         birthConnection.transform.parent = parentPlatformTransform;
         birthConnection.transform.localPosition = new Vector3(0, 0, - 0.5f);
     }
@@ -131,15 +130,18 @@ public class PersonNode : MonoBehaviour
         sj.connectedAnchor = new Vector3(0, 0.5f, childAgeConnectionPointPercent - 0.5f);
         sj.enableCollision = true;
         sj.connectedBody = childRidgidbodyComponent;
+        sj.spring = 10.0f;
+        //sj.minDistance = 10.0f;
+        //sj.maxDistance = 500.0f;
 
         leftConnection = //GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            Instantiate(this.capsuleBubblePrefabObject, Vector3.zero, Quaternion.identity);
+            Instantiate(this.capsuleBubblePrefabObject, Vector3.zero, Quaternion.identity);        
         //TODO Twins born at the same time are not handled well if one is a boy and the other a girl
         leftConnection.transform.GetChild(PlatformChildIndex).GetComponent<Renderer>().material.SetColor("_Color", 
             personGenderCapsuleBubbleColors[(int)childPersonNode.personGender]);
 
-
-        leftConnection.transform.localScale = Vector3.one * 2f;
+        leftConnection.transform.localScale = new Vector3(10.0f, 2.0f, 2.0f);
+        //leftConnection.transform.localScale = Vector3.one * 2f;
         leftConnection.transform.parent = parentPlatformTransform;
         leftConnection.transform.localPosition = new Vector3(0, 0, myAgeConnectionPointPercent - 0.5f);
 
@@ -173,6 +175,9 @@ public class PersonNode : MonoBehaviour
         sj.connectedAnchor = new Vector3(0, 0.5f, spouseAgeConnectionPointPercent - 0.5f);
         sj.enableCollision = true;
         sj.connectedBody = spouseRidgidbodyComponent;
+        sj.spring = 50.0f;
+        sj.minDistance = 30.0f;
+        sj.maxDistance = 60.0f;
 
         leftConnection = new GameObject(); // GameObject.CreatePrimitive(PrimitiveType.Sphere);
         //leftConnection.GetComponent<Renderer>().material.SetColor("_Color", Color.yellow);
