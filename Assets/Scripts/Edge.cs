@@ -7,6 +7,7 @@ public class Edge : MonoBehaviour
     private GameObject leftSphere;
     private GameObject rightSphere;
     private int eventLength = 0; // 0 indicates no length
+    private float edgeXscale;
 
     private void Update()
     {
@@ -20,9 +21,10 @@ public class Edge : MonoBehaviour
         UpdateCylinderPosition(leftSphere.transform.position, rightSphere.transform.position);
     }
 
-    public void SetEdgeEventLength(int eventLength)
+    public void SetEdgeEventLength(int eventLength, float xScale)
     {
         this.eventLength = eventLength;
+        this.edgeXscale = xScale;
         UpdateCylinderPosition(leftSphere.transform.position, rightSphere.transform.position);
     }
 
@@ -30,11 +32,7 @@ public class Edge : MonoBehaviour
     {
         Vector3 offset = endPoint - beginPoint;
         Vector3 position = beginPoint + (offset / 2.0f);
-        if (eventLength != 0)
-        {
-            //position -= new Vector3(0, 0, eventLength / 2);
-            //beginPoint -= new Vector3(0, 0, eventLength / 2);
-        }
+
         transform.position = position;
         transform.LookAt(beginPoint);
         Vector3 localScale = transform.localScale;
@@ -42,7 +40,7 @@ public class Edge : MonoBehaviour
         if (eventLength != 0)
         {
             transform.localPosition = transform.localPosition + new Vector3(0, 0, eventLength/2);
-            localScale.x = eventLength * 5f;
+            localScale.x = (float)eventLength / edgeXscale;  // Make sure we take into accout the original prefab scaling
         }
         transform.localScale = localScale;
     }

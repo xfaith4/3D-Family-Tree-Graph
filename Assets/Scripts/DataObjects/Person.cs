@@ -77,12 +77,12 @@ namespace Assets.Scripts.DataObjects
 				dateQualityInformationString += $"Fixing up birthDate using known marriageDate by adding {deltaFromMarriageAtTwenty}. ";
 				birthEventDate += deltaFromMarriageAtTwenty;
 			}
-			if (originalDeathEventDate == 0)
+			if (originalDeathEventDate == 0 && !isLiving)
 			{
 				dateQualityInformationString += $"Fixing up deathDate using known marriageDate by adding {deltaFromMarriageAtTwenty}. ";
 				deathEventDate += deltaFromMarriageAtTwenty;
 			}
-			if (originalBirthEventDate != 0 && originalDeathEventDate == 0 && deathEventDate < fixedUpMarriageDate)
+			if (originalBirthEventDate != 0 && originalDeathEventDate == 0 && !isLiving && deathEventDate < fixedUpMarriageDate)
 			{
 				dateQualityInformationString += $"Fixing up deathDate because MarriageDate is after DeathDate.  New deathDate is {fixedUpMarriageDate + 5}. ";
 				deathEventDate = fixedUpMarriageDate + 5;

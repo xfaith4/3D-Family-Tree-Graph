@@ -16,6 +16,7 @@ public class PersonNode : MonoBehaviour
     public string dateQualityInformationString = "using original dates, all is good";
     
     GameObject edgePrefabObject;
+    float edgePrefabXScale;
     GameObject bubblePrefabObject;
     GameObject capsuleBubblePrefabObject;
     GameObject leftConnection;
@@ -54,9 +55,10 @@ public class PersonNode : MonoBehaviour
        
     }
 
-    public void SetEdgePrefab(GameObject edge, GameObject bubble, GameObject capsuleBubble)
+    public void SetEdgePrefab(GameObject edge, GameObject bubble, GameObject capsuleBubble, float edgeXScale)
     {
         this.edgePrefabObject = edge;
+        this.edgePrefabXScale = edgeXScale;
         this.bubblePrefabObject = bubble;
         this.capsuleBubblePrefabObject = capsuleBubble;
     }
@@ -116,7 +118,7 @@ public class PersonNode : MonoBehaviour
     }
 
     public void AddBirthEdge(PersonNode childPersonNode, float myAgeConnectionPointPercent = 0f, 
-        ChildRelationshipType childRelationshipType = ChildRelationshipType.Biological)
+        ChildRelationshipType childRelationshipType = ChildRelationshipType.Biological, int birthDate = 0)
     {
         var foo = new Color(0.3f, 0.4f, 0.6f);
         var childAgeConnectionPointPercent = 0f;
@@ -154,6 +156,7 @@ public class PersonNode : MonoBehaviour
         //
 
         GameObject edge = Instantiate(this.edgePrefabObject, Vector3.zero, Quaternion.identity);
+        edge.name = $"Birth {birthDate} {childPersonNode.name}";
         edge.GetComponent<Edge>().CreateEdge(leftConnection, rightConnection);
         edge.transform.GetChild(PlatformChildIndex).GetComponent<Renderer>().material.SetColor("_Color",
             childRelationshipColors[(int)childRelationshipType]);
@@ -163,7 +166,7 @@ public class PersonNode : MonoBehaviour
     }
     public void AddMarriageEdge(PersonNode spousePersonNode, 
         float myAgeConnectionPointPercent = 0f, 
-        float spouseAgeConnectionPointPercent = 0f, int marriageLength = 0)
+        float spouseAgeConnectionPointPercent = 0f, int marriageEventDate = 0, int marriageLength = 0)
     {
         var myPlatformTransform = gameObject.transform.GetChild(PlatformChildIndex);
         var myRidgidbodyComponent = myPlatformTransform.GetComponent<Rigidbody>();
@@ -171,8 +174,8 @@ public class PersonNode : MonoBehaviour
         var spouseRidgidbodyComponent = spousePlatformTransform.GetComponent<Rigidbody>();
         SpringJoint sj = myRidgidbodyComponent.gameObject.AddComponent<SpringJoint>();
         sj.autoConfigureConnectedAnchor = false;
-        sj.anchor = new Vector3(0, 0.5f, myAgeConnectionPointPercent - 0.5f);
-        sj.connectedAnchor = new Vector3(0, 0.5f, spouseAgeConnectionPointPercent - 0.5f);
+        sj.anchor = new Vector3(0, 0.5f, myAgeConnectionPointPercent);   // - 0.5f
+        sj.connectedAnchor = new Vector3(0, 0.5f, spouseAgeConnectionPointPercent);  // - 0.5f
         sj.enableCollision = true;
         sj.connectedBody = spouseRidgidbodyComponent;
         sj.spring = 50.0f;
@@ -194,9 +197,9 @@ public class PersonNode : MonoBehaviour
         //
 
         GameObject edge = Instantiate(this.edgePrefabObject, Vector3.zero, Quaternion.identity);
-        
+        edge.name = $"Marriage {marriageEventDate}, to {spousePersonNode.name}, duration {marriageLength}.";
         edge.GetComponent<Edge>().CreateEdge(leftConnection, rightConnection);
-        edge.GetComponent<Edge>().SetEdgeEventLength(marriageLength);
+        edge.GetComponent<Edge>().SetEdgeEventLength(marriageLength, edgePrefabXScale);
         var material = edge.transform.GetChild(PlatformChildIndex).GetComponent<Renderer>().material;
         material.SetColor("_Color", new Color(1.0f, 0.92f, 0.01f,  0.2f));
         //material.SetOverrideTag("RenderMode", "Transparent");

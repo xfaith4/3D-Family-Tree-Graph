@@ -23,7 +23,9 @@ namespace Assets.Scripts.DataProviders
         }
         public void GetSinglePersonFromDataBase(int ownerId, int generation, float xOffset, int spouseNumber)
         {
-            GetListOfPersonsFromDataBase(limitListSizeTo: 1, ownerId, generation, xOffset, spouseNumber);
+            // only if this person is not in the Tribe yet
+            if (!personsList.Exists(x => x.dataBaseOwnerId == ownerId))
+                GetListOfPersonsFromDataBase(limitListSizeTo: 1, ownerId, generation, xOffset, spouseNumber);
         }
 
         public void GetListOfPersonsFromDataBase(int limitListSizeTo, int? JustThisOwnerId = null, int generation = 0, 

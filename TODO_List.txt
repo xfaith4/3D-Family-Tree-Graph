@@ -18,16 +18,20 @@ X Add children connections
 X Get all Children for a Family (FatherID + MotherID or FamilyID) - Decendants
 X Get parents for a Child (Ancesters)
 X Organize families better
+X Fix some overlapping issues
+X Only populate X generations from a starting person.
 
 --------------->
 > Still To Do ->
 --------------->
-Fix some overlapping issues
+Name Boxes with word wrap and other treatments (opaque background)to make it easier to read in a complex screen
+
 Add code for getting Ancesters recursivly
+
+First person player
 
 
 Setup a "Date Horizon" Clip field at a specific Z location (date) and/or 
-Only populate X generations from a starting person.
 
 --->Foreach individual, get Marriages for that person - get other person, event type (marriage/divorce) and event Date
  

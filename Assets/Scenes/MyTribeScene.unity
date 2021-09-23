@@ -252,10 +252,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tribeType: 3
   rootsMagicFileName: Huskey08D.rmgc
-  startingIdForTree: 123
+  startingIdForTree: 12040
   numberOfGenerations: 9
   personPrefab: {fileID: 4664796352529360708, guid: 19ad8fb955b8c5b49ac14b95be498ada, type: 3}
   edgepf: {fileID: 2006701754031461468, guid: 285eaa547166bce5bbdeb2d0d90b4b4c, type: 3}
+  edgepfXScale: 0.4
   bubblepf: {fileID: 557405875712316749, guid: a27690feb6cc0e74c95759bc7baff389, type: 3}
   capsuleBubblepf: {fileID: 557405875712316749, guid: 4cb9e513d2f90084c942a0eb65d8eaaf, type: 3}
   numberOfPeopleInTribe: 25
