@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2006701754031461411}
   - component: {fileID: -2303787907306076844}
   m_Layer: 0
-  m_Name: EdgePrefab
+  m_Name: BirthConnectionPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -37,15 +37,27 @@ namespace Assets.Scripts.DataProviders
             dbconn.Open();
             IDbCommand dbcmd = dbconn.CreateCommand();
             string QUERYNAMES =
-                "SELECT name.OwnerID \n" +
-                "    , case when Sex = 0 then 'M' when Sex = 1 then 'F' else 'U' end \n" +
-                "    , name.Given, name.Surname, name.BirthYear, name.DeathYear, person.Living \n" +
+                "SELECT  name.OwnerID \n" +
+                "     , case when Sex = 0 then 'M' when Sex = 1 then 'F' else 'U' end \n" +
+                "     , name.Given, name.Surname \n" +
+                "     , CASE WHEN SUBSTR(eventBirth.Date,8,2) THEN SUBSTR(eventBirth.Date,8,2) ELSE \"0\" END AS BirthMonth \n"+
+                "     , CASE WHEN SUBSTR(eventBirth.Date, 10, 2) THEN SUBSTR(eventBirth.Date,10,2) ELSE \"0\" END AS BirthdDay \n" +
+                "     , CASE WHEN SUBSTR(eventBirth.Date,4,4) THEN \n" +
+                "           CASE WHEN SUBSTR(eventBirth.Date, 4, 4) != \"0\" THEN SUBSTR(eventBirth.Date,4,4) END \n" +
+                "           ELSE CAST(name.BirthYear as varchar(10)) END AS BirthYear \n" +
+                "     , person.Living \n" +
+                "     , CASE WHEN SUBSTR(eventDeath.Date,8,2) THEN SUBSTR(eventDeath.Date,8,2) ELSE \"0\" END AS DeathMonth \n" +
+                "     , CASE WHEN SUBSTR(eventDeath.Date,10,2) THEN SUBSTR(eventDeath.Date,10,2) ELSE \"0\" END AS DeathdDay \n" +
+                "     , CASE WHEN SUBSTR(eventDeath.Date,4,4) THEN SUBSTR(eventDeath.Date,4,4) ELSE \"0\" END AS DeathYear \n" +
                 "FROM NameTable name \n" +
                 "JOIN PersonTable person \n" +
-                "ON name.OwnerID = person.PersonID \n";
+                "    ON name.OwnerID = person.PersonID \n" +
+                "LEFT JOIN EventTable eventBirth ON name.OwnerID = eventBirth.OwnerID AND eventBirth.EventType = 1 \n" +
+                "LEFT JOIN EventTable eventDeath \n" +
+                "    ON name.OwnerID = eventDeath.OwnerID AND eventDeath.EventType = 2 \n";
             if (JustThisOwnerId != null)
                 QUERYNAMES +=
-                    $"WHERE name.OwnerID = \"{JustThisOwnerId}\"";
+                    $"WHERE name.OwnerID = \"{JustThisOwnerId}\" LIMIT 1";
             string sqlQuery = QUERYNAMES;
             dbcmd.CommandText = sqlQuery;
             IDataReader reader = dbcmd.ExecuteReader();
@@ -58,9 +70,9 @@ namespace Assets.Scripts.DataProviders
                     gender: charToPersonGenderType(reader.GetString(1)[0]),
                     given: reader.GetString(2),
                     surname: reader.GetString(3),
-                    birthYear: reader.GetInt32(4),
-                    deathYear: reader.GetInt32(5),
-                    isLiving: reader.GetBoolean(6),
+                    birthYear: Int32.Parse(reader.GetString(6)),
+                    isLiving: reader.GetBoolean(7),
+                    deathYear: Int32.Parse(reader.GetString(10)),
                     generation: generation,
                     xOffset: xOffset,
                     spouseNumber: spouseNumber);

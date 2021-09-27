@@ -39,7 +39,7 @@ public class Edge : MonoBehaviour
         localScale.z = (endPoint - beginPoint).magnitude;
         if (eventLength != 0)
         {
-            transform.localPosition = transform.localPosition + new Vector3(0, 0, eventLength/2);
+            transform.localPosition = transform.localPosition + new Vector3(0, 0, (float)eventLength/2);
             localScale.x = (float)eventLength / edgeXscale;  // Make sure we take into accout the original prefab scaling
         }
         transform.localScale = localScale;

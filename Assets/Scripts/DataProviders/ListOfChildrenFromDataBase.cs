@@ -40,7 +40,8 @@ namespace Assets.Scripts.DataProviders
                 "   ON family.FamilyID = children.FamilyID \n" +
                 "   JOIN NameTable child \n" +
                 "      ON children.ChildID = child.OwnerID \n" +
-                $"WHERE family.familyID = \"{familyId}\";";
+                $"WHERE family.familyID = \"{familyId}\" \n" +
+                "ORDER BY children.ChildOrder ASC; ";
 
             IDataReader reader = dbcmd.ExecuteReader();            
             while (reader.Read())

@@ -15,14 +15,15 @@ public class Tribe : MonoBehaviour
 	public int startingIdForTree;
 	public int numberOfGenerations = 5;
 	public GameObject personPrefab;
-	public GameObject edgepf;
-	public float edgepfXScale = 0.4f;
+	public GameObject birthConnectionPrefab;
+	public GameObject marriageConnectionPrefab;
+	public float marriageEdgepfXScale = 0.4f;
 	public GameObject bubblepf;
 	public GameObject capsuleBubblepf;
 	public int numberOfPeopleInTribe = 1000;
-	public bool crazySprings = false;
-	public int generationGap = 20;
-	public int spouseGap = 5;
+	public GlobalSpringType globalSpringType = GlobalSpringType.Normal;
+	public int generationGap;
+	public int spouseGap;
 	
 	private List<PersonNode> gameObjectNodes = new List<PersonNode>();
 	private ListOfPersonsFromDataBase myTribeOfPeople;
@@ -67,7 +68,7 @@ public class Tribe : MonoBehaviour
 
 			FixUpDatesBasedOffMarriageDates();
 
-			CreatePersonGameObjectForAllPeople(crazySprings: crazySprings);
+			CreatePersonGameObjectForAllPeople(globalSpringType);
 
 			HookUpTheMarriages();
 
@@ -83,7 +84,7 @@ public class Tribe : MonoBehaviour
 
 			FixUpDatesBasedOffMarriageDates();
 
-			CreatePersonGameObjectForAllPeople(crazySprings: crazySprings);
+			CreatePersonGameObjectForAllPeople(globalSpringType);
 
 			HookUpTheMarriages();
 
@@ -98,9 +99,6 @@ public class Tribe : MonoBehaviour
 			Debug.Log($"We made it to {personId}!");
 		
 		var personWeAreAdding = getPersonForDataBaseOwnerId(personId);
-
-		if (personWeAreAdding.surName == "Cothren")
-			Debug.Log($"We found a {personWeAreAdding.surName}!");
 
 		var listOfFamilyIds = AddSpousesAndFixUpDates(personWeAreAdding, depth, xOffSet, xRange);
 
@@ -132,14 +130,14 @@ public class Tribe : MonoBehaviour
 		bool thisIsAHusbandQuery = (forThisPerson.gender == PersonGenderType.Male);
 		
 		myListOfMarriages.GetListOfMarriagesWithEventsForPersonFromDataBase(forThisPerson.dataBaseOwnerId, useHusbandQuery: thisIsAHusbandQuery);
-		int spouseIndex = 0;
+		int spouseNumber = 1;
 
 		foreach (var marriage in myListOfMarriages.marriageList)
 		{
 			var spouseIdWeAreAdding = thisIsAHusbandQuery ? marriage.wifeId : marriage.husbandId;
 
-			var spouseXOffset = xOffset + (xRange / (myListOfMarriages.marriageList.Count + 2)) * (spouseIndex+1);
-			myTribeOfPeople.GetSinglePersonFromDataBase(spouseIdWeAreAdding, generation: numberOfGenerations - depth, spouseXOffset, spouseIndex);
+			var spouseXOffset = xOffset + (xRange / (myListOfMarriages.marriageList.Count + 2)) * spouseNumber;
+			myTribeOfPeople.GetSinglePersonFromDataBase(spouseIdWeAreAdding, generation: numberOfGenerations - depth, spouseXOffset, spouseNumber);
 			var spousePersonWeAreAdding = getPersonForDataBaseOwnerId(spouseIdWeAreAdding);
 			
 			forThisPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
@@ -152,7 +150,7 @@ public class Tribe : MonoBehaviour
 				var errorPersonId = spouseIdWeAreAdding;
 			}
 			listOfFamilyIdsToReturn.Add(marriage.familyId);
-			spouseIndex++;
+			spouseNumber++;
 		}
 		return listOfFamilyIdsToReturn;
 	}
@@ -180,13 +178,13 @@ public class Tribe : MonoBehaviour
 		}
 	}
 
-	void CreatePersonGameObjectForAllPeople(bool crazySprings = false)
+	void CreatePersonGameObjectForAllPeople(GlobalSpringType globalSpringType = GlobalSpringType.Normal)
     {				
 		int counter = 0;
 		int generationWidth = (int)Math.Sqrt((double)numberOfPeopleInTribe);
 		foreach (var personToAdd in myTribeOfPeople.personsList)
 		{
-			personToAdd.personNodeGameObject = CreatePersonGameObject(personToAdd, crazySprings: crazySprings);
+			personToAdd.personNodeGameObject = CreatePersonGameObject(personToAdd, globalSpringType);
 			personToAdd.generation = counter / generationWidth;
 			personToAdd.xOffset = Random.value;
 			counter++;
@@ -254,17 +252,17 @@ public class Tribe : MonoBehaviour
 				myTribeOfPeople.personsList.Find(x => x.dataBaseOwnerId == ownerId);
 
 	GameObject CreatePersonGameObject(string name, PersonGenderType personGender, int birthEventDate,
-		bool livingFlag = true, int deathEventDate = 0, int generation = 0, float xOffset = 0.0f,
-		int spouseIndex = 0,
+		bool isLiving = true, int deathEventDate = 0, int generation = 0, float xOffset = 0.0f,
+		int spouseNumber = 0,
 		int originalBirthDate = 0, int originalDeathDate = 0, string dateQualityInformationString = "",
-		int databaseOwnerArry = 0, int tribeArrayIndex = 0, bool crazySprings = false)
+		int databaseOwnerArry = 0, int tribeArrayIndex = 0, GlobalSpringType globalSpringType = GlobalSpringType.Normal)
     {
 		var currentYear = DateTime.Now.Year;
 	
-		var age = livingFlag ? currentYear - birthEventDate : deathEventDate - birthEventDate;
+		var age = isLiving ? currentYear - birthEventDate : deathEventDate - birthEventDate;
 
 		var x = xOffset * 2000;
-		var y = generation * generationGap - spouseIndex * spouseGap;
+		var y = generation * generationGap + spouseNumber * spouseGap;
 		
 		var newPersonGameObject = Instantiate(personPrefab, new Vector3(x, y, birthEventDate), Quaternion.identity);		
 		newPersonGameObject.transform.parent = transform;
@@ -272,25 +270,25 @@ public class Tribe : MonoBehaviour
 		var personObjectScript = newPersonGameObject.GetComponent<PersonNode>();
 
 		personObjectScript.SetIndexes(databaseOwnerArry, tribeArrayIndex);
-		personObjectScript.SetLifeSpan(birthEventDate, age);
+		personObjectScript.SetLifeSpan(birthEventDate, age, isLiving);
 		personObjectScript.AddDateQualityInformation((birthEventDate, originalBirthDate), (deathEventDate, originalDeathDate), dateQualityInformationString);
 		personObjectScript.SetPersonGender(personGender);
-		personObjectScript.SetEdgePrefab(edgepf, bubblepf, capsuleBubblepf, edgepfXScale);
+		personObjectScript.SetEdgePrefab(birthConnectionPrefab, marriageConnectionPrefab, bubblepf, capsuleBubblepf, marriageEdgepfXScale);
 		personObjectScript.addMyBirthQualityBubble();
-		personObjectScript.Freeze(crazySprings);
+		personObjectScript.SetGlobalSpringType(globalSpringType);
 
 		//TODO use gender to set the color of the platform	
 		//
 		return newPersonGameObject;
 	}
 
-	GameObject CreatePersonGameObject(Person person, bool crazySprings = false)
+	GameObject CreatePersonGameObject(Person person, GlobalSpringType globalSpringType = GlobalSpringType.Normal)
 	{
 		return CreatePersonGameObject($"{person.givenName} {person.surName}", person.gender, person.birthEventDate,
 			person.isLiving, person.deathEventDate, person.generation, person.xOffset, person.spouseNumber,
 			person.originalBirthEventDate, person.originalDeathEventDate,
 			person.dateQualityInformationString,
-			person.dataBaseOwnerId, person.tribeArrayIndex, crazySprings);
+			person.dataBaseOwnerId, person.tribeArrayIndex, globalSpringType);
 	}
 
 	void CreateMarriage(GameObject wifePerson, GameObject husbandPerson, int marriageEventDate, bool divorcedFlag= false,int divorcedEventDate=0)

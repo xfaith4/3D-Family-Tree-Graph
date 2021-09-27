@@ -29,7 +29,7 @@ namespace Assets.Scripts.DataObjects
         List<(PersonRelationshipType Relationship, Person RelatedPerson)> familyRelationships;
 
         public Person(int arrayIndex, int ownerId, PersonGenderType gender, string given, string surname, 
-			int birthYear, int deathYear, bool isLiving, int generation, float xOffset, int spouseNumber)
+			int birthYear, bool isLiving, int deathYear, int generation, float xOffset, int spouseNumber)
         {
             this.tribeArrayIndex = arrayIndex;
             this.dataBaseOwnerId = ownerId;
