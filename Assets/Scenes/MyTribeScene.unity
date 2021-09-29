@@ -260,7 +260,7 @@ MonoBehaviour:
   marriageEdgepfXScale: 0.4
   bubblepf: {fileID: 557405875712316749, guid: a27690feb6cc0e74c95759bc7baff389, type: 3}
   capsuleBubblepf: {fileID: 557405875712316749, guid: 4cb9e513d2f90084c942a0eb65d8eaaf, type: 3}
-  numberOfPeopleInTribe: 25
+  numberOfPeopleInTribe: 200
   globalSpringType: 0
   generationGap: 10
   spouseGap: 2

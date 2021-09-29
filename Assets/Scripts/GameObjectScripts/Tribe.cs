@@ -30,6 +30,10 @@ public class Tribe : MonoBehaviour
 
 	void Start()
 	{
+		tribeType = Assets.Scripts.CrossSceneInformation.myTribeType;
+		numberOfGenerations = Assets.Scripts.CrossSceneInformation.numberOfGenerations;
+		startingIdForTree = Assets.Scripts.CrossSceneInformation.StartingDataBaseId;
+
 		if (tribeType == TribeType.MadeUpData || rootsMagicFileName == null)
 		{
 			var adam = CreatePersonGameObject("Adam", PersonGenderType.Male, 10, false,60, generation: 0);
@@ -68,11 +72,7 @@ public class Tribe : MonoBehaviour
 
 			FixUpDatesBasedOffMarriageDates();
 
-			CreatePersonGameObjectForAllPeople(globalSpringType);
-
-			HookUpTheMarriages();
-
-			NowAddChildren();
+			CreatePersonGameObjectAllPeople();
 		}
 		else if (tribeType == TribeType.Ancestry)
 		{
@@ -84,7 +84,7 @@ public class Tribe : MonoBehaviour
 
 			FixUpDatesBasedOffMarriageDates();
 
-			CreatePersonGameObjectForAllPeople(globalSpringType);
+			CreatePersonGameObjectForMyTribeOfPeople(globalSpringType);
 
 			HookUpTheMarriages();
 
@@ -178,17 +178,25 @@ public class Tribe : MonoBehaviour
 		}
 	}
 
-	void CreatePersonGameObjectForAllPeople(GlobalSpringType globalSpringType = GlobalSpringType.Normal)
+	void CreatePersonGameObjectForMyTribeOfPeople(GlobalSpringType globalSpringType = GlobalSpringType.Normal)
     {				
-		int counter = 0;
-		int generationWidth = (int)Math.Sqrt((double)numberOfPeopleInTribe);
 		foreach (var personToAdd in myTribeOfPeople.personsList)
 		{
 			personToAdd.personNodeGameObject = CreatePersonGameObject(personToAdd, globalSpringType);
-			personToAdd.generation = counter / generationWidth;
-			personToAdd.xOffset = Random.value;
-			counter++;
 		}
+	}
+
+	void CreatePersonGameObjectAllPeople()
+	{
+        int counter = 0;
+        int generationWidth = (int)Math.Sqrt((double)numberOfPeopleInTribe);
+        foreach (var personToAdd in myTribeOfPeople.personsList)
+		{
+			personToAdd.generation = counter / generationWidth;
+			personToAdd.xOffset = ((float)(counter % generationWidth) / (float)generationWidth) / 1000f; //Random.value;
+			personToAdd.personNodeGameObject = CreatePersonGameObject(personToAdd);
+            counter++;
+        }
 	}
 
 	void HookUpTheMarriages()

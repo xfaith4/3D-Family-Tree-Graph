@@ -11,7 +11,7 @@ using Assets.Scripts.Enums;
 
 namespace Assets.Scripts.DataProviders
 {
-    class ListOfPersonsFromDataBase
+    class ListOfPersonsFromDataBase : DataProviderBase
     {
         public List<Person> personsList;
         private string _dataBaseFileName;
@@ -28,7 +28,7 @@ namespace Assets.Scripts.DataProviders
                 GetListOfPersonsFromDataBase(limitListSizeTo: 1, ownerId, generation, xOffset, spouseNumber);
         }
 
-        public void GetListOfPersonsFromDataBase(int limitListSizeTo, int? JustThisOwnerId = null, int generation = 0, 
+        public void GetListOfPersonsFromDataBase(int limitListSizeTo, int? JustThisOwnerId = null, int generation = 0,
             float xOffset = 0.0f, int spouseNumber = 0)
         {
             string conn = "URI=file:" + Application.dataPath + $"/RootsMagic/{_dataBaseFileName}";
@@ -57,22 +57,24 @@ namespace Assets.Scripts.DataProviders
                 "    ON name.OwnerID = eventDeath.OwnerID AND eventDeath.EventType = 2 \n";
             if (JustThisOwnerId != null)
                 QUERYNAMES +=
-                    $"WHERE name.OwnerID = \"{JustThisOwnerId}\" LIMIT 1";
+                    $"WHERE name.OwnerID = \"{JustThisOwnerId}\" LIMIT 1;";
+
             string sqlQuery = QUERYNAMES;
             dbcmd.CommandText = sqlQuery;
             IDataReader reader = dbcmd.ExecuteReader();
             int currentArrayIndex = 0;
             while (reader.Read() && currentArrayIndex < limitListSizeTo)
             {
+                var ownerId = reader.GetInt32(0);
                 var nextName = new Person(
                     arrayIndex: currentArrayIndex,
-                    ownerId: reader.GetInt32(0),
+                    ownerId: ownerId,
                     gender: charToPersonGenderType(reader.GetString(1)[0]),
                     given: reader.GetString(2),
                     surname: reader.GetString(3),
-                    birthYear: Int32.Parse(reader.GetString(6)),
+                    birthYear: StringToNumberProtected(reader.GetString(6), $"birthYear as GetString(6) for OwnerId: {ownerId}."),
                     isLiving: reader.GetBoolean(7),
-                    deathYear: Int32.Parse(reader.GetString(10)),
+                    deathYear: StringToNumberProtected(reader.GetString(10), $"deathYear as GetString(10) for OwnerId: {ownerId}."),
                     generation: generation,
                     xOffset: xOffset,
                     spouseNumber: spouseNumber);
@@ -95,5 +97,64 @@ namespace Assets.Scripts.DataProviders
             PersonGenderType charToPersonGenderType(char sex) =>
                 sex.Equals('M') ? PersonGenderType.Male : (sex.Equals('F') ? PersonGenderType.Female : PersonGenderType.NotSet);
         }
-    }        
+
+        public void GetListOfPersonsFromDataBaseWithLastNameFilter(int limitListSizeTo, int? JustThisOwnerId = null, int generation = 0,
+    float xOffset = 0.0f, int spouseNumber = 0, string lastNameFilterString = null)
+        {
+            string conn = "URI=file:" + Application.dataPath + $"/RootsMagic/{_dataBaseFileName}";
+            IDbConnection dbconn;
+            dbconn = (IDbConnection)new SqliteConnection(conn);
+            dbconn.Open();
+            IDbCommand dbcmd = dbconn.CreateCommand();
+            string QUERYNAMES =
+                "SELECT  name.OwnerID \n" +
+                "     , case when Sex = 0 then 'M' when Sex = 1 then 'F' else 'U' end \n" +
+                "     , name.Given, name.Surname \n" +                
+                "     , CAST(name.BirthYear as varchar(10)) AS BirthYear \n" +                
+                "FROM NameTable name \n" +
+                "JOIN PersonTable person \n" +
+                "    ON name.OwnerID = person.PersonID \n";                
+                QUERYNAMES +=
+                    $"WHERE name.Surname LIKE \"{lastNameFilterString}%\";";
+
+            string sqlQuery = QUERYNAMES;
+            dbcmd.CommandText = sqlQuery;
+            IDataReader reader = dbcmd.ExecuteReader();
+            int currentArrayIndex = 0;
+            while (reader.Read() && currentArrayIndex < limitListSizeTo)
+            {
+                var ownerId = reader.GetInt32(0);
+                var nextName = new Person(
+                    arrayIndex: currentArrayIndex,
+                    ownerId: ownerId,
+                    gender: charToPersonGenderType(reader.GetString(1)[0]),
+                    given: reader.GetString(2),
+                    surname: reader.GetString(3),
+                    birthYear: StringToNumberProtected(reader.GetString(4), $"birthYear as GetString(4) for OwnerId: {ownerId}."),   
+                    deathYear: 0,
+                    isLiving: false,
+                    generation: generation,
+                    xOffset: xOffset,
+                    spouseNumber: spouseNumber);
+
+                if (nextName.dataBaseOwnerId == 218)
+                    Debug.Log($"We just read in OwnerId {nextName.dataBaseOwnerId}");
+
+               // nextName.FixUpDatesForViewing();
+
+                personsList.Add(nextName);
+                currentArrayIndex++;
+            }
+            reader.Close();
+            reader = null;
+            dbcmd.Dispose();
+            dbcmd = null;
+            dbconn.Close();
+            dbconn = null;
+
+            PersonGenderType charToPersonGenderType(char sex) =>
+                sex.Equals('M') ? PersonGenderType.Male : (sex.Equals('F') ? PersonGenderType.Female : PersonGenderType.NotSet);
+        }
+
+    }
 }

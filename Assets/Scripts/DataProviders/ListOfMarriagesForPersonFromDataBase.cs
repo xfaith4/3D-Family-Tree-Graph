@@ -11,7 +11,7 @@ using Assets.Scripts.Enums;
 
 namespace Assets.Scripts.DataProviders
 {
-    class ListOfMarriagesForPersonFromDataBase
+    class ListOfMarriagesForPersonFromDataBase : DataProviderBase
     {
         public List<Marriage> marriageList;
         private string _dataBaseFileName;
@@ -48,15 +48,17 @@ namespace Assets.Scripts.DataProviders
             IDataReader reader = dbcmd.ExecuteReader();   
             while (reader.Read())
             {
+                var familyId = reader.GetInt32(0);
                 var MarriageName = new Marriage(
-                    familyId: reader.GetInt32(0),
+                    familyId: familyId,
                     husbandId: reader.GetInt32(1),
                     wifeId: reader.GetInt32(2),
-                    marriageMonth: Int32.Parse(reader.GetString(3)),
-                    marriageDay: Int32.Parse(reader.GetString(4)),
-                    marriageYear: Int32.Parse(reader.GetString(5)),
-                    annulledYear: Int32.Parse(reader.GetString(6)),
-                    divorcedYear: Int32.Parse(reader.GetString(7)));
+                    marriageMonth: StringToNumberProtected(reader.GetString(3), $"marriageMonth as GetString(3) for OwnerId/FamilyId: {ownerId}/{familyId}."),
+                    marriageDay: StringToNumberProtected(reader.GetString(4), $"marriageDay as GetString(4) for OwnerId/FamilyId: {ownerId}/{familyId}."),
+                    marriageYear: StringToNumberProtected(reader.GetString(5), $"marriageYear as GetString(5) for OwnerId/FamilyId: {ownerId}/{familyId}."),
+                    annulledYear: StringToNumberProtected(reader.GetString(6), $"annulledYear as GetString(6) for OwnerId/FamilyId: {ownerId}/{familyId}."),
+                    divorcedYear: StringToNumberProtected(reader.GetString(7), $"divorcedYear as GetString(7) for OwnerId/FamilyId: {ownerId}/{familyId}.")
+                    );
 
                 marriageList.Add(MarriageName);                
             }
