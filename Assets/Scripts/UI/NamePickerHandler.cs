@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class DropdownHandler : MonoBehaviour
+public class NamePickerHandler : MonoBehaviour
 {
     public Text searchStatusText;
     public InputField lastNameFilterField;
@@ -26,7 +26,9 @@ public class DropdownHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        generationsDropdown.value = 1;
+        startButton.interactable = false;
+
+        generationsDropdown.value = 0;
 
         startButton.onClick.AddListener(delegate { startClicked(); });
 
@@ -41,6 +43,7 @@ public class DropdownHandler : MonoBehaviour
         transform.GetComponent<Dropdown>().onValueChanged.AddListener(delegate { DropDownItemSelected(transform.GetComponent<Dropdown>()); });
         ResetDropDown();
     }
+
     void startClicked()
     {
         Assets.Scripts.CrossSceneInformation.StartingDataBaseId = selectedPerson.dataBaseOwnerId;
@@ -70,15 +73,14 @@ public class DropdownHandler : MonoBehaviour
     {
         var dropdown = transform.GetComponent<Dropdown>();
         dropdown.options.Clear();
-
+        dropdown.value = 0;
+        dropdown.RefreshShownValue();
         dropdown.options.Add(new Dropdown.OptionData() { text = $"Enter Last Name above, to populate this" });
 
-        //var labelText = transform.GetComponent<Label>();
-        //labelText.text = "Enter Last Name above, to populate this";
-
         searchStatusText.text = "";
-    }
 
+        startButton.interactable = false;
+    }
 
     void LastNameFilterFieldEndEdit(InputField input)
     {
@@ -90,7 +92,9 @@ public class DropdownHandler : MonoBehaviour
 
             if (myTribeOfPeople.personsList.Count > 0)
             {
-                searchStatusText.text = $"{myTribeOfPeople.personsList.Count} Search Results Available.";
+                searchStatusText.text = $"{myTribeOfPeople.personsList.Count} Search Results Available.";                
+                dropdown.value = 0;
+                DropDownItemSelected(dropdown);
                 dropdown.Show();
             }
             else
@@ -109,20 +113,22 @@ public class DropdownHandler : MonoBehaviour
         var index = dropdown.value;
         searchStatusText.text = $"Person selected. Press Start to play.";
         selectedPerson = myTribeOfPeople.personsList[index];
+        startButton.interactable = true;
     }
 
     void PopulateDropDownWithMyTribeSubSet(string filterText)
     {
         var dropdown = transform.GetComponent<Dropdown>();
         dropdown.options.Clear();
-        
+        dropdown.value = 0;        
+        dropdown.RefreshShownValue();
+
         myTribeOfPeople = new ListOfPersonsFromDataBase(rootsMagicFileName);
         myTribeOfPeople.GetListOfPersonsFromDataBaseWithLastNameFilter(numberOfPeopleInTribe, lastNameFilterString: filterText);
         foreach (var person in myTribeOfPeople.personsList)
         {
             dropdown.options.Add(new Dropdown.OptionData() { text = $"{person.surName}, {person.givenName} b{person.birthEventDate} id {person.dataBaseOwnerId}" });
         }
-       // dropdown.value = 1;
     }
 
     // Update is called once per frame
