@@ -26,7 +26,8 @@ namespace Assets.Scripts.DataProviders
         {
             string whereIdTypeToUse = useHusbandQuery ? "FatherID" : "MotherID";
 
-            string conn = "URI=file:" + Application.dataPath + $"/RootsMagic/{_dataBaseFileName}";
+            string conn = "URI=file:" + _dataBaseFileName;
+
             IDbConnection dbconn;
             dbconn = (IDbConnection)new SqliteConnection(conn);
             dbconn.Open();

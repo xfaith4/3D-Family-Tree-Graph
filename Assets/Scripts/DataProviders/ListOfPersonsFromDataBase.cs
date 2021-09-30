@@ -31,7 +31,7 @@ namespace Assets.Scripts.DataProviders
         public void GetListOfPersonsFromDataBase(int limitListSizeTo, int? JustThisOwnerId = null, int generation = 0,
             float xOffset = 0.0f, int spouseNumber = 0)
         {
-            string conn = "URI=file:" + Application.dataPath + $"/RootsMagic/{_dataBaseFileName}";
+            string conn = "URI=file:" + _dataBaseFileName;
             IDbConnection dbconn;
             dbconn = (IDbConnection)new SqliteConnection(conn);
             dbconn.Open();
@@ -101,7 +101,8 @@ namespace Assets.Scripts.DataProviders
         public void GetListOfPersonsFromDataBaseWithLastNameFilter(int limitListSizeTo, int? JustThisOwnerId = null, int generation = 0,
     float xOffset = 0.0f, int spouseNumber = 0, string lastNameFilterString = null)
         {
-            string conn = "URI=file:" + Application.dataPath + $"/RootsMagic/{_dataBaseFileName}";
+            string conn = "URI=file:" + _dataBaseFileName;
+
             IDbConnection dbconn;
             dbconn = (IDbConnection)new SqliteConnection(conn);
             dbconn.Open();

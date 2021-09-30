@@ -9,8 +9,9 @@ namespace Assets.Scripts
 {
     public static class CrossSceneInformation
     {
-        public static int StartingDataBaseId { get; set; }
+        public static int startingDataBaseId { get; set; }
         public static TribeType myTribeType { get; set; }
         public static int numberOfGenerations { get; set; }
+        public static string rootsMagicDataFileNameWithFullPath { get; set; }
     }
 }

@@ -10,10 +10,10 @@ using Assets.Scripts.DataProviders;
 
 public class Tribe : MonoBehaviour
 {
-	public TribeType tribeType;
-	public String rootsMagicFileName;
-	public int startingIdForTree;
-	public int numberOfGenerations = 5;
+	private TribeType tribeType;
+	private String rootsMagicFileName;
+	private int startingIdForTree;
+	private int numberOfGenerations = 5;
 	public GameObject personPrefab;
 	public GameObject birthConnectionPrefab;
 	public GameObject marriageConnectionPrefab;
@@ -32,7 +32,8 @@ public class Tribe : MonoBehaviour
 	{
 		tribeType = Assets.Scripts.CrossSceneInformation.myTribeType;
 		numberOfGenerations = Assets.Scripts.CrossSceneInformation.numberOfGenerations;
-		startingIdForTree = Assets.Scripts.CrossSceneInformation.StartingDataBaseId;
+		startingIdForTree = Assets.Scripts.CrossSceneInformation.startingDataBaseId;
+		rootsMagicFileName = Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath;
 
 		if (tribeType == TribeType.MadeUpData || rootsMagicFileName == null)
 		{

@@ -24,7 +24,8 @@ namespace Assets.Scripts.DataProviders
 
         public void GetListOfChildrenFromDataBase(int familyId)
         {
-            string conn = "URI=file:" + Application.dataPath + $"/RootsMagic/{_dataBaseFileName}";
+            string conn = "URI=file:" + _dataBaseFileName;
+
             IDbConnection dbconn;
             dbconn = (IDbConnection)new SqliteConnection(conn);
             dbconn.Open();

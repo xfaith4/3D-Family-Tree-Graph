@@ -22,11 +22,12 @@ X Fix some overlapping issues
 X Only populate X generations from a starting person.
 X Enhance Current Birthdate info in name table by getting (joining) the date from the event table.
 X Add a Name picker/finder so that user can select the starting (root) person for the Tree
+X RootsMagic file picker of some kind
 
 --------------->
 > Still To Do ->
 --------------->
-RootsMagic file picker of some kind
+
 'First person' player perspective
 Name Boxes with word wrap and other treatments (opaque background)to make it easier to read in a complex screen
 Add code for getting Ancesters recursivly

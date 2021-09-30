@@ -16,7 +16,6 @@ public class NamePickerHandler : MonoBehaviour
     public Toggle descendancyToggle;
     public Dropdown generationsDropdown;
     public Button startButton;
-    public String rootsMagicFileName;
     public int numberOfPeopleInTribe = 1000;
 
     private ListOfPersonsFromDataBase myTribeOfPeople;
@@ -46,7 +45,7 @@ public class NamePickerHandler : MonoBehaviour
 
     void startClicked()
     {
-        Assets.Scripts.CrossSceneInformation.StartingDataBaseId = selectedPerson.dataBaseOwnerId;
+        Assets.Scripts.CrossSceneInformation.startingDataBaseId = selectedPerson.dataBaseOwnerId;
         Assets.Scripts.CrossSceneInformation.numberOfGenerations = Int32.Parse(generationsDropdown.options[generationsDropdown.value].text);
         Assets.Scripts.CrossSceneInformation.myTribeType = ancestryToggle.isOn ? TribeType.Ancestry : TribeType.Descendancy;
         SceneManager.LoadScene("MyTribeScene");
@@ -123,7 +122,7 @@ public class NamePickerHandler : MonoBehaviour
         dropdown.value = 0;        
         dropdown.RefreshShownValue();
 
-        myTribeOfPeople = new ListOfPersonsFromDataBase(rootsMagicFileName);
+        myTribeOfPeople = new ListOfPersonsFromDataBase(Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath);
         myTribeOfPeople.GetListOfPersonsFromDataBaseWithLastNameFilter(numberOfPeopleInTribe, lastNameFilterString: filterText);
         foreach (var person in myTribeOfPeople.personsList)
         {
