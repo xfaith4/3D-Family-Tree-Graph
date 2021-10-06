@@ -3,11 +3,17 @@ using System.Collections;
 using System.IO;
 using SimpleFileBrowser;
 using UnityEngine.UI;
+using Assets.Scripts.DataProviders;
 
 public class FileBrowserHandler : MonoBehaviour
 {
 
 	public Text fileSelectedText;
+	public string initialPath = null;
+	public string initialFilename = null;
+	public GameObject personPickerDropdownGameObject;
+
+	private ListOfPersonsFromDataBase myTribeOfPeople;
 	// Warning: paths returned by FileBrowser dialogs do not contain a trailing '\' character
 	// Warning: FileBrowser can only show 1 dialog at a time
 
@@ -35,6 +41,17 @@ public class FileBrowserHandler : MonoBehaviour
 		// Path: C:\Users
 		// Icon: default (folder icon)
 		FileBrowser.AddQuickLink("Users", "C:\\Users", null);
+		if (PlayerPrefs.HasKey("LastUsedRootsMagicDataFilePath"))
+		{
+			Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath = PlayerPrefs.GetString("LastUsedRootsMagicDataFilePath");
+			initialFilename = Path.GetFileName(Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath);
+			initialPath = Path.GetDirectoryName(Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath);
+			fileSelectedText.text = initialFilename;
+			personPickerDropdownGameObject.GetComponent<NamePickerHandler>().FileSelectedNowEnableUserInterface();
+			Debug.Log("Game data loaded!");
+		}
+		else
+			Debug.Log("There is no save data!");
 
 		// Show a save file dialog 
 		// onSuccess event: not registered (which means this dialog is pretty useless)
@@ -69,7 +86,7 @@ public class FileBrowserHandler : MonoBehaviour
 		// Load file/folder: both, Allow multiple selection: true
 		// Initial path: default (Documents), Initial filename: empty
 		// Title: "Load File", Submit button text: "Load"
-		yield return FileBrowser.WaitForLoadDialog(FileBrowser.PickMode.FilesAndFolders, allowMultiSelection: false, null, null, "Open RootMagic File", "Open");
+		yield return FileBrowser.WaitForLoadDialog(FileBrowser.PickMode.FilesAndFolders, allowMultiSelection: false, initialPath: initialPath, initialFilename: initialFilename, "Open RootMagic File", "Open");
 
 		// Dialog is closed
 		// Print whether the user has selected some files/folders or cancelled the operation (FileBrowser.Success)
@@ -77,14 +94,39 @@ public class FileBrowserHandler : MonoBehaviour
 
 		if (FileBrowser.Success)
 		{
-			// Print paths of the selected files (FileBrowser.Result) (null, if FileBrowser.Success is false)
+			string result = null;
 			for (int i = 0; i < FileBrowser.Result.Length; i++)
 			{
-				fileSelectedText.text = Path.GetFileName(FileBrowser.Result[i]);
-				Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath = FileBrowser.Result[i];
-				Debug.Log(FileBrowser.Result[i]);
+				result = FileBrowser.Result[i];
+			}
+            try
+            {
+				if (!File.Exists(result))
+					throw new FileNotFoundException($"{result} file was not found.");
+
+				myTribeOfPeople = new ListOfPersonsFromDataBase(result);
+				if (myTribeOfPeople.QuickDataBaseIntergetyCheck())
+				{
+					Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath = result;
+					fileSelectedText.text = Path.GetFileName(result);
+					Debug.Log("Data File Path Chosen: " + fileSelectedText.text);
+					PlayerPrefs.SetString("LastUsedRootsMagicDataFilePath", result);
+					PlayerPrefs.Save();
+					Debug.Log("Game data saved!");
+					personPickerDropdownGameObject.GetComponent<NamePickerHandler>().FileSelectedNowEnableUserInterface(true);
+				}
+				
+			}
+            catch (System.Exception ex)
+            {
+				Debug.Log($"{ex.Message} Exception thrown, database file is not valid.");
+				Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath = null;
+				fileSelectedText.text = "> File Failure <  Please try again.";
+				Debug.Log("Bad Data File Path Chosen: " + result);
+				personPickerDropdownGameObject.GetComponent<NamePickerHandler>().FileSelectedNowEnableUserInterface(false);
 			}
 
+			
 #if NOTNOW
 
 			// Read the bytes of the first file via FileBrowserHelpers

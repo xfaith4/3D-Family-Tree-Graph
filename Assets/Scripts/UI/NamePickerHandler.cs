@@ -26,10 +26,20 @@ public class NamePickerHandler : MonoBehaviour
     void Start()
     {
         startButton.interactable = false;
+        FileSelectedNowEnableUserInterface(false);
+
+        if (PlayerPrefs.HasKey("LastUsedRootsMagicDataFilePath"))
+        {
+            Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath = PlayerPrefs.GetString("LastUsedRootsMagicDataFilePath");
+            FileSelectedNowEnableUserInterface();
+            Debug.Log("Game data loaded!");
+        }
+        else
+            Debug.Log("There is no save data!");
 
         generationsDropdown.value = 0;
 
-        startButton.onClick.AddListener(delegate { startClicked(); });
+        startButton.onClick.AddListener(delegate { StartClicked(); });
 
         lastNameFilterField.onEndEdit.AddListener(delegate { LastNameFilterFieldEndEdit(lastNameFilterField); });
         lastNameFilterField.onSubmit.AddListener(delegate { LastNameFilterFieldEndEdit(lastNameFilterField); });
@@ -43,7 +53,13 @@ public class NamePickerHandler : MonoBehaviour
         ResetDropDown();
     }
 
-    void startClicked()
+    public void FileSelectedNowEnableUserInterface(bool enableFlag = true)
+    {
+        lastNameFilterField.interactable = enableFlag;
+        transform.GetComponent<Dropdown>().interactable = enableFlag;
+    }
+
+    void StartClicked()
     {
         Assets.Scripts.CrossSceneInformation.startingDataBaseId = selectedPerson.dataBaseOwnerId;
         Assets.Scripts.CrossSceneInformation.numberOfGenerations = Int32.Parse(generationsDropdown.options[generationsDropdown.value].text);

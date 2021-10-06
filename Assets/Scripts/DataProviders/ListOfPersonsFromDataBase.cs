@@ -157,5 +157,36 @@ namespace Assets.Scripts.DataProviders
                 sex.Equals('M') ? PersonGenderType.Male : (sex.Equals('F') ? PersonGenderType.Female : PersonGenderType.NotSet);
         }
 
+        public bool QuickDataBaseIntergetyCheck()
+        {
+            bool returnThisStatus = true;
+
+            string conn = "URI=file:" + _dataBaseFileName;
+
+            IDbConnection dbconn;
+            dbconn = (IDbConnection)new SqliteConnection(conn);
+            dbconn.Open();
+            //IDbCommand dbcmd = dbconn.CreateCommand();
+            //string QUERYNAMES =
+            //    "PRAGMA quick_check;";
+
+            //string sqlQuery = QUERYNAMES;
+            //dbcmd.CommandText = sqlQuery;
+            //IDataReader reader = dbcmd.ExecuteReader();
+
+            //reader.Read();
+            //returnThisStatus = (reader.GetString(0).ToLower() == "ok");
+
+            //reader.Close();
+            //reader = null;
+            //dbcmd.Dispose();
+            //dbcmd = null;
+            dbconn.Close();
+            dbconn = null;
+
+            return returnThisStatus;
+        }
+
+
     }
 }
