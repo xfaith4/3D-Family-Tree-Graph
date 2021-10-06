@@ -77,6 +77,16 @@ public class Tribe : MonoBehaviour
 		}
 		else if (tribeType == TribeType.Ancestry)
 		{
+			myTribeOfPeople = new ListOfPersonsFromDataBase(rootsMagicFileName);
+			GetNextLevelOfAncestryForThisPersonIdDataBaseOnly(startingIdForTree, numberOfGenerations, xOffSet: 0.0f, xRange: 1.0f);
+
+			FixUpDatesBasedOffMarriageDates();
+
+			CreatePersonGameObjectForMyTribeOfPeople(globalSpringType);
+
+			HookUpTheMarriages();
+
+			NowAddChildrenAssignments();
 		}
 		else if (tribeType == TribeType.Descendancy)
         {
@@ -89,25 +99,39 @@ public class Tribe : MonoBehaviour
 
 			HookUpTheMarriages();
 
-			NowAddChildren();
+			NowAddChildrenAssignments();
+		}
+	}
+
+	void GetNextLevelOfAncestryForThisPersonIdDataBaseOnly(int personId, int depth, float xOffSet, float xRange)
+	{
+		myTribeOfPeople.GetSinglePersonFromDataBase(personId, generation: numberOfGenerations - depth, xOffSet, spouseNumber: 0);
+		var personWeAreAdding = getPersonForDataBaseOwnerId(personId);
+
+		var listOfFamilyIds = AddParentsAndFixUpDates(personWeAreAdding, depth, xOffSet, xRange);
+		if (depth == 0)
+			return;
+
+		var parentCount = listOfFamilyIds.Count;
+		var parentIndex = 0;
+		foreach (var familyId  in listOfFamilyIds)
+		{
+			var newRange = xRange / parentCount;
+			var newOffset = xOffSet + parentIndex * newRange;
+			GetNextLevelOfAncestryForThisPersonIdDataBaseOnly(familyId, depth - 1, newOffset, newRange);
+			parentIndex++;
 		}
 	}
 
 	void GetNextLevelOfDescendancyForThisPersonIdDataBaseOnly(int personId, int depth, float xOffSet, float xRange)
 	{
 		myTribeOfPeople.GetSinglePersonFromDataBase(personId, generation: numberOfGenerations - depth, xOffSet, spouseNumber: 0);
-		if (personId == 12040)
-			Debug.Log($"We made it to {personId}!");
-		
 		var personWeAreAdding = getPersonForDataBaseOwnerId(personId);
-
 		var listOfFamilyIds = AddSpousesAndFixUpDates(personWeAreAdding, depth, xOffSet, xRange);
-
 		if (depth == 0)
 			return;
 
 		var myChildrenList = new ListOfChildrenFromDataBase(rootsMagicFileName);
-        
 		foreach (var familyId  in listOfFamilyIds)
 			myChildrenList.GetListOfChildrenFromDataBase(familyId);
 			
@@ -116,12 +140,27 @@ public class Tribe : MonoBehaviour
 		
 		foreach (var child in myChildrenList.childList)
 		{
-
 			var newRange = xRange / childCount;
 			var newOffset = xOffSet + childIndex * newRange;
 			GetNextLevelOfDescendancyForThisPersonIdDataBaseOnly(child.childId, depth - 1, newOffset, newRange);
 			childIndex++;
 		}
+	}
+
+	List<int> AddParentsAndFixUpDates(Person forThisPerson, int depth, float xOffset, float xRange)
+    {
+		var listOfPersonIdsToReturn = new List<int>();
+		var myListOfParentages = new ListOfParentsFromDataBase(rootsMagicFileName);
+		myListOfParentages.parentList.Clear();
+		myListOfParentages.GetListOfParentsFromDataBase(forThisPerson.dataBaseOwnerId);
+        foreach (var parentage in myListOfParentages.parentList)
+        {
+			if (parentage.fatherId != 0)
+				listOfPersonIdsToReturn.Add(parentage.fatherId);
+			if (parentage.motherId != 0)
+				listOfPersonIdsToReturn.Add(parentage.motherId);
+		}
+		return listOfPersonIdsToReturn;
 	}
 
 	List<int> AddSpousesAndFixUpDates(Person forThisPerson, int depth, float xOffset, float xRange)
@@ -235,7 +274,7 @@ public class Tribe : MonoBehaviour
 		}
 	}
 
-	void NowAddChildren()
+	void NowAddChildrenAssignments()
 	{ 
 		// first came love, then came marriage, then came a baby in a baby carriage
 		var myListOfParents = new ListOfParentsFromDataBase(rootsMagicFileName);

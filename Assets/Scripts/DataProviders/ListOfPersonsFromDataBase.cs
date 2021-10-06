@@ -116,7 +116,7 @@ namespace Assets.Scripts.DataProviders
                 "JOIN PersonTable person \n" +
                 "    ON name.OwnerID = person.PersonID \n";                
                 QUERYNAMES +=
-                    $"WHERE name.Surname LIKE \"{lastNameFilterString}%\";";
+                    $"WHERE name.Surname LIKE \"%{lastNameFilterString}%\";";
 
             string sqlQuery = QUERYNAMES;
             dbcmd.CommandText = sqlQuery;

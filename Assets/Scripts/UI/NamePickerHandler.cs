@@ -126,9 +126,9 @@ public class NamePickerHandler : MonoBehaviour
     void DropDownItemSelected(Dropdown dropdown)
     {
         var index = dropdown.value;
-        searchStatusText.text = $"Person selected. Press Start to play.";
         selectedPerson = myTribeOfPeople.personsList[index];
         startButton.interactable = true;
+        searchStatusText.text = $"{selectedPerson.givenName} {selectedPerson.surName} selected. Press Start.";
     }
 
     void PopulateDropDownWithMyTribeSubSet(string filterText)

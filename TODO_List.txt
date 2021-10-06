@@ -24,11 +24,12 @@ X Enhance Current Birthdate info in name table by getting (joining) the date fro
 X Add a Name picker/finder so that user can select the starting (root) person for the Tree
 X RootsMagic file picker of some kind
 X Save last selected RootMagic file path and use it when re-started
+X Add code for getting Ancesters recursivly
 
 --------------->
 > Still To Do ->
 --------------->
-Add code for getting Ancesters recursivly
+
 'First person' player perspective
 Name Boxes with word wrap and other treatments (opaque background)to make it easier to read in a complex screen
 Get photo's added
