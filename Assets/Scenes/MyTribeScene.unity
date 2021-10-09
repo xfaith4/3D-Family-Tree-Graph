@@ -250,10 +250,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d4cc490207113000a9fc690bffcab7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tribeType: 3
-  rootsMagicFileName: Huskey08D.rmgc
-  startingIdForTree: 8236
-  numberOfGenerations: 3
   personPrefab: {fileID: 4664796352529360708, guid: 19ad8fb955b8c5b49ac14b95be498ada, type: 3}
   birthConnectionPrefab: {fileID: 2006701754031461468, guid: 285eaa547166bce5bbdeb2d0d90b4b4c, type: 3}
   marriageConnectionPrefab: {fileID: 2006701754031461468, guid: eac9d8e935b98264ba7de1b6921f363b, type: 3}

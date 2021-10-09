@@ -21,6 +21,8 @@
 [Aa]ssets/Plugins/AwsSdk*
 [Aa]ssets/Plugins/SimpleFileBrowser*
 [Aa]ssets/AwsSdk*
+[Aa]ssets/Samples*
+[Aa]ssets/StarterAssets*
 [Aa]ssets/Scripts/DataObjects/AWSSECRETS.cs*
 /[Aa]ssets/Scripts/DataObjects/AWSSECRETS.cs*
 /[Aa]ssets/Scripts/DataObjects/AWSSECRETS.cs
