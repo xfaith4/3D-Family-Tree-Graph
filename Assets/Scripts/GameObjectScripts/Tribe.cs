@@ -7,6 +7,7 @@ using System;
 using Random = UnityEngine.Random;
 using Assets.Scripts.DataObjects;
 using Assets.Scripts.DataProviders;
+using Cinemachine;
 
 public class Tribe : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class Tribe : MonoBehaviour
 	private int startingIdForTree;
 	private int numberOfGenerations = 5;
 	public GameObject personPrefab;
+	public GameObject playerControllerPrefab;
+	public GameObject playerFollowCameraPrefab;
 	public GameObject birthConnectionPrefab;
 	public GameObject marriageConnectionPrefab;
 	public float marriageEdgepfXScale = 0.4f;
@@ -28,6 +31,8 @@ public class Tribe : MonoBehaviour
 	private List<PersonNode> gameObjectNodes = new List<PersonNode>();
 	private ListOfPersonsFromDataBase myTribeOfPeople;
 
+	const int PlatformChildIndex = 0;
+
 	void Start()
 	{
 		tribeType = Assets.Scripts.CrossSceneInformation.myTribeType;
@@ -37,35 +42,41 @@ public class Tribe : MonoBehaviour
 
 		if (tribeType == TribeType.MadeUpData || rootsMagicFileName == null)
 		{
-			var adam = CreatePersonGameObject("Adam", PersonGenderType.Male, 10, false,60, generation: 0);
-			var eve = CreatePersonGameObject("Eve", PersonGenderType.Female, 10, false,60, generation: 0);
-			CreateMarriage(eve, adam, 30);
-			//var leisha = CreatePersonGameObject("Leisha", PersonGenderType.Female, 1832, false, 1900, generation: 1);
-			//var bob = CreatePersonGameObject("Bob", PersonGenderType.Male, 1834, false, 1837, generation: 1);
-			//var grace = CreatePersonGameObject("Grace", PersonGenderType.Female, 1836, false, 1910, generation: 1);
-			//var olivia = CreatePersonGameObject("Olivia", PersonGenderType.Female, 1837, false, 1920, generation: 1);
-			//var laura = CreatePersonGameObject("Laura", PersonGenderType.Female, 1840, false, 1930, generation: 1);
-			//var emily = CreatePersonGameObject("Emily", PersonGenderType.Female, 1842, false, 1940, generation: 1);
-			//var gary = CreatePersonGameObject("Gary", PersonGenderType.NotSet, 1848, false, 1932, generation: 1);
-			//AssignParents(leisha, eve, adam);
-			//AssignParents(bob, eve, adam, ChildRelationshipType.Biological, ChildRelationshipType.Adopted);
-			//AssignParents(grace, eve, adam);
-			//AssignParents(olivia, eve, adam);
-			//AssignParents(laura, eve, adam);
-			//AssignParents(emily, eve, adam);
-			//AssignParents(gary, eve, null);
+			var adam = CreatePersonGameObject("Adam", PersonGenderType.Male, 10, false,60, xOffset:10, generation: 0);
 
-			//var vahe = CreatePersonGameObject("Vahe", PersonGenderType.Male, 1822, false, 1880, generation: 1);
-			//CreateMarriage(leisha, vahe, 1840);
-			//var kyah = CreatePersonGameObject("Kyah", PersonGenderType.Female, 1841, false, 1980, generation: 2);
-			//var hanna = CreatePersonGameObject("Hannah", PersonGenderType.Female, 1843, false, 1960, generation: 2);
-			//var jude = CreatePersonGameObject("Jude", PersonGenderType.Male, 1846, false, 1846, generation: 2);
-			//var arie = CreatePersonGameObject("Arie", PersonGenderType.Male, 1848, false, 1930, generation: 2);
-			//AssignParents(kyah, leisha, vahe);
-			//AssignParents(hanna, leisha, vahe);
-			//AssignParents(jude, leisha, vahe);
-			//AssignParents(arie, leisha, vahe);
-		}
+			//SetDemoMotionMode(adam);
+
+			CreatePlayerOnThisPersonObject(adam);
+
+			var eve = CreatePersonGameObject("Eve", PersonGenderType.Female, 10, false, 60, xOffset: 30, generation: 0);
+
+            CreateMarriage(eve, adam, 30);
+            var leisha = CreatePersonGameObject("Leisha", PersonGenderType.Female, 1832, false, 1900, generation: 1);
+            var bob = CreatePersonGameObject("Bob", PersonGenderType.Male, 1834, false, 1837, generation: 1);
+            var grace = CreatePersonGameObject("Grace", PersonGenderType.Female, 1836, false, 1910, generation: 1);
+            var olivia = CreatePersonGameObject("Olivia", PersonGenderType.Female, 1837, false, 1920, generation: 1);
+            var laura = CreatePersonGameObject("Laura", PersonGenderType.Female, 1840, false, 1930, generation: 1);
+            var emily = CreatePersonGameObject("Emily", PersonGenderType.Female, 1842, false, 1940, generation: 1);
+            var gary = CreatePersonGameObject("Gary", PersonGenderType.NotSet, 1848, false, 1932, generation: 1);
+            AssignParents(leisha, eve, adam);
+            AssignParents(bob, eve, adam, ChildRelationshipType.Biological, ChildRelationshipType.Adopted);
+            AssignParents(grace, eve, adam);
+            AssignParents(olivia, eve, adam);
+            AssignParents(laura, eve, adam);
+            AssignParents(emily, eve, adam);
+            AssignParents(gary, eve, null);
+
+            //var vahe = CreatePersonGameObject("Vahe", PersonGenderType.Male, 1822, false, 1880, generation: 1);
+            //CreateMarriage(leisha, vahe, 1840);
+            //var kyah = CreatePersonGameObject("Kyah", PersonGenderType.Female, 1841, false, 1980, generation: 2);
+            //var hanna = CreatePersonGameObject("Hannah", PersonGenderType.Female, 1843, false, 1960, generation: 2);
+            //var jude = CreatePersonGameObject("Jude", PersonGenderType.Male, 1846, false, 1846, generation: 2);
+            //var arie = CreatePersonGameObject("Arie", PersonGenderType.Male, 1848, false, 1930, generation: 2);
+            //AssignParents(kyah, leisha, vahe);
+            //AssignParents(hanna, leisha, vahe);
+            //AssignParents(jude, leisha, vahe);
+            //AssignParents(arie, leisha, vahe);
+        }
 		else if (tribeType == TribeType.AllPersons)
 		{
             myTribeOfPeople = new ListOfPersonsFromDataBase(rootsMagicFileName);
@@ -82,7 +93,7 @@ public class Tribe : MonoBehaviour
 
 			FixUpDatesBasedOffMarriageDates();
 
-			CreatePersonGameObjectForMyTribeOfPeople(globalSpringType);
+			CreatePersonGameObjectForMyTribeOfPeople(startingIdForTree, globalSpringType);
 
 			HookUpTheMarriages();
 
@@ -95,7 +106,7 @@ public class Tribe : MonoBehaviour
 
 			FixUpDatesBasedOffMarriageDates();
 
-			CreatePersonGameObjectForMyTribeOfPeople(globalSpringType);
+			CreatePersonGameObjectForMyTribeOfPeople(startingIdForTree, globalSpringType);
 
 			HookUpTheMarriages();
 
@@ -218,12 +229,14 @@ public class Tribe : MonoBehaviour
 		}
 	}
 
-	void CreatePersonGameObjectForMyTribeOfPeople(GlobalSpringType globalSpringType = GlobalSpringType.Normal)
+	void CreatePersonGameObjectForMyTribeOfPeople(int startingID, GlobalSpringType globalSpringType = GlobalSpringType.Normal)
     {				
 		foreach (var personToAdd in myTribeOfPeople.personsList)
 		{
 			personToAdd.personNodeGameObject = CreatePersonGameObject(personToAdd, globalSpringType);
-		}
+            if (personToAdd.dataBaseOwnerId == startingID)
+                CreatePlayerOnThisPersonObject(personToAdd.personNodeGameObject);
+        }
 	}
 
 	void CreatePersonGameObjectAllPeople()
@@ -330,7 +343,38 @@ public class Tribe : MonoBehaviour
 		return newPersonGameObject;
 	}
 
-	GameObject CreatePersonGameObject(Person person, GlobalSpringType globalSpringType = GlobalSpringType.Normal)
+	void SetDemoMotionMode(GameObject personGameObject)
+    {
+		personGameObject.GetComponent<PersonNode>().SetDebugAddMotionSetting(true);
+	}
+
+	GameObject CreatePlayerOnThisPersonObject(GameObject personGameObject)
+    {
+		GameObject playerGameObject = Instantiate(playerControllerPrefab);
+
+		playerGameObject.transform.SetParent(personGameObject.transform);
+		
+		playerGameObject.transform.position = new Vector3(0f, 1f, 0f); 
+
+		GameObject[] targets = GameObject.FindGameObjectsWithTag("CinemachineTarget");
+		GameObject target = targets.FirstOrDefault(t => t.transform.IsChildOf(playerGameObject.transform));
+		
+		CreatePlayerFollowCameraObject(target);
+
+		return playerGameObject;
+    }
+
+	private void CreatePlayerFollowCameraObject(GameObject target)
+	{
+		var playerFollowCameraGameObject = Instantiate(playerFollowCameraPrefab);
+
+		var vCam = playerFollowCameraGameObject.GetComponent<CinemachineVirtualCamera>();
+		vCam.Follow = target.transform;
+		
+	}
+		
+
+GameObject CreatePersonGameObject(Person person, GlobalSpringType globalSpringType = GlobalSpringType.Normal)
 	{
 		return CreatePersonGameObject($"{person.givenName} {person.surName}", person.gender, person.birthEventDate,
 			person.isLiving, person.deathEventDate, person.generation, person.xOffset, person.spouseNumber,
