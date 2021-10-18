@@ -26,12 +26,20 @@ X RootsMagic file picker of some kind
 X Save last selected RootMagic file path and use it when re-started
 X Add code for getting Ancesters recursivly
 X 'First person' player perspective
+X Attach starting platform to starting person 
+X Transporter zones:
+X At birth areas, have blue/pink areas left and right of the birth bubble allowing for a transporter down to mother or father.
+X <Father> (0) <Mother>
+X Get rid of force field around birth oval on parents platform.  make ovals smaller and a transporter as well.
 
 --------------->
 > Still To Do ->
 --------------->
 
-Attach starting platform to starting person 
+Collider Zones restrict the places the third person player can go.
+Is the standard of Father on Right of Mother being followed? Should it be?
+Use Canvase panel to display specifics on tht person platform you are on.
+
 switch out character armature with something from Maximo
 Name Boxes with word wrap and other treatments (opaque background)to make it easier to read in a complex screen
 Get photo's added

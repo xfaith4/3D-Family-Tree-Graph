@@ -202,7 +202,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 221459543}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.803654, y: 19.308632, z: 1947.7032}
+  m_LocalPosition: {x: -4.46, y: -0.615, z: -4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -292,7 +292,8 @@ MonoBehaviour:
   marriageConnectionPrefab: {fileID: 2006701754031461468, guid: eac9d8e935b98264ba7de1b6921f363b, type: 3}
   marriageEdgepfXScale: 0.4
   bubblepf: {fileID: 557405875712316749, guid: a27690feb6cc0e74c95759bc7baff389, type: 3}
-  capsuleBubblepf: {fileID: 557405875712316749, guid: 4cb9e513d2f90084c942a0eb65d8eaaf, type: 3}
+  parentPlatformBirthBubble: {fileID: 557405875712316749, guid: 4cb9e513d2f90084c942a0eb65d8eaaf, type: 3}
+  childPlatformReturnToParent: {fileID: 557405875712316749, guid: 0588cde970f36444abb86b40a70f10cb, type: 3}
   numberOfPeopleInTribe: 200
   globalSpringType: 0
   generationGap: 10
@@ -724,7 +725,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 832160371}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -5, z: 1963}
+  m_LocalPosition: {x: 0, y: -5, z: 0}
   m_LocalScale: {x: 100000, y: 1, z: 30}
   m_Children: []
   m_Father: {fileID: 0}

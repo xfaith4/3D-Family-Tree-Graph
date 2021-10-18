@@ -25,22 +25,28 @@ public class PersonNode : MonoBehaviour
 
     float marriageConnectionXScale;
     GameObject bubblePrefabObject;
-    GameObject capsuleBubblePrefabObject;
-    GameObject leftConnection;
-    GameObject rightConnection;
+    GameObject parentPlatformBirthBubble;
+    GameObject childPlatformReturnToParent;
+    GameObject parentBirthConnectionPoint;
+    GameObject returnToMotherBirthConnectionPoint;
+    GameObject returnToFatherBirthConnectionPoint;
+    GameObject childBirthConnectionPoint;
 
     const int ScaleThisChildIndex = 0;
+    static Color clearWhite = new Color(1.0f, 1.0f, 1.0f, 0.2f);
+    static Color pink = new Color(0.8f, 0.5f, 0.8f, 0.7f);
+    static Color blue = new Color(0.4f, 0.7f, 0.9f, 0.7f);
 
     private Color[] personGenderCapsuleBubbleColors = {
-            new Color(0.4f, 0.4f, 0.4f, 0.7f),   // notset
-            new Color(0.4f, 0.7f, 0.9f, 0.7f),   // male
-            new Color(0.8f, 0.5f, 0.8f, 0.7f)    // female
+            clearWhite,   // notset
+            blue,   // male
+            pink    // female
         };
     private Color[] personDateQualityColors = {
             new Color(0.4f, 0.4f, 0.4f),   // date = orig
             new Color(0.9f, 0.1f, 0.1f)    // date != orig
         };
-    private Color clearWhite = new Color(1.0f, 1.0f, 1.0f, 0.2f);
+
     private Color[] personGenderPlatformColors = {
             new Color(0.2f, 0.2f, 0.2f),   // notset
             new Color(0.3f, 0.6f, 0.9f),   // male
@@ -67,13 +73,14 @@ public class PersonNode : MonoBehaviour
         }
     }
 
-    public void SetEdgePrefab(GameObject birthConnectionPrefab, GameObject marriageConnectionPrefab, GameObject bubble, GameObject capsuleBubble, float edgeXScale)
+    public void SetEdgePrefab(GameObject birthConnectionPrefab, GameObject marriageConnectionPrefab, GameObject bubble, GameObject parentPlatformBirthBubble, GameObject childPlatformReturnToParent, float edgeXScale)
     {
         this.birthConnectionPrefabObject = birthConnectionPrefab;
         this.marriageConnectionPrefabObject = marriageConnectionPrefab;
         this.marriageConnectionXScale = edgeXScale;
         this.bubblePrefabObject = bubble;
-        this.capsuleBubblePrefabObject = capsuleBubble;
+        this.parentPlatformBirthBubble = parentPlatformBirthBubble;
+        this.childPlatformReturnToParent = childPlatformReturnToParent;
     }
 
     public void SetGlobalSpringType(GlobalSpringType globalSpringType)
@@ -161,30 +168,62 @@ public class PersonNode : MonoBehaviour
         //sj.minDistance = 10.0f;
         //sj.maxDistance = 500.0f;
 
-        leftConnection = //GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            Instantiate(this.capsuleBubblePrefabObject, Vector3.zero, Quaternion.identity);
+        parentBirthConnectionPoint = 
+            Instantiate(this.parentPlatformBirthBubble, Vector3.zero, Quaternion.identity);
         //TODO Twins born at the same time are not handled well if one is a boy and the other a girl
-        var renderer = leftConnection.GetComponentInChildren<Renderer>(); //.Where(r => r.CompareTag("GenderColor")).ToArray()[0];
+        var renderer = parentBirthConnectionPoint.GetComponentInChildren<Renderer>(); //.Where(r => r.CompareTag("GenderColor")).ToArray()[0];
         renderer.material.SetColor("_Color",
             personGenderCapsuleBubbleColors[(int)childPersonNode.personGender]);
 
-        leftConnection.transform.localScale = new Vector3(10.0f, 2.0f, 2.0f);
+        //parentBirthConnectionPoint.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
         //leftConnection.transform.localScale = Vector3.one * 2f;
-        leftConnection.transform.parent = parentPlatformTransform.GetChild(0);  // Point to the ScaleThis Section
-        leftConnection.transform.localPosition = new Vector3(0, 0, myAgeConnectionPointPercent);
+        parentBirthConnectionPoint.transform.parent = parentPlatformTransform.GetChild(0);  // Point to the ScaleThis Section
+        parentBirthConnectionPoint.transform.localPosition = new Vector3(0, 0.5f, myAgeConnectionPointPercent);  // 0.5 top of platform
 
-        rightConnection = //GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        var triggerTeleportToChildScript = parentBirthConnectionPoint.transform.GetChild(0).GetComponent<TriggerTeleportToChild>();
+        triggerTeleportToChildScript.teleportTargetChild = childPlatformTransform;
+        triggerTeleportToChildScript.teleportOffset = new Vector3(0, 0.5f, 0);
+
+        childBirthConnectionPoint = //GameObject.CreatePrimitive(PrimitiveType.Sphere);
             Instantiate(this.bubblePrefabObject, Vector3.zero, Quaternion.identity);
-        renderer = rightConnection.GetComponentInChildren<Renderer>(); //.Where(r => r.CompareTag("GenderColor")).ToArray()[0];
+        renderer = childBirthConnectionPoint.GetComponentInChildren<Renderer>(); //.Where(r => r.CompareTag("GenderColor")).ToArray()[0];
         renderer.material.SetColor("_Color", clearWhite);
-        rightConnection.transform.localScale = Vector3.one * 2f;
-        rightConnection.transform.parent = childPlatformTransform.GetChild(0); // Point to the ScaleThis Section
-        rightConnection.transform.localPosition = new Vector3(0, 0, childAgeConnectionPointPercent);
-        //
+        childBirthConnectionPoint.transform.localScale = Vector3.one * 2f;
+        childBirthConnectionPoint.transform.parent = childPlatformTransform.GetChild(0); // Point to the ScaleThis Section
+        childBirthConnectionPoint.transform.localPosition = new Vector3(0, 0, childAgeConnectionPointPercent);
+
+        // Mom and Dad Return transportes
+        if (this.personGender == PersonGenderType.Male)
+        {
+            returnToFatherBirthConnectionPoint =
+                Instantiate(this.childPlatformReturnToParent, Vector3.zero, Quaternion.identity);
+            var returnToFatherRenderer = returnToFatherBirthConnectionPoint.GetComponentInChildren<Renderer>(); 
+            returnToFatherRenderer.material.SetColor("_Color", blue);
+            var triggerTeleportToFatherScript = returnToFatherBirthConnectionPoint.transform.GetChild(0).GetComponent<TriggerTeleportToChild>();
+            triggerTeleportToFatherScript.teleportTargetChild = parentPlatformTransform;
+            triggerTeleportToFatherScript.teleportOffset = new Vector3(-3f, .5f, myAgeConnectionPointPercent * this.lifeSpan);
+            //returnToFatherBirthConnectionPoint.transform.localScale = Vector3.one * 2f;
+            returnToFatherBirthConnectionPoint.transform.parent = childPlatformTransform.GetChild(0); // Point to the ScaleThis Section
+            returnToFatherBirthConnectionPoint.transform.localPosition = new Vector3(-3f, 0, 0);
+        }
+        else if (this.personGender == PersonGenderType.Female)
+        {
+            returnToMotherBirthConnectionPoint =
+                Instantiate(this.childPlatformReturnToParent, Vector3.zero, Quaternion.identity);
+            var returnToMotherRenderer = returnToMotherBirthConnectionPoint.GetComponentInChildren<Renderer>();
+            returnToMotherRenderer.material.SetColor("_Color", pink);
+            var triggerTeleportToMotherScript = returnToMotherBirthConnectionPoint.transform.GetChild(0).GetComponent<TriggerTeleportToChild>();
+            triggerTeleportToMotherScript.teleportTargetChild = parentPlatformTransform;
+            triggerTeleportToMotherScript.teleportOffset = new Vector3(3f, .5f, myAgeConnectionPointPercent * this.lifeSpan);
+
+            //returnToMotherBirthConnectionPoint.transform.localScale = Vector3.one * 2f;
+            returnToMotherBirthConnectionPoint.transform.parent = childPlatformTransform.GetChild(0); // Point to the ScaleThis Section
+            returnToMotherBirthConnectionPoint.transform.localPosition = new Vector3(3f, 0, 0);
+        }
 
         GameObject edge = Instantiate(this.birthConnectionPrefabObject, Vector3.zero, Quaternion.identity);
         edge.name = $"Birth {birthDate} {childPersonNode.name}";
-        edge.GetComponent<Edge>().CreateEdge(leftConnection, rightConnection);
+        edge.GetComponent<Edge>().CreateEdge(parentBirthConnectionPoint, childBirthConnectionPoint);
 
         edge.transform.GetChild(ScaleThisChildIndex).GetComponent<Renderer>().material.SetColor("_Color",
             childRelationshipColors[(int)childRelationshipType]);
@@ -210,23 +249,23 @@ public class PersonNode : MonoBehaviour
         sj.minDistance = 10.0f;
         sj.maxDistance = 40.0f;
 
-        leftConnection = new GameObject(); // GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        parentBirthConnectionPoint = new GameObject(); // GameObject.CreatePrimitive(PrimitiveType.Sphere);
         //leftConnection.GetComponent<Renderer>().material.SetColor("_Color", Color.yellow);
 
-        leftConnection.transform.localScale = Vector3.one * 2f;
-        leftConnection.transform.parent = myPositionThisPlatformTransform.GetChild(0);  // Point to the ScaleThis Section
-        leftConnection.transform.localPosition = new Vector3(0, 0, myAgeConnectionPointPercent);
+        parentBirthConnectionPoint.transform.localScale = Vector3.one * 2f;
+        parentBirthConnectionPoint.transform.parent = myPositionThisPlatformTransform.GetChild(0);  // Point to the ScaleThis Section
+        parentBirthConnectionPoint.transform.localPosition = new Vector3(0, 0, myAgeConnectionPointPercent);
 
-        rightConnection = new GameObject(); // GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        childBirthConnectionPoint = new GameObject(); // GameObject.CreatePrimitive(PrimitiveType.Sphere);
         //rightConnection.GetComponent<Renderer>().material.SetColor("_Color", Color.yellow);
-        rightConnection.transform.localScale = Vector3.one * 2f;
-        rightConnection.transform.parent = spousePositionThisPlatformTransform.GetChild(0);  // Point to the ScaleThis Section
-        rightConnection.transform.localPosition = new Vector3(0, 0, spouseAgeConnectionPointPercent);
+        childBirthConnectionPoint.transform.localScale = Vector3.one * 2f;
+        childBirthConnectionPoint.transform.parent = spousePositionThisPlatformTransform.GetChild(0);  // Point to the ScaleThis Section
+        childBirthConnectionPoint.transform.localPosition = new Vector3(0, 0, spouseAgeConnectionPointPercent);
         //
 
         GameObject edge = Instantiate(this.marriageConnectionPrefabObject, Vector3.zero, Quaternion.identity);
         edge.name = $"Marriage {marriageEventDate}, to {spousePersonNode.name}, duration {marriageLength}.";
-        edge.GetComponent<Edge>().CreateEdge(leftConnection, rightConnection);
+        edge.GetComponent<Edge>().CreateEdge(parentBirthConnectionPoint, childBirthConnectionPoint);
         edge.GetComponent<Edge>().SetEdgeEventLength(marriageLength, marriageConnectionXScale);
         var material = edge.transform.GetChild(0).GetComponent<Renderer>().material;
         material.SetColor("_Color", new Color(1.0f, 0.92f, 0.01f, 0.2f));

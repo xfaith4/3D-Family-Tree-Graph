@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 using Assets.Scripts.DataObjects;
 using Assets.Scripts.DataProviders;
 using Cinemachine;
+using StarterAssets;
 
 public class Tribe : MonoBehaviour
 {
@@ -22,7 +23,8 @@ public class Tribe : MonoBehaviour
 	public GameObject marriageConnectionPrefab;
 	public float marriageEdgepfXScale = 0.4f;
 	public GameObject bubblepf;
-	public GameObject capsuleBubblepf;
+	public GameObject parentPlatformBirthBubble;
+	public GameObject childPlatformReturnToParent;
 	public int numberOfPeopleInTribe = 1000;
 	public GlobalSpringType globalSpringType = GlobalSpringType.Normal;
 	public int generationGap;
@@ -116,7 +118,7 @@ public class Tribe : MonoBehaviour
 
 	void GetNextLevelOfAncestryForThisPersonIdDataBaseOnly(int personId, int depth, float xOffSet, float xRange)
 	{
-		myTribeOfPeople.GetSinglePersonFromDataBase(personId, generation: numberOfGenerations - depth, xOffSet, spouseNumber: 0);
+		myTribeOfPeople.GetSinglePersonFromDataBase(personId, generation: depth, xOffSet, spouseNumber: 0);
 		var personWeAreAdding = getPersonForDataBaseOwnerId(personId);
 
 		var listOfFamilyIds = AddParentsAndFixUpDates(personWeAreAdding, depth, xOffSet, xRange);
@@ -334,7 +336,7 @@ public class Tribe : MonoBehaviour
 		personObjectScript.SetLifeSpan(birthEventDate, age, isLiving);
 		personObjectScript.AddDateQualityInformation((birthEventDate, originalBirthDate), (deathEventDate, originalDeathDate), dateQualityInformationString);
 		personObjectScript.SetPersonGender(personGender);
-		personObjectScript.SetEdgePrefab(birthConnectionPrefab, marriageConnectionPrefab, bubblepf, capsuleBubblepf, marriageEdgepfXScale);
+		personObjectScript.SetEdgePrefab(birthConnectionPrefab, marriageConnectionPrefab, bubblepf, parentPlatformBirthBubble, childPlatformReturnToParent, marriageEdgepfXScale);
 		personObjectScript.addMyBirthQualityBubble();
 		personObjectScript.SetGlobalSpringType(globalSpringType);
 
@@ -350,16 +352,23 @@ public class Tribe : MonoBehaviour
 
 	GameObject CreatePlayerOnThisPersonObject(GameObject personGameObject)
     {
+		personGameObject.GetComponent<Rigidbody>().isKinematic = true;  // Lets make this on stay put
+
 		GameObject playerGameObject = Instantiate(playerControllerPrefab);
 
-		playerGameObject.transform.SetParent(personGameObject.transform);
+		//playerGameObject.transform.SetParent(personGameObject.transform, false);
 		
-		playerGameObject.transform.position = new Vector3(0f, 1f, 0f); 
+		//playerGameObject.transform.position = new Vector3(0f, 1f, 0f);
+
+		//playerGameObject.transform.localPosition = new Vector3(0f, 0f, 0f);
 
 		GameObject[] targets = GameObject.FindGameObjectsWithTag("CinemachineTarget");
 		GameObject target = targets.FirstOrDefault(t => t.transform.IsChildOf(playerGameObject.transform));
 		
 		CreatePlayerFollowCameraObject(target);
+
+		var thirdPersonContollerScript = playerGameObject.GetComponent<ThirdPersonController>();
+		thirdPersonContollerScript.TeleportTo(personGameObject.transform, new Vector3(0,0.5f,0));
 
 		return playerGameObject;
     }
