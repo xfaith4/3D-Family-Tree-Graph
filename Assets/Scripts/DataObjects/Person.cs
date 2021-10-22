@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.DataObjects
 {
-    class Person
+    public class Person
     {
         public int dataBaseOwnerId;
         public int tribeArrayIndex;

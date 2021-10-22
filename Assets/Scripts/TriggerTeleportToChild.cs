@@ -15,7 +15,7 @@ public class TriggerTeleportToChild : MonoBehaviour
             var playerObject = other.gameObject;
 
             var thirdPersonContollerScript = other.GetComponent<ThirdPersonController>();
-            thirdPersonContollerScript.TeleportTo(teleportTargetChild, teleportOffset); 
+            thirdPersonContollerScript.TeleportTo(teleportTargetChild, teleportOffset, 25); 
         }
     }
 }

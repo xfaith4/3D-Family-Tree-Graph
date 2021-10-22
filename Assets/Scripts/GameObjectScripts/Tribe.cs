@@ -29,6 +29,7 @@ public class Tribe : MonoBehaviour
 	public GlobalSpringType globalSpringType = GlobalSpringType.Normal;
 	public int generationGap;
 	public int spouseGap;
+	public int tribeWidth = 200;
 	
 	private List<PersonNode> gameObjectNodes = new List<PersonNode>();
 	private ListOfPersonsFromDataBase myTribeOfPeople;
@@ -100,6 +101,8 @@ public class Tribe : MonoBehaviour
 			HookUpTheMarriages();
 
 			NowAddChildrenAssignments();
+
+			PositionTimeBarrier();
 		}
 		else if (tribeType == TribeType.Descendancy)
         {
@@ -113,15 +116,24 @@ public class Tribe : MonoBehaviour
 			HookUpTheMarriages();
 
 			NowAddChildrenAssignments();
+
+			PositionTimeBarrier();
 		}
+	}
+
+	void PositionTimeBarrier()
+    {
+		var timeBarrierObject = GameObject.FindGameObjectsWithTag("TimeBarrier")[0];
+		timeBarrierObject.transform.position = new Vector3(tribeWidth / 2f, 0f, DateTime.Now.Year + 0.5f);
+		timeBarrierObject.transform.localScale = new Vector3(tribeWidth, 0.1f, tribeWidth);
 	}
 
 	void GetNextLevelOfAncestryForThisPersonIdDataBaseOnly(int personId, int depth, float xOffSet, float xRange)
 	{
-		myTribeOfPeople.GetSinglePersonFromDataBase(personId, generation: depth, xOffSet, spouseNumber: 0);
+		myTribeOfPeople.GetSinglePersonFromDataBase(personId, generation: depth, xOffSet + xRange / 2, spouseNumber: 0);
 		var personWeAreAdding = getPersonForDataBaseOwnerId(personId);
 
-		var listOfFamilyIds = AddParentsAndFixUpDates(personWeAreAdding, depth, xOffSet, xRange);
+		var listOfFamilyIds = AddParentsAndFixUpDates(personWeAreAdding);
 		if (depth == 0)
 			return;
 
@@ -138,7 +150,7 @@ public class Tribe : MonoBehaviour
 
 	void GetNextLevelOfDescendancyForThisPersonIdDataBaseOnly(int personId, int depth, float xOffSet, float xRange)
 	{
-		myTribeOfPeople.GetSinglePersonFromDataBase(personId, generation: numberOfGenerations - depth, xOffSet, spouseNumber: 0);
+		myTribeOfPeople.GetSinglePersonFromDataBase(personId, generation: numberOfGenerations - depth, xOffSet + xRange / 2, spouseNumber: 0);
 		var personWeAreAdding = getPersonForDataBaseOwnerId(personId);
 		var listOfFamilyIds = AddSpousesAndFixUpDates(personWeAreAdding, depth, xOffSet, xRange);
 		if (depth == 0)
@@ -160,7 +172,7 @@ public class Tribe : MonoBehaviour
 		}
 	}
 
-	List<int> AddParentsAndFixUpDates(Person forThisPerson, int depth, float xOffset, float xRange)
+	List<int> AddParentsAndFixUpDates(Person forThisPerson)
     {
 		var listOfPersonIdsToReturn = new List<int>();
 		var myListOfParentages = new ListOfParentsFromDataBase(rootsMagicFileName);
@@ -318,13 +330,14 @@ public class Tribe : MonoBehaviour
 		bool isLiving = true, int deathEventDate = 0, int generation = 0, float xOffset = 0.0f,
 		int spouseNumber = 0,
 		int originalBirthDate = 0, int originalDeathDate = 0, string dateQualityInformationString = "",
-		int databaseOwnerArry = 0, int tribeArrayIndex = 0, GlobalSpringType globalSpringType = GlobalSpringType.Normal)
+		int databaseOwnerArry = 0, int tribeArrayIndex = 0, GlobalSpringType globalSpringType = GlobalSpringType.Normal,
+		Person person = null)
     {
 		var currentYear = DateTime.Now.Year;
 	
 		var age = isLiving ? currentYear - birthEventDate : deathEventDate - birthEventDate;
 
-		var x = xOffset * 2000;
+		var x = xOffset * tribeWidth;
 		var y = generation * generationGap + spouseNumber * spouseGap;
 		
 		var newPersonGameObject = Instantiate(personPrefab, new Vector3(x, y, birthEventDate), Quaternion.identity);		
@@ -332,7 +345,7 @@ public class Tribe : MonoBehaviour
 		newPersonGameObject.name = name;
 		var personObjectScript = newPersonGameObject.GetComponent<PersonNode>();
 
-		personObjectScript.SetIndexes(databaseOwnerArry, tribeArrayIndex);
+		personObjectScript.SetIndexes(databaseOwnerArry, tribeArrayIndex, person);
 		personObjectScript.SetLifeSpan(birthEventDate, age, isLiving);
 		personObjectScript.AddDateQualityInformation((birthEventDate, originalBirthDate), (deathEventDate, originalDeathDate), dateQualityInformationString);
 		personObjectScript.SetPersonGender(personGender);
@@ -368,7 +381,7 @@ public class Tribe : MonoBehaviour
 		CreatePlayerFollowCameraObject(target);
 
 		var thirdPersonContollerScript = playerGameObject.GetComponent<ThirdPersonController>();
-		thirdPersonContollerScript.TeleportTo(personGameObject.transform, new Vector3(0,0.5f,0));
+		thirdPersonContollerScript.TeleportTo(personGameObject.transform, new Vector3(0,0.5f,0), ticksToHoldHere: 100);
 
 		return playerGameObject;
     }
@@ -389,7 +402,8 @@ GameObject CreatePersonGameObject(Person person, GlobalSpringType globalSpringTy
 			person.isLiving, person.deathEventDate, person.generation, person.xOffset, person.spouseNumber,
 			person.originalBirthEventDate, person.originalDeathEventDate,
 			person.dateQualityInformationString,
-			person.dataBaseOwnerId, person.tribeArrayIndex, globalSpringType);
+			person.dataBaseOwnerId, person.tribeArrayIndex, globalSpringType,
+			person);
 	}
 
 	void CreateMarriage(GameObject wifePerson, GameObject husbandPerson, int marriageEventDate, bool divorcedFlag= false,int divorcedEventDate=0)

@@ -9,6 +9,8 @@ public class TriggerGrabPlayer : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             other.transform.parent = gameObject.transform.parent;
+            var personNodeScript = GetComponentInParent<PersonNode>();
+            personNodeScript.UpdatePersonDetailsWithThisPerson((int)other.gameObject.transform.position.z);
         }
     }
 
@@ -17,6 +19,8 @@ public class TriggerGrabPlayer : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             other.transform.parent = null;
+            var personNodeScript = GetComponentInParent<PersonNode>();
+            personNodeScript.ClearPersonDetails();
         }
     }
 }

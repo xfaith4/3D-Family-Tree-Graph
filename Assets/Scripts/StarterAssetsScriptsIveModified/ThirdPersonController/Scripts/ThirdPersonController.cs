@@ -94,6 +94,8 @@ namespace StarterAssets
 		private bool _noMovementThisTick = false;
 		private int tickCountWithNoMovement = 100;
 
+		private PersonDetailsHandler personDetailsHandlerScript;
+
 		private void Awake()
 		{
 			// get a reference to our main camera
@@ -114,6 +116,9 @@ namespace StarterAssets
 			// reset our timeouts on start
 			_jumpTimeoutDelta = JumpTimeout;
 			_fallTimeoutDelta = FallTimeout;
+
+			GameObject[] personDetailsPanel = GameObject.FindGameObjectsWithTag("PersonDetailsPanel");
+			personDetailsHandlerScript = personDetailsPanel[0].transform.GetComponent<PersonDetailsHandler>();
 		}
 
 		private void Update()
@@ -125,6 +130,8 @@ namespace StarterAssets
 				JumpAndGravity();
 				GroundedCheck();
 				Move();
+
+				personDetailsHandlerScript.UpdateCurrentDate((int)gameObject.transform.position.z);
 			}
 			else
 			{
@@ -138,13 +145,13 @@ namespace StarterAssets
 			CameraRotation();
 		}
 
-		public void TeleportTo(Transform teleportTarget, Vector3 teleportOffset)
+		public void TeleportTo(Transform teleportTarget, Vector3 teleportOffset, int ticksToHoldHere)
 		{
 			transform.SetParent(teleportTarget.transform, false);
 			transform.localPosition = teleportOffset;
 
 			_noMovementThisTick = true;
-			tickCountWithNoMovement = 100;
+			tickCountWithNoMovement = ticksToHoldHere;
 		}
 
 		private void AssignAnimationIDs()

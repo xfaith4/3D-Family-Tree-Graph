@@ -31,19 +31,18 @@ X Transporter zones:
 X At birth areas, have blue/pink areas left and right of the birth bubble allowing for a transporter down to mother or father.
 X <Father> (0) <Mother>
 X Get rid of force field around birth oval on parents platform.  make ovals smaller and a transporter as well.
+X Collider Time Zone Barrier restrict the places the third person player can go.
+X Is the standard of Father on Right of Mother being followed? Should it be?
+X Use Canvase panel to display specifics on the person platform you are on.
+X Setup a "Date Horizon" Clip field at a specific Z location (date) and/or 
 
 --------------->
 > Still To Do ->
 --------------->
-
-Collider Zones restrict the places the third person player can go.
-Is the standard of Father on Right of Mother being followed? Should it be?
-Use Canvase panel to display specifics on tht person platform you are on.
-
-switch out character armature with something from Maximo
+Fix/Improve Person platforms that get shoved ontop of eachother.
+Switch out character armature with something from Maximo
 Name Boxes with word wrap and other treatments (opaque background)to make it easier to read in a complex screen
 Get photo's added
-Setup a "Date Horizon" Clip field at a specific Z location (date) and/or 
 
 --->Foreach individual, get Marriages for that person - get other person, event type (marriage/divorce) and event Date
  

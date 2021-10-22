@@ -1,3 +1,4 @@
+using Assets.Scripts.DataObjects;
 using Assets.Scripts.Enums;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,6 +7,9 @@ using UnityEngine;
 
 public class PersonNode : MonoBehaviour
 {
+    private Person person;
+    private PersonDetailsHandler personDetailsHandlerScript;
+    
     public float lifeSpan;
     public int birthDate;
     public int endOfPlatformDate;
@@ -61,6 +65,8 @@ public class PersonNode : MonoBehaviour
     {
         //transform.GetChild(TextNodeChildIndex).GetComponent<TextMesh>().text = name;
         transform.GetComponentInChildren<TextMesh>().text = name;
+        GameObject[] personDetailsPanel = GameObject.FindGameObjectsWithTag("PersonDetailsPanel");
+        personDetailsHandlerScript = personDetailsPanel[0].transform.GetComponent<PersonDetailsHandler>();
     }
 
     void Update()
@@ -71,6 +77,16 @@ public class PersonNode : MonoBehaviour
             var vVelocityDirection = new Vector3(-1, 0, 0);
             myRigidbody.velocity = vVelocityDirection * 1f;
         }
+    }
+
+    public void UpdatePersonDetailsWithThisPerson(int currentDate)
+    {
+        personDetailsHandlerScript.DisplayThisPerson(person, currentDate);
+    }
+
+    public void ClearPersonDetails()
+    {
+        personDetailsHandlerScript.DisplayThisPerson(null);
     }
 
     public void SetEdgePrefab(GameObject birthConnectionPrefab, GameObject marriageConnectionPrefab, GameObject bubble, GameObject parentPlatformBirthBubble, GameObject childPlatformReturnToParent, float edgeXScale)
@@ -104,10 +120,11 @@ public class PersonNode : MonoBehaviour
         }
     }
 
-    public void SetIndexes(int dataBaseOwnerId, int arrayIndex)
+    public void SetIndexes(int dataBaseOwnerId, int arrayIndex, Person person)
     {
         this.dataBaseOwnerID = dataBaseOwnerId;
         this.arrayIndex = arrayIndex;
+        this.person = person;
     }
 
     public void SetLifeSpan(int birthDate, float age, bool isLiving)

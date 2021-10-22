@@ -6,6 +6,8 @@ TagManager:
   tags:
   - GenderColor
   - CinemachineTarget
+  - PersonDetailsPanel
+  - TimeBarrier
   layers:
   - Default
   - TransparentFX
