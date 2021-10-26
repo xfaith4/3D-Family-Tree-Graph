@@ -93,7 +93,7 @@ namespace Assets.Scripts.DataProviders
             dbcmd = null;
             dbconn.Close();
             dbconn = null;
-            
+
             PersonGenderType charToPersonGenderType(char sex) =>
                 sex.Equals('M') ? PersonGenderType.Male : (sex.Equals('F') ? PersonGenderType.Female : PersonGenderType.NotSet);
         }
@@ -102,6 +102,7 @@ namespace Assets.Scripts.DataProviders
     float xOffset = 0.0f, int spouseNumber = 0, string lastNameFilterString = null)
         {
             string conn = "URI=file:" + _dataBaseFileName;
+            List<Person> unsortedPersonList = new List<Person>();
 
             IDbConnection dbconn;
             dbconn = (IDbConnection)new SqliteConnection(conn);
@@ -143,9 +144,11 @@ namespace Assets.Scripts.DataProviders
 
                // nextName.FixUpDatesForViewing();
 
-                personsList.Add(nextName);
+                unsortedPersonList.Add(nextName);
                 currentArrayIndex++;
             }
+            personsList = unsortedPersonList.OrderBy(x=> x.surName + " " + x.givenName).ToList();
+
             reader.Close();
             reader = null;
             dbcmd.Dispose();

@@ -23,6 +23,8 @@ namespace Assets.Scripts.DataObjects
 		public bool isLiving;
 		private bool originalIsLiving;
 		public int generation;
+		public int numberOfPersonsInThisGeneration;   
+		public int indexIntoPersonsInThisGeneration;  // my 'zero based' postion/index into the number of persons in this generation
 		public float xOffset;  // assists in recursive ordering of descendency trees
 		public int spouseNumber;
         public GameObject personNodeGameObject;

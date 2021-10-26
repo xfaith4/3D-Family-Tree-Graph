@@ -41,7 +41,7 @@ public class PersonDetailsHandler : MonoBehaviour
     public void UpdateCurrentDate(int currentDate)
     {
         currentDateObject.GetComponent<Text>().text = (personObject == null) ? "" : $"Current Date: {currentDate}";
-        currentAgeObject.GetComponent<Text>().text = (personObject == null) ? "" : $"Current Age: {(currentDate - personObject.birthEventDate)}";
+        currentAgeObject.GetComponent<Text>().text = (personObject == null) ? "" : $"Current Age: {Mathf.Max(0f, (currentDate - personObject.birthEventDate))}";
     }
 
     // Update is called once per frame

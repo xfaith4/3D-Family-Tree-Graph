@@ -29,10 +29,13 @@ public class Tribe : MonoBehaviour
 	public GlobalSpringType globalSpringType = GlobalSpringType.Normal;
 	public int generationGap;
 	public int spouseGap;
-	public int tribeWidth = 200;
+	public int personSpacing = 20;
+
+	private int maximumNumberOfPeopleInAGeneration = 0;
 	
 	private List<PersonNode> gameObjectNodes = new List<PersonNode>();
-	private ListOfPersonsFromDataBase myTribeOfPeople;
+	private ListOfPersonsFromDataBase[] listOfPersonsPerGeneration = new ListOfPersonsFromDataBase[11];
+	//private ListOfPersonsFromDataBase myTribeOfPeople;
 
 	const int PlatformChildIndex = 0;
 
@@ -54,44 +57,10 @@ public class Tribe : MonoBehaviour
 			var eve = CreatePersonGameObject("Eve", PersonGenderType.Female, 10, false, 60, xOffset: 30, generation: 0);
 
             CreateMarriage(eve, adam, 30);
-            var leisha = CreatePersonGameObject("Leisha", PersonGenderType.Female, 1832, false, 1900, generation: 1);
-            var bob = CreatePersonGameObject("Bob", PersonGenderType.Male, 1834, false, 1837, generation: 1);
-            var grace = CreatePersonGameObject("Grace", PersonGenderType.Female, 1836, false, 1910, generation: 1);
-            var olivia = CreatePersonGameObject("Olivia", PersonGenderType.Female, 1837, false, 1920, generation: 1);
-            var laura = CreatePersonGameObject("Laura", PersonGenderType.Female, 1840, false, 1930, generation: 1);
-            var emily = CreatePersonGameObject("Emily", PersonGenderType.Female, 1842, false, 1940, generation: 1);
-            var gary = CreatePersonGameObject("Gary", PersonGenderType.NotSet, 1848, false, 1932, generation: 1);
-            AssignParents(leisha, eve, adam);
-            AssignParents(bob, eve, adam, ChildRelationshipType.Biological, ChildRelationshipType.Adopted);
-            AssignParents(grace, eve, adam);
-            AssignParents(olivia, eve, adam);
-            AssignParents(laura, eve, adam);
-            AssignParents(emily, eve, adam);
-            AssignParents(gary, eve, null);
-
-            //var vahe = CreatePersonGameObject("Vahe", PersonGenderType.Male, 1822, false, 1880, generation: 1);
-            //CreateMarriage(leisha, vahe, 1840);
-            //var kyah = CreatePersonGameObject("Kyah", PersonGenderType.Female, 1841, false, 1980, generation: 2);
-            //var hanna = CreatePersonGameObject("Hannah", PersonGenderType.Female, 1843, false, 1960, generation: 2);
-            //var jude = CreatePersonGameObject("Jude", PersonGenderType.Male, 1846, false, 1846, generation: 2);
-            //var arie = CreatePersonGameObject("Arie", PersonGenderType.Male, 1848, false, 1930, generation: 2);
-            //AssignParents(kyah, leisha, vahe);
-            //AssignParents(hanna, leisha, vahe);
-            //AssignParents(jude, leisha, vahe);
-            //AssignParents(arie, leisha, vahe);
-        }
-		else if (tribeType == TribeType.AllPersons)
+      
+        } else if (tribeType == TribeType.Ancestry)
 		{
-            myTribeOfPeople = new ListOfPersonsFromDataBase(rootsMagicFileName);
-			myTribeOfPeople.GetListOfPersonsFromDataBase(numberOfPeopleInTribe);
-
-			FixUpDatesBasedOffMarriageDates();
-
-			CreatePersonGameObjectAllPeople();
-		}
-		else if (tribeType == TribeType.Ancestry)
-		{
-			myTribeOfPeople = new ListOfPersonsFromDataBase(rootsMagicFileName);
+			NewUpEnoughListOfPersonsPerGeneration(numberOfGenerations);
 			GetNextLevelOfAncestryForThisPersonIdDataBaseOnly(startingIdForTree, numberOfGenerations, xOffSet: 0.0f, xRange: 1.0f);
 
 			FixUpDatesBasedOffMarriageDates();
@@ -100,13 +69,13 @@ public class Tribe : MonoBehaviour
 
 			HookUpTheMarriages();
 
-			NowAddChildrenAssignments();
+			NowAddChildrenAssignments(tribeType);
 
 			PositionTimeBarrier();
 		}
 		else if (tribeType == TribeType.Descendancy)
         {
-			myTribeOfPeople = new ListOfPersonsFromDataBase(rootsMagicFileName);
+			NewUpEnoughListOfPersonsPerGeneration(numberOfGenerations);
 			GetNextLevelOfDescendancyForThisPersonIdDataBaseOnly(startingIdForTree, numberOfGenerations, xOffSet: 0.0f, xRange: 1.0f);
 
 			FixUpDatesBasedOffMarriageDates();
@@ -115,23 +84,31 @@ public class Tribe : MonoBehaviour
 
 			HookUpTheMarriages();
 
-			NowAddChildrenAssignments();
+			NowAddChildrenAssignments(tribeType);
 
 			PositionTimeBarrier();
 		}
 	}
 
+	void NewUpEnoughListOfPersonsPerGeneration(int numberOfGenerations)
+    {
+		for(var depth = 0; depth <= numberOfGenerations; depth++)
+        {
+			listOfPersonsPerGeneration[depth] = new ListOfPersonsFromDataBase(rootsMagicFileName);
+        }
+    }
+
 	void PositionTimeBarrier()
     {
 		var timeBarrierObject = GameObject.FindGameObjectsWithTag("TimeBarrier")[0];
-		timeBarrierObject.transform.position = new Vector3(tribeWidth / 2f, 0f, DateTime.Now.Year + 0.5f);
-		timeBarrierObject.transform.localScale = new Vector3(tribeWidth, 0.1f, tribeWidth);
+		timeBarrierObject.transform.position = new Vector3(0f, 0f, DateTime.Now.Year + 0.5f);
+		timeBarrierObject.transform.localScale = new Vector3((maximumNumberOfPeopleInAGeneration * personSpacing), 0.1f, (maximumNumberOfPeopleInAGeneration * personSpacing));
 	}
 
 	void GetNextLevelOfAncestryForThisPersonIdDataBaseOnly(int personId, int depth, float xOffSet, float xRange)
 	{
-		myTribeOfPeople.GetSinglePersonFromDataBase(personId, generation: depth, xOffSet + xRange / 2, spouseNumber: 0);
-		var personWeAreAdding = getPersonForDataBaseOwnerId(personId);
+		listOfPersonsPerGeneration[depth].GetSinglePersonFromDataBase(personId, generation: depth, xOffSet + xRange / 2, spouseNumber: 0);
+		var personWeAreAdding = getPersonForDataBaseOwnerId(personId, depth);
 
 		var listOfFamilyIds = AddParentsAndFixUpDates(personWeAreAdding);
 		if (depth == 0)
@@ -150,8 +127,8 @@ public class Tribe : MonoBehaviour
 
 	void GetNextLevelOfDescendancyForThisPersonIdDataBaseOnly(int personId, int depth, float xOffSet, float xRange)
 	{
-		myTribeOfPeople.GetSinglePersonFromDataBase(personId, generation: numberOfGenerations - depth, xOffSet + xRange / 2, spouseNumber: 0);
-		var personWeAreAdding = getPersonForDataBaseOwnerId(personId);
+		listOfPersonsPerGeneration[depth].GetSinglePersonFromDataBase(personId, generation: numberOfGenerations - depth, xOffSet + xRange / 2, spouseNumber: 0);
+		var personWeAreAdding = getPersonForDataBaseOwnerId(personId, depth);
 		var listOfFamilyIds = AddSpousesAndFixUpDates(personWeAreAdding, depth, xOffSet, xRange);
 		if (depth == 0)
 			return;
@@ -202,8 +179,8 @@ public class Tribe : MonoBehaviour
 			var spouseIdWeAreAdding = thisIsAHusbandQuery ? marriage.wifeId : marriage.husbandId;
 
 			var spouseXOffset = xOffset + (xRange / (myListOfMarriages.marriageList.Count + 2)) * spouseNumber;
-			myTribeOfPeople.GetSinglePersonFromDataBase(spouseIdWeAreAdding, generation: numberOfGenerations - depth, spouseXOffset, spouseNumber);
-			var spousePersonWeAreAdding = getPersonForDataBaseOwnerId(spouseIdWeAreAdding);
+			listOfPersonsPerGeneration[depth].GetSinglePersonFromDataBase(spouseIdWeAreAdding, generation: numberOfGenerations - depth, spouseXOffset, spouseNumber);
+			var spousePersonWeAreAdding = getPersonForDataBaseOwnerId(spouseIdWeAreAdding, depth);
 			
 			forThisPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
 			if (spousePersonWeAreAdding != null)
@@ -224,110 +201,130 @@ public class Tribe : MonoBehaviour
     {
 		// Lets fixup some more PersonDates based off off Marriage Event Dates
 		var myListOfMarriages = new ListOfMarriagesForPersonFromDataBase(rootsMagicFileName);
-		foreach (var potentialMarriedPerson in myTribeOfPeople.personsList)
+		for (var depth = 0; depth <= numberOfGenerations; depth++)
 		{
-			if (potentialMarriedPerson.gender == PersonGenderType.Male)
+			foreach (var potentialMarriedPerson in listOfPersonsPerGeneration[depth].personsList)
 			{
-				myListOfMarriages.marriageList.Clear();
-				myListOfMarriages.GetListOfMarriagesWithEventsForPersonFromDataBase(potentialMarriedPerson.dataBaseOwnerId, useHusbandQuery: true);
-				foreach (var marriage in myListOfMarriages.marriageList)
-					potentialMarriedPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
-			}
-			else
-			{
-				myListOfMarriages.marriageList.Clear();
-				myListOfMarriages.GetListOfMarriagesWithEventsForPersonFromDataBase(potentialMarriedPerson.dataBaseOwnerId, useHusbandQuery: false);
-				foreach (var marriage in myListOfMarriages.marriageList)
-					potentialMarriedPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
+				if (potentialMarriedPerson.gender == PersonGenderType.Male)
+				{
+					myListOfMarriages.marriageList.Clear();
+					myListOfMarriages.GetListOfMarriagesWithEventsForPersonFromDataBase(potentialMarriedPerson.dataBaseOwnerId, useHusbandQuery: true);
+					foreach (var marriage in myListOfMarriages.marriageList)
+						potentialMarriedPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
+				}
+				else
+				{
+					myListOfMarriages.marriageList.Clear();
+					myListOfMarriages.GetListOfMarriagesWithEventsForPersonFromDataBase(potentialMarriedPerson.dataBaseOwnerId, useHusbandQuery: false);
+					foreach (var marriage in myListOfMarriages.marriageList)
+						potentialMarriedPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
+				}
 			}
 		}
 	}
 
 	void CreatePersonGameObjectForMyTribeOfPeople(int startingID, GlobalSpringType globalSpringType = GlobalSpringType.Normal)
-    {				
-		foreach (var personToAdd in myTribeOfPeople.personsList)
+    {
+		maximumNumberOfPeopleInAGeneration = 0;
+		for (var depth = 0; depth <= numberOfGenerations; depth++)
 		{
-			personToAdd.personNodeGameObject = CreatePersonGameObject(personToAdd, globalSpringType);
-            if (personToAdd.dataBaseOwnerId == startingID)
-                CreatePlayerOnThisPersonObject(personToAdd.personNodeGameObject);
-        }
-	}
+			var numberOfPersonsInThisGeneration = listOfPersonsPerGeneration[depth].personsList.Count;
+			if (numberOfPersonsInThisGeneration > maximumNumberOfPeopleInAGeneration)
+				maximumNumberOfPeopleInAGeneration = numberOfPersonsInThisGeneration;
+			//Sort this by personList.xOffset
+			var indexIntoPersonsInThisGeneration = 0;
+			foreach (var personToAdd in listOfPersonsPerGeneration[depth].personsList.OrderBy(x=>x.xOffset))
+			{
+				// This two items (along with personToAdd.Generation) help place this personGameObject in x/y space
+				personToAdd.numberOfPersonsInThisGeneration = numberOfPersonsInThisGeneration;
+				personToAdd.indexIntoPersonsInThisGeneration = indexIntoPersonsInThisGeneration;
 
-	void CreatePersonGameObjectAllPeople()
-	{
-        int counter = 0;
-        int generationWidth = (int)Math.Sqrt((double)numberOfPeopleInTribe);
-        foreach (var personToAdd in myTribeOfPeople.personsList)
-		{
-			personToAdd.generation = counter / generationWidth;
-			personToAdd.xOffset = ((float)(counter % generationWidth) / (float)generationWidth) / 1000f; //Random.value;
-			personToAdd.personNodeGameObject = CreatePersonGameObject(personToAdd);
-            counter++;
-        }
+				personToAdd.personNodeGameObject = CreatePersonGameObject(personToAdd, globalSpringType);
+				if (personToAdd.dataBaseOwnerId == startingID)
+					CreatePlayerOnThisPersonObject(personToAdd.personNodeGameObject);
+				indexIntoPersonsInThisGeneration++;
+			}
+		}
 	}
 
 	void HookUpTheMarriages()
 	{
 		// time to hook up some marriages
 		var myListOfMarriages = new ListOfMarriagesForPersonFromDataBase(rootsMagicFileName);
-		foreach (var potentialHusbandPerson in myTribeOfPeople.personsList)
+		for (var depth = 0; depth <= numberOfGenerations; depth++)
 		{
-			if (potentialHusbandPerson.gender == PersonGenderType.Male)
+			foreach (var potentialHusbandPerson in listOfPersonsPerGeneration[depth].personsList)
 			{
-				myListOfMarriages.marriageList.Clear();
-				myListOfMarriages.GetListOfMarriagesWithEventsForPersonFromDataBase(potentialHusbandPerson.dataBaseOwnerId);
-				foreach (var marriage in myListOfMarriages.marriageList)
+				if (potentialHusbandPerson.gender == PersonGenderType.Male)
 				{
-					int marriageYearToUse = potentialHusbandPerson.FixUpAndReturnMarriageDate(marriage.marriageYear);
-					bool divorcedOrAnnuledFlag = false;
-					int divorcedOrAnnuledDate = 0;
+					myListOfMarriages.marriageList.Clear();
+					myListOfMarriages.GetListOfMarriagesWithEventsForPersonFromDataBase(potentialHusbandPerson.dataBaseOwnerId);
+					foreach (var marriage in myListOfMarriages.marriageList)
+					{
+						int marriageYearToUse = potentialHusbandPerson.FixUpAndReturnMarriageDate(marriage.marriageYear);
+						bool divorcedOrAnnuledFlag = false;
+						int divorcedOrAnnuledDate = 0;
 
-					if (marriage.divorcedYear != 0 || marriage.annulledYear != 0)
-                    {
-						divorcedOrAnnuledFlag = true;
-						if (marriage.divorcedYear != 0)
-							divorcedOrAnnuledDate = marriage.divorcedYear;
-						if (marriage.annulledYear != 0 && marriage.annulledYear < marriage.divorcedYear)
-							divorcedOrAnnuledDate = marriage.annulledYear;
-                    }
-					CreateMarriage(
-						getGameObjectForDataBaseOwnerId(marriage.wifeId),
-						getGameObjectForDataBaseOwnerId(marriage.husbandId),
-						marriageYearToUse,
-						divorcedOrAnnuledFlag,
-						divorcedOrAnnuledDate);
+						if (marriage.divorcedYear != 0 || marriage.annulledYear != 0)
+						{
+							divorcedOrAnnuledFlag = true;
+							if (marriage.divorcedYear != 0)
+								divorcedOrAnnuledDate = marriage.divorcedYear;
+							if (marriage.annulledYear != 0 && marriage.annulledYear < marriage.divorcedYear)
+								divorcedOrAnnuledDate = marriage.annulledYear;
+						}
+						CreateMarriage(
+							getGameObjectForDataBaseOwnerId(marriage.wifeId, depth),
+							getGameObjectForDataBaseOwnerId(marriage.husbandId, depth),
+							marriageYearToUse,
+							divorcedOrAnnuledFlag,
+							divorcedOrAnnuledDate);
+					}
 				}
 			}
 		}
 	}
 
-	void NowAddChildrenAssignments()
-	{ 
+	void NowAddChildrenAssignments(TribeType tribeType)
+	{
 		// first came love, then came marriage, then came a baby in a baby carriage
 		var myListOfParents = new ListOfParentsFromDataBase(rootsMagicFileName);
-		foreach (var child in myTribeOfPeople.personsList)
-		{
-			myListOfParents.parentList.Clear();
-			myListOfParents.GetListOfParentsFromDataBase(child.dataBaseOwnerId);
-			foreach (var myParents in myListOfParents.parentList)
+		for (var depth = (tribeType == TribeType.Ancestry ? 1 : 0);
+			depth <= (tribeType == TribeType.Ancestry ? numberOfGenerations : numberOfGenerations - 1);
+			depth++)
+		{			
+			foreach (var child in listOfPersonsPerGeneration[depth].personsList)
 			{
-				AssignParents(
-					getGameObjectForDataBaseOwnerId(child.dataBaseOwnerId),
-					getGameObjectForDataBaseOwnerId(myParents.motherId),
-					getGameObjectForDataBaseOwnerId(myParents.fatherId),
-					myParents.relationToMother,
-					myParents.relationToFather);
+				myListOfParents.parentList.Clear();
+				myListOfParents.GetListOfParentsFromDataBase(child.dataBaseOwnerId);
+
+				foreach (var myParents in myListOfParents.parentList)
+				{
+					AssignParents(
+						getGameObjectForDataBaseOwnerId(child.dataBaseOwnerId, 
+							depth),
+						getGameObjectForDataBaseOwnerId(myParents.motherId,
+							tribeType == TribeType.Ancestry ? depth - 1 : depth + 1),
+						getGameObjectForDataBaseOwnerId(myParents.fatherId,
+							tribeType == TribeType.Ancestry ? depth - 1 : depth + 1),
+						myParents.relationToMother,
+						myParents.relationToFather);
+				}
 			}
 		}
 	}
 
-	GameObject getGameObjectForDataBaseOwnerId(int ownerId) =>
-				myTribeOfPeople.personsList.Find(x => x.dataBaseOwnerId == ownerId)?.personNodeGameObject;
-	Person getPersonForDataBaseOwnerId(int ownerId) =>
-				myTribeOfPeople.personsList.Find(x => x.dataBaseOwnerId == ownerId);
+	GameObject getGameObjectForDataBaseOwnerId(int ownerId, int depth) =>
+				listOfPersonsPerGeneration[depth].personsList.Find(x => x.dataBaseOwnerId == ownerId)?.personNodeGameObject;
+	Person getPersonForDataBaseOwnerId(int ownerId, int depth) =>
+				listOfPersonsPerGeneration[depth].personsList.Find(x => x.dataBaseOwnerId == ownerId);
 
 	GameObject CreatePersonGameObject(string name, PersonGenderType personGender, int birthEventDate,
-		bool isLiving = true, int deathEventDate = 0, int generation = 0, float xOffset = 0.0f,
+		bool isLiving = true, int deathEventDate = 0,
+		int generation = 0,
+		int numberOfPersonsInThisGeneration = 0,
+		int indexIntoPersonsInThisGeneration = 0,
+		float xOffset = 0.0f,
 		int spouseNumber = 0,
 		int originalBirthDate = 0, int originalDeathDate = 0, string dateQualityInformationString = "",
 		int databaseOwnerArry = 0, int tribeArrayIndex = 0, GlobalSpringType globalSpringType = GlobalSpringType.Normal,
@@ -337,7 +334,8 @@ public class Tribe : MonoBehaviour
 	
 		var age = isLiving ? currentYear - birthEventDate : deathEventDate - birthEventDate;
 
-		var x = xOffset * tribeWidth;
+		// old way    var x = xOffset * (maximumNumberOfPeopleInAGeneration * personSpacing);
+		var x = indexIntoPersonsInThisGeneration * personSpacing - (numberOfPersonsInThisGeneration * personSpacing) / 2 + personSpacing / 2;
 		var y = generation * generationGap + spouseNumber * spouseGap;
 		
 		var newPersonGameObject = Instantiate(personPrefab, new Vector3(x, y, birthEventDate), Quaternion.identity);		
@@ -399,7 +397,8 @@ public class Tribe : MonoBehaviour
 GameObject CreatePersonGameObject(Person person, GlobalSpringType globalSpringType = GlobalSpringType.Normal)
 	{
 		return CreatePersonGameObject($"{person.givenName} {person.surName}", person.gender, person.birthEventDate,
-			person.isLiving, person.deathEventDate, person.generation, person.xOffset, person.spouseNumber,
+			person.isLiving, person.deathEventDate, person.generation, person.numberOfPersonsInThisGeneration, person.indexIntoPersonsInThisGeneration,
+			person.xOffset, person.spouseNumber,
 			person.originalBirthEventDate, person.originalDeathEventDate,
 			person.dateQualityInformationString,
 			person.dataBaseOwnerId, person.tribeArrayIndex, globalSpringType,

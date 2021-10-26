@@ -9,6 +9,7 @@ public class PersonNode : MonoBehaviour
 {
     private Person person;
     private PersonDetailsHandler personDetailsHandlerScript;
+    private GlobalSpringType globalSpringType;
     
     public float lifeSpan;
     public int birthDate;
@@ -101,12 +102,13 @@ public class PersonNode : MonoBehaviour
 
     public void SetGlobalSpringType(GlobalSpringType globalSpringType)
     {
-        if (globalSpringType == GlobalSpringType.Crazy)
+        this.globalSpringType = globalSpringType;
+        if (this.globalSpringType == GlobalSpringType.Crazy)
         {
             this.transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
             return;
         }
-        if (globalSpringType == GlobalSpringType.Normal)
+        if (this.globalSpringType == GlobalSpringType.Normal)
         {
             this.transform.GetComponent<Rigidbody>().constraints =
                 RigidbodyConstraints.FreezePositionY |
@@ -114,9 +116,10 @@ public class PersonNode : MonoBehaviour
                 RigidbodyConstraints.FreezeRotation;
             return;
         }
-        if (globalSpringType == GlobalSpringType.Freeze)
+        if (this.globalSpringType == GlobalSpringType.Freeze)
         {
             this.transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+            this.transform.GetComponent<Rigidbody>().isKinematic = true;
         }
     }
 
@@ -175,16 +178,18 @@ public class PersonNode : MonoBehaviour
         var parentRidgidbodyComponent = parentPlatformTransform.transform.GetComponent<Rigidbody>();
         var childPlatformTransform = childPersonNode.transform;
         var childRidgidbodyComponent = childPlatformTransform.transform.GetComponent<Rigidbody>();
-        SpringJoint sj = parentRidgidbodyComponent.gameObject.AddComponent<SpringJoint>();
-        sj.autoConfigureConnectedAnchor = false;
-        sj.anchor = new Vector3(0, 0.5f, myAgeConnectionPointPercent);
-        sj.connectedAnchor = new Vector3(0, 0.5f, childAgeConnectionPointPercent);
-        sj.enableCollision = true;
-        sj.connectedBody = childRidgidbodyComponent;
-        sj.spring = 1f; // 10.0f;
-        //sj.minDistance = 10.0f;
-        //sj.maxDistance = 500.0f;
-
+        if (globalSpringType != GlobalSpringType.Freeze)
+        {
+            SpringJoint sj = parentRidgidbodyComponent.gameObject.AddComponent<SpringJoint>();
+            sj.autoConfigureConnectedAnchor = false;
+            sj.anchor = new Vector3(0, 0.5f, myAgeConnectionPointPercent);
+            sj.connectedAnchor = new Vector3(0, 0.5f, childAgeConnectionPointPercent);
+            sj.enableCollision = true;
+            sj.connectedBody = childRidgidbodyComponent;
+            sj.spring = 0.01f; // 10.0f;
+                               //sj.minDistance = 10.0f;
+                               //sj.maxDistance = 500.0f;
+        }
         parentBirthConnectionPoint = 
             Instantiate(this.parentPlatformBirthBubble, Vector3.zero, Quaternion.identity);
         //TODO Twins born at the same time are not handled well if one is a boy and the other a girl
@@ -256,16 +261,18 @@ public class PersonNode : MonoBehaviour
         var myRidgidbodyComponent = myPositionThisPlatformTransform.GetComponent<Rigidbody>();
         var spousePositionThisPlatformTransform = spousePersonNode.transform;
         var spouseRidgidbodyComponent = spousePositionThisPlatformTransform.GetComponent<Rigidbody>();
-        SpringJoint sj = myRidgidbodyComponent.gameObject.AddComponent<SpringJoint>();
-        sj.autoConfigureConnectedAnchor = false;
-        sj.anchor = new Vector3(0, 0.5f, myAgeConnectionPointPercent);   // - 0.5f
-        sj.connectedAnchor = new Vector3(0, 0.5f, spouseAgeConnectionPointPercent);  // - 0.5f
-        sj.enableCollision = true;
-        sj.connectedBody = spouseRidgidbodyComponent;
-        sj.spring = 5f; // 50.0f;
-        sj.minDistance = 10.0f;
-        sj.maxDistance = 40.0f;
-
+        if (globalSpringType != GlobalSpringType.Freeze)
+        {
+            SpringJoint sj = myRidgidbodyComponent.gameObject.AddComponent<SpringJoint>();
+            sj.autoConfigureConnectedAnchor = false;
+            sj.anchor = new Vector3(0, 0.5f, myAgeConnectionPointPercent);   // - 0.5f
+            sj.connectedAnchor = new Vector3(0, 0.5f, spouseAgeConnectionPointPercent);  // - 0.5f
+            sj.enableCollision = true;
+            sj.connectedBody = spouseRidgidbodyComponent;
+            sj.spring = 5f; // 50.0f;
+            sj.minDistance = 20.0f;
+            sj.maxDistance = 80.0f;
+        }
         parentBirthConnectionPoint = new GameObject(); // GameObject.CreatePrimitive(PrimitiveType.Sphere);
         //leftConnection.GetComponent<Renderer>().material.SetColor("_Color", Color.yellow);
 

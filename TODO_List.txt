@@ -35,11 +35,14 @@ X Collider Time Zone Barrier restrict the places the third person player can go.
 X Is the standard of Father on Right of Mother being followed? Should it be?
 X Use Canvase panel to display specifics on the person platform you are on.
 X Setup a "Date Horizon" Clip field at a specific Z location (date) and/or 
+X Name Chooser - Alphabetize the name dropdown list
+X Fix/Improve Person platforms that get shoved ontop of each other.
 
 --------------->
 > Still To Do ->
 --------------->
-Fix/Improve Person platforms that get shoved ontop of eachother.
+
+Spinner on Start button to help give the user an idea that a long process is happily churning away.
 Switch out character armature with something from Maximo
 Name Boxes with word wrap and other treatments (opaque background)to make it easier to read in a complex screen
 Get photo's added
