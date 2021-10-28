@@ -26,6 +26,7 @@ public class NamePickerHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        startButton.transform.Find("LoadingCircle").gameObject.SetActive(false);
         startButton.interactable = false;
         FileSelectedNowEnableUserInterface(false);
 
@@ -62,10 +63,18 @@ public class NamePickerHandler : MonoBehaviour
 
     void StartClicked()
     {
+        startButton.transform.Find("LoadingCircle").gameObject.SetActive(true);
         Assets.Scripts.CrossSceneInformation.startingDataBaseId = selectedPerson.dataBaseOwnerId;
         Assets.Scripts.CrossSceneInformation.numberOfGenerations = Int32.Parse(generationsDropdown.options[generationsDropdown.value].text);
         Assets.Scripts.CrossSceneInformation.myTribeType = ancestryToggle.isOn ? TribeType.Ancestry : TribeType.Descendancy;
-        SceneManager.LoadScene("MyTribeScene");
+        SceneManager.LoadScene("MyTribeScene"); //StartCoroutine(LoadSceneAsync());
+    }
+
+    private IEnumerator LoadSceneAsync()
+    {
+        var progress = SceneManager.LoadSceneAsync("MyTribeScene", LoadSceneMode.Additive);
+        while (!progress.isDone)
+            yield return null;
     }
 
     void ToggleControl(Toggle toggleThatToggled)

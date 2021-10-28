@@ -1,13 +1,8 @@
 ﻿using Assets.Scripts.DataObjects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Mono.Data.Sqlite;
 using System.Data;
-using UnityEngine;
-using Assets.Scripts.Enums;
 
 namespace Assets.Scripts.DataProviders
 {

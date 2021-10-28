@@ -42,17 +42,19 @@ X Name Boxes with word wrap and other treatments (opaque background)to make it e
 X Add appropriate Male vs Female avatar photo to canvas info panel - right now its just female
 X Add Persons name to top of platform as well
 X Add Restart button back
+X beginnings of a spinner on start button
 
 --------------->
 > Still To Do ->
 --------------->
 
 Add Spouse Ramp - or bubbles for transportertation between spouse platforms
+Spinner on Start button to help give the user an idea that a long process is happily churning away.
 
 --
 Add Child first names to parent platform as well
 Add Spouse name to platform
-Spinner on Start button to help give the user an idea that a long process is happily churning away.
+
 Add female player, Pearl, from Maximo
 
 > Later
