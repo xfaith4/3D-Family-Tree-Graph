@@ -64,8 +64,12 @@ public class PersonNode : MonoBehaviour
         };
 
     void Start()
-    {
-        transform.GetComponentInChildren<TextMeshPro>().text = name;
+    {        
+        var bothTextMeshProItems = transform.GetComponentsInChildren<TextMeshPro>();
+        foreach (var textMeshProItem in bothTextMeshProItems)
+        {
+            textMeshProItem.text = name;
+        }
         GameObject[] personDetailsPanel = GameObject.FindGameObjectsWithTag("PersonDetailsPanel");
         personDetailsHandlerScript = personDetailsPanel[0].transform.GetComponent<PersonDetailsHandler>();
     }

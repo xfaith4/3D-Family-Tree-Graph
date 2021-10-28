@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 public class PersonDetailsHandler : MonoBehaviour
 {
+    public Sprite femaleImage;
+    public Sprite maleImage;
+    public Sprite unknownGenderImage;
     public Person personObject;
     public GameObject imageGameObject;
     public GameObject nameGameObject;
@@ -36,6 +39,9 @@ public class PersonDetailsHandler : MonoBehaviour
         generationGameObject.GetComponent<Text>().text = (personObject == null) ? "" : $"Generation: {personObject.generation}";
         UpdateCurrentDate(currentDate);
         recordIdGameObject.GetComponent<Text>().text = (personObject == null) ? "" : $"RootsMagic DB ID: {personObject.dataBaseOwnerId}";
+        imageGameObject.GetComponent<Image>().sprite = (personObject == null) ? unknownGenderImage :
+            personObject.gender == Assets.Scripts.Enums.PersonGenderType.Male ? maleImage : 
+            personObject.gender == Assets.Scripts.Enums.PersonGenderType.Female ? femaleImage : unknownGenderImage;
     }
 
     public void UpdateCurrentDate(int currentDate)

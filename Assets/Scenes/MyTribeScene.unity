@@ -259,7 +259,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b41265732c18c1748b2f9b43a3ae8442, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7581f8d28466c6e43b6f61b4dd4ce035, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1321,6 +1321,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b45b06333bb845c46bca6b27946c3d98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  femaleImage: {fileID: 21300000, guid: b41265732c18c1748b2f9b43a3ae8442, type: 3}
+  maleImage: {fileID: 21300000, guid: 70aa1192de5d49d449cdf3ec76102f15, type: 3}
+  unknownGenderImage: {fileID: 21300000, guid: 7581f8d28466c6e43b6f61b4dd4ce035, type: 3}
   imageGameObject: {fileID: 156349872}
   nameGameObject: {fileID: 326257435}
   birthGameObject: {fileID: 1210621597}
@@ -1388,10 +1391,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 10
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -1795,8 +1798,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1018, y: -44}
-  m_SizeDelta: {x: 120, y: 30}
+  m_AnchoredPosition: {x: 758.7, y: -15}
+  m_SizeDelta: {x: 60, y: 15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1383112957
 MonoBehaviour:
