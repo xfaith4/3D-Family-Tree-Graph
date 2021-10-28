@@ -49,6 +49,7 @@ X beginnings of a spinner on start button
 --------------->
 
 Add Spouse Ramp - or bubbles for transportertation between spouse platforms
+Make DBLoad Person List / MyTribe Data read be yeildable so that something like a spinner or other animation can play while it loads.
 Spinner on Start button to help give the user an idea that a long process is happily churning away.
 
 --
@@ -56,6 +57,7 @@ Add Child first names to parent platform as well
 Add Spouse name to platform
 
 Add female player, Pearl, from Maximo
+Show relationship between "seed person" and current visited platform.
 
 > Later
 Better 'camera control' / 'camera follow'
