@@ -3,6 +3,7 @@ using Assets.Scripts.Enums;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class PersonNode : MonoBehaviour
@@ -48,8 +49,8 @@ public class PersonNode : MonoBehaviour
             pink    // female
         };
     private Color[] personDateQualityColors = {
-            new Color(0.4f, 0.4f, 0.4f),   // date = orig
-            new Color(0.9f, 0.1f, 0.1f)    // date != orig
+            new Color(0.4f, 0.4f, 0.4f, 0.5f),   // date = orig
+            new Color(0.9f, 0.1f, 0.1f, 0.5f)    // date != orig
         };
 
     private Color[] personGenderPlatformColors = {
@@ -64,8 +65,7 @@ public class PersonNode : MonoBehaviour
 
     void Start()
     {
-        //transform.GetChild(TextNodeChildIndex).GetComponent<TextMesh>().text = name;
-        transform.GetComponentInChildren<TextMesh>().text = name;
+        transform.GetComponentInChildren<TextMeshPro>().text = name;
         GameObject[] personDetailsPanel = GameObject.FindGameObjectsWithTag("PersonDetailsPanel");
         personDetailsHandlerScript = personDetailsPanel[0].transform.GetComponent<PersonDetailsHandler>();
     }
@@ -152,9 +152,9 @@ public class PersonNode : MonoBehaviour
     {
         var myScaleThisPlatformTransform = gameObject.transform.GetChild(ScaleThisChildIndex);
 
-        var birthConnection = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        var birthConnection = Instantiate(this.bubblePrefabObject, Vector3.zero, Quaternion.identity);  //GameObject.CreatePrimitive(PrimitiveType.Sphere);
         var colorToSet = personDateQualityColors[birthDateQuality.original == birthDateQuality.updated ? 0 : 1];
-        birthConnection.GetComponent<Renderer>().material.SetColor("_Color", colorToSet);
+        birthConnection.GetComponentInChildren<Renderer>().material.SetColor("_Color", colorToSet);
 
         birthConnection.transform.localScale = Vector3.one * 1.5f;
         birthConnection.transform.parent = myScaleThisPlatformTransform;

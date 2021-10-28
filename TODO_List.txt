@@ -37,53 +37,27 @@ X Use Canvase panel to display specifics on the person platform you are on.
 X Setup a "Date Horizon" Clip field at a specific Z location (date) and/or 
 X Name Chooser - Alphabetize the name dropdown list
 X Fix/Improve Person platforms that get shoved ontop of each other.
+X Switch out character armature with something from Maximo, we've got Jasper!
+X Name Boxes with word wrap and other treatments (opaque background)to make it easier to read in a complex screen
 
 --------------->
 > Still To Do ->
 --------------->
-
+Add appropriate Male vs Female avatar photo to canvas info panel - right now its just female
+Add Spouse Ramp - or bubbles for transportertation between spouse platforms
+Add Persons name to top of platform as well
+Add Restart button back
+--
+Add Child first names to parent platform as well
+Add Spouse name to platform
 Spinner on Start button to help give the user an idea that a long process is happily churning away.
-Switch out character armature with something from Maximo
-Name Boxes with word wrap and other treatments (opaque background)to make it easier to read in a complex screen
+Add female player, Pearl, from Maximo
+
+> Later
+Better 'camera control' / 'camera follow'
+Add Sound effects
 Get photo's added
-
---->Foreach individual, get Marriages for that person - get other person, event type (marriage/divorce) and event Date
- 
---->CreateMarriage(GameObject wifePerson, GameObject husbandPerson, int marriageEventDate, bool divorcedFlag= false,int divorcedEventDate=0)
-Get Marriages for Husband
-  for each wifePerson
-	get Divorces for (husband + wife)
-	   CreateMarriage platform for them
-
---->AssignParents(GameObject childPerson, GameObject motherPerson, GameObject fatherPerson,
-		ChildRelationshipType motherChildRelationshipType = ChildRelationshipType.Biological,
-		ChildRelationshipType fatherChildRelationshipType = ChildRelationshipType.Biological)
- 	
-Specialize Edges - different spring attractions:
- - Marrage Edges (tightest coupling)
- - OffSpring Edges
-	Future: Divorced, Adopted
-
-- Story - Create EventDate DataType - that takes into account rough or unknown dates
-EventDate associated with a person
-	Event Type: Birth, Adopted, Marriage, Divorced, Death
-	nullable Specific Date
-	Rough date
-		Year
-		Month
-	Non understood Date String or string clue, no year indicated "23" "Feb 23", or non handled "300bc"
-	Qualifier "About", means the same as: Estimate, Calculated, Circa, Say, certainly, probably, possibly, likely, perhaps, maybe)
-	Unknown (absolutly no information)
-	Range (future story)
-	Inferred (future story)
-	
-	Ask person object for Birth Date - Also available for Marriage Date, or Death Date (inferred dates will be latest, not eariest)
-	Returns either a - colors are 'date quality colors' - perhaps a shell around date bubbles
-		Specific Date (green), or
-		Specific Date with Qualifier string, Calculated or Rough Earliest Date (yellow), or
-		Inferred earliest Date (orange), or (future story)
-		null - not availabe (black) (inferred also returns null)  - Use todays date
-	
+Could we do a virtual terminal to a RootsMagic session ??
 	
 **********************
 *** Future Stories ***
@@ -117,4 +91,3 @@ Future Story: Ask person to evaluate Birth Date Evidences - colors are 'evidence
 	Green Check - all dates match
 	Yellow Check - some data point in dissagreement
 	Red Check - Data/Evidences disagree
-		
