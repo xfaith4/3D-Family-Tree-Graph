@@ -48,9 +48,12 @@ X beginnings of a spinner on start button
 > Still To Do ->
 --------------->
 
+Put full dates into Detail Panel (Birth, Death)
+Make a stand alone version That can run in windows, and be sharable.
 Add Spouse Ramp - or bubbles for transportertation between spouse platforms
-Make DBLoad Person List / MyTribe Data read be yeildable so that something like a spinner or other animation can play while it loads.
-Spinner on Start button to help give the user an idea that a long process is happily churning away.
+Need to get CoRoutines working.
+   Make DBLoad Person List / MyTribe Data read be yeildable so that something like a spinner or other animation can play while it loads.
+   Spinner on Start button to help give the user an idea that a long process is happily churning away.
 
 --
 Add Child first names to parent platform as well
@@ -60,6 +63,7 @@ Add female player, Pearl, from Maximo
 Show relationship between "seed person" and current visited platform.
 
 > Later
+add a button or something that let me go get more family information - like got get me Alex's parents
 Better 'camera control' / 'camera follow'
 Add Sound effects
 Get photo's added

@@ -14,6 +14,8 @@ public class Tribe : MonoBehaviour
 {
 	private TribeType tribeType;
 	private String rootsMagicFileName;
+	private bool dataLoadComplete = false;
+	private int updateFramesToWaist = 120;
 	private int startingIdForTree;
 	private int numberOfGenerations = 5;
 	public GameObject personPrefab;
@@ -41,6 +43,8 @@ public class Tribe : MonoBehaviour
 
 	void Start()
 	{
+		dataLoadComplete = false;
+		updateFramesToWaist = 120;
 		tribeType = Assets.Scripts.CrossSceneInformation.myTribeType;
 		numberOfGenerations = Assets.Scripts.CrossSceneInformation.numberOfGenerations;
 		startingIdForTree = Assets.Scripts.CrossSceneInformation.startingDataBaseId;
@@ -57,37 +61,9 @@ public class Tribe : MonoBehaviour
 			var eve = CreatePersonGameObject("Eve", PersonGenderType.Female, 10, false, 60, xOffset: 30, generation: 0);
 
             CreateMarriage(eve, adam, 30);
+			dataLoadComplete = true;
       
-        } else if (tribeType == TribeType.Ancestry)
-		{
-			NewUpEnoughListOfPersonsPerGeneration(numberOfGenerations);
-			GetNextLevelOfAncestryForThisPersonIdDataBaseOnly(startingIdForTree, numberOfGenerations, xOffSet: 0.0f, xRange: 1.0f);
-
-			FixUpDatesBasedOffMarriageDates();
-
-			CreatePersonGameObjectForMyTribeOfPeople(startingIdForTree, globalSpringType);
-
-			HookUpTheMarriages();
-
-			NowAddChildrenAssignments(tribeType);
-
-			PositionTimeBarrier();
-		}
-		else if (tribeType == TribeType.Descendancy)
-        {
-			NewUpEnoughListOfPersonsPerGeneration(numberOfGenerations);
-			GetNextLevelOfDescendancyForThisPersonIdDataBaseOnly(startingIdForTree, numberOfGenerations, xOffSet: 0.0f, xRange: 1.0f);
-
-			FixUpDatesBasedOffMarriageDates();
-
-			CreatePersonGameObjectForMyTribeOfPeople(startingIdForTree, globalSpringType);
-
-			HookUpTheMarriages();
-
-			NowAddChildrenAssignments(tribeType);
-
-			PositionTimeBarrier();
-		}
+        } 		
 	}
 
 	void NewUpEnoughListOfPersonsPerGeneration(int numberOfGenerations)
@@ -105,48 +81,55 @@ public class Tribe : MonoBehaviour
 		timeBarrierObject.transform.localScale = new Vector3((maximumNumberOfPeopleInAGeneration * personSpacing), 0.1f, (maximumNumberOfPeopleInAGeneration * personSpacing));
 	}
 
-	void GetNextLevelOfAncestryForThisPersonIdDataBaseOnly(int personId, int depth, float xOffSet, float xRange)
-	{
+	private IEnumerator GetNextLevelOfAncestryForThisPersonIdDataBaseOnlyAsync(int personId, int depth, float xOffSet, float xRange)
+	{		
 		listOfPersonsPerGeneration[depth].GetSinglePersonFromDataBase(personId, generation: depth, xOffSet + xRange / 2, spouseNumber: 0);
 		var personWeAreAdding = getPersonForDataBaseOwnerId(personId, depth);
 
 		var listOfFamilyIds = AddParentsAndFixUpDates(personWeAreAdding);
-		if (depth == 0)
-			return;
-
-		var parentCount = listOfFamilyIds.Count;
-		var parentIndex = 0;
-		foreach (var familyId  in listOfFamilyIds)
+		//yield return new WaitForSeconds(0.1f);
+		if (depth > 0)
 		{
-			var newRange = xRange / parentCount;
-			var newOffset = xOffSet + parentIndex * newRange;
-			GetNextLevelOfAncestryForThisPersonIdDataBaseOnly(familyId, depth - 1, newOffset, newRange);
-			parentIndex++;
+
+			var parentCount = listOfFamilyIds.Count;
+			var parentIndex = 0;
+			foreach (var familyId in listOfFamilyIds)
+			{
+				var newRange = xRange / parentCount;
+				var newOffset = xOffSet + parentIndex * newRange;
+				
+				StartCoroutine(GetNextLevelOfAncestryForThisPersonIdDataBaseOnlyAsync(familyId, depth - 1, newOffset, newRange));
+				parentIndex++;				
+			}			
 		}
+		yield return new WaitForSeconds(0.1f);
 	}
 
-	void GetNextLevelOfDescendancyForThisPersonIdDataBaseOnly(int personId, int depth, float xOffSet, float xRange)
-	{
+	private IEnumerator GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(int personId, int depth, float xOffSet, float xRange)
+	{		
 		listOfPersonsPerGeneration[depth].GetSinglePersonFromDataBase(personId, generation: numberOfGenerations - depth, xOffSet + xRange / 2, spouseNumber: 0);
 		var personWeAreAdding = getPersonForDataBaseOwnerId(personId, depth);
 		var listOfFamilyIds = AddSpousesAndFixUpDates(personWeAreAdding, depth, xOffSet, xRange);
-		if (depth == 0)
-			return;
-
-		var myChildrenList = new ListOfChildrenFromDataBase(rootsMagicFileName);
-		foreach (var familyId  in listOfFamilyIds)
-			myChildrenList.GetListOfChildrenFromDataBase(familyId);
-			
-		var childCount = myChildrenList.childList.Count;
-		var childIndex = 0;
-		
-		foreach (var child in myChildrenList.childList)
+		//yield return new WaitForSeconds(0.1f);
+		if (depth > 0)
 		{
-			var newRange = xRange / childCount;
-			var newOffset = xOffSet + childIndex * newRange;
-			GetNextLevelOfDescendancyForThisPersonIdDataBaseOnly(child.childId, depth - 1, newOffset, newRange);
-			childIndex++;
+			var myChildrenList = new ListOfChildrenFromDataBase(rootsMagicFileName);
+			foreach (var familyId in listOfFamilyIds)
+				myChildrenList.GetListOfChildrenFromDataBase(familyId);
+
+			var childCount = myChildrenList.childList.Count;
+			var childIndex = 0;
+			
+			foreach (var child in myChildrenList.childList)
+			{
+				var newRange = xRange / childCount;
+				var newOffset = xOffSet + childIndex * newRange;
+				
+				StartCoroutine(GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(child.childId, depth - 1, newOffset, newRange));
+				childIndex++;		
+			}			
 		}
+		yield return new WaitForSeconds(0.1f);
 	}
 
 	List<int> AddParentsAndFixUpDates(Person forThisPerson)
@@ -462,6 +445,47 @@ GameObject CreatePersonGameObject(Person person, GlobalSpringType globalSpringTy
 		}
 	}
 
-	void Update() { }
+	void Update() 
+	{
+		if (dataLoadComplete)
+			return;
 
+		if (updateFramesToWaist-- > 0)
+			return;
+
+		if (tribeType == TribeType.Ancestry)
+		{
+			NewUpEnoughListOfPersonsPerGeneration(numberOfGenerations);
+			StartCoroutine(GetNextLevelOfAncestryForThisPersonIdDataBaseOnlyAsync(startingIdForTree, numberOfGenerations, xOffSet: 0.0f, xRange: 1.0f));
+
+			FixUpDatesBasedOffMarriageDates();
+
+			CreatePersonGameObjectForMyTribeOfPeople(startingIdForTree, globalSpringType);
+
+			HookUpTheMarriages();
+
+			NowAddChildrenAssignments(tribeType);
+
+			PositionTimeBarrier();
+
+			dataLoadComplete = true;
+		}
+		else if (tribeType == TribeType.Descendancy)
+		{
+			NewUpEnoughListOfPersonsPerGeneration(numberOfGenerations);
+			StartCoroutine(GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(startingIdForTree, numberOfGenerations, xOffSet: 0.0f, xRange: 1.0f));
+
+			FixUpDatesBasedOffMarriageDates();
+
+			CreatePersonGameObjectForMyTribeOfPeople(startingIdForTree, globalSpringType);
+
+			HookUpTheMarriages();
+
+			NowAddChildrenAssignments(tribeType);
+
+			PositionTimeBarrier();
+
+			dataLoadComplete = true;
+		}
+	}
 }

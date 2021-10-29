@@ -67,12 +67,13 @@ public class NamePickerHandler : MonoBehaviour
         Assets.Scripts.CrossSceneInformation.startingDataBaseId = selectedPerson.dataBaseOwnerId;
         Assets.Scripts.CrossSceneInformation.numberOfGenerations = Int32.Parse(generationsDropdown.options[generationsDropdown.value].text);
         Assets.Scripts.CrossSceneInformation.myTribeType = ancestryToggle.isOn ? TribeType.Ancestry : TribeType.Descendancy;
-        SceneManager.LoadScene("MyTribeScene"); //StartCoroutine(LoadSceneAsync());
+        //SceneManager.LoadScene("MyTribeScene"); 
+        StartCoroutine(LoadSceneAsync());
     }
 
     private IEnumerator LoadSceneAsync()
     {
-        var progress = SceneManager.LoadSceneAsync("MyTribeScene", LoadSceneMode.Additive);
+        var progress = SceneManager.LoadSceneAsync("MyTribeScene", LoadSceneMode.Single);
         while (!progress.isDone)
             yield return null;
     }
