@@ -13,9 +13,13 @@ namespace Assets.Scripts.DataObjects
         public string givenName;
         public PersonGenderType gender;
         public int birthEventDate;   //TODO upgrade to EventDate in the future
-		public int originalBirthEventDate;
+		public int originalBirthEventDateMonth;
+		public int originalBirthEventDateDay;
+		public int originalBirthEventDateYear;
         public int deathEventDate;   //TODO upgrade to EventDate in the future
-		public int originalDeathEventDate;
+		public int originalDeathEventDateMonth;
+		public int originalDeathEventDateDay;
+		public int originalDeathEventDateYear;
 		public string dateQualityInformationString;
 		public bool isLiving;
 		private bool originalIsLiving;
@@ -27,18 +31,22 @@ namespace Assets.Scripts.DataObjects
         public GameObject personNodeGameObject;
         List<(PersonRelationshipType Relationship, Person RelatedPerson)> familyRelationships;
 
-        public Person(int arrayIndex, int ownerId, PersonGenderType gender, string given, string surname, 
-			int birthYear, bool isLiving, int deathYear, int generation, float xOffset, int spouseNumber)
+        public Person(int arrayIndex, int ownerId, PersonGenderType gender, string given, string surname,
+				bool isLiving, int birthYear, int deathYear, int generation, float xOffset, int spouseNumber, int birthMonth = 0, int birthDay = 0, int deathMonth = 0, int deathDay = 0)
         {
             this.tribeArrayIndex = arrayIndex;
             this.dataBaseOwnerId = ownerId;
             this.gender = gender;
             givenName = given;
             surName = surname;
-            originalBirthEventDate = birthEventDate = birthYear;
-            originalDeathEventDate = deathEventDate = deathYear;
+			originalBirthEventDateMonth = birthMonth;
+			originalBirthEventDateDay = birthDay;
+            originalBirthEventDateYear = birthEventDate = birthYear;
+			originalDeathEventDateMonth = deathMonth;
+			originalDeathEventDateDay = deathDay;
+            originalDeathEventDateYear = deathEventDate = deathYear;
             originalIsLiving = this.isLiving = isLiving;
-			dateQualityInformationString = $"For {givenName} {surName}. Original birthDate {originalBirthEventDate}, deathDate {originalDeathEventDate}. ";
+			dateQualityInformationString = $"For {givenName} {surName}. Original birthDate {originalBirthEventDateYear}, deathDate {originalDeathEventDateYear}. ";
 			this.generation = generation;
 			this.xOffset = xOffset;
 			this.spouseNumber = spouseNumber;
@@ -71,17 +79,17 @@ namespace Assets.Scripts.DataObjects
 			int fixedUpMarriageDate = FixUpAndReturnMarriageDate(marriageEventDate);
 
 			var deltaFromMarriageAtTwenty = fixedUpMarriageDate - birthEventDate - 20;
-			if (originalBirthEventDate == 0)
+			if (originalBirthEventDateYear == 0)
 			{
 				dateQualityInformationString += $"Fixing up birthDate using known marriageDate by adding {deltaFromMarriageAtTwenty}. ";
 				birthEventDate += deltaFromMarriageAtTwenty;
 			}
-			if (originalDeathEventDate == 0 && !isLiving)
+			if (originalDeathEventDateYear == 0 && !isLiving)
 			{
 				dateQualityInformationString += $"Fixing up deathDate using known marriageDate by adding {deltaFromMarriageAtTwenty}. ";
 				deathEventDate += deltaFromMarriageAtTwenty;
 			}
-			if (originalBirthEventDate != 0 && originalDeathEventDate == 0 && !isLiving && deathEventDate < fixedUpMarriageDate)
+			if (originalBirthEventDateYear != 0 && originalDeathEventDateYear == 0 && !isLiving && deathEventDate < fixedUpMarriageDate)
 			{
 				dateQualityInformationString += $"Fixing up deathDate because MarriageDate is after DeathDate.  New deathDate is {fixedUpMarriageDate + 5}. ";
 				deathEventDate = fixedUpMarriageDate + 5;

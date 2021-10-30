@@ -97,12 +97,16 @@ public class Tribe : MonoBehaviour
 			{
 				var newRange = xRange / parentCount;
 				var newOffset = xOffSet + parentIndex * newRange;
-				
+
+				//if (depth > 4)
+				//	yield return null; 
 				StartCoroutine(GetNextLevelOfAncestryForThisPersonIdDataBaseOnlyAsync(familyId, depth - 1, newOffset, newRange));
 				parentIndex++;				
-			}			
+			}
+
+			Debug.Log($"Depth {depth} complete with {parentCount} parents found for personId {personId}.");
 		}
-		yield return new WaitForSeconds(0.1f);
+		yield return null;
 	}
 
 	private IEnumerator GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(int personId, int depth, float xOffSet, float xRange)
@@ -124,12 +128,14 @@ public class Tribe : MonoBehaviour
 			{
 				var newRange = xRange / childCount;
 				var newOffset = xOffSet + childIndex * newRange;
-				
+				//if (depth > 4) 
+				//	yield return null; 
 				StartCoroutine(GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(child.childId, depth - 1, newOffset, newRange));
 				childIndex++;		
-			}			
+			}
+			Debug.Log($"Depth {depth} complete with {childCount} children found for personId {personId}.");
 		}
-		yield return new WaitForSeconds(0.1f);
+		yield return null;
 	}
 
 	List<int> AddParentsAndFixUpDates(Person forThisPerson)
@@ -140,9 +146,9 @@ public class Tribe : MonoBehaviour
 		myListOfParentages.GetListOfParentsFromDataBase(forThisPerson.dataBaseOwnerId);
         foreach (var parentage in myListOfParentages.parentList)
         {
-			if (parentage.fatherId != 0)
+			if (parentage.fatherId != 0 && !listOfPersonIdsToReturn.Contains(parentage.fatherId))
 				listOfPersonIdsToReturn.Add(parentage.fatherId);
-			if (parentage.motherId != 0)
+			if (parentage.motherId != 0 && !listOfPersonIdsToReturn.Contains(parentage.motherId))
 				listOfPersonIdsToReturn.Add(parentage.motherId);
 		}
 		return listOfPersonIdsToReturn;
@@ -382,7 +388,7 @@ GameObject CreatePersonGameObject(Person person, GlobalSpringType globalSpringTy
 		return CreatePersonGameObject($"{person.givenName} {person.surName}", person.gender, person.birthEventDate,
 			person.isLiving, person.deathEventDate, person.generation, person.numberOfPersonsInThisGeneration, person.indexIntoPersonsInThisGeneration,
 			person.xOffset, person.spouseNumber,
-			person.originalBirthEventDate, person.originalDeathEventDate,
+			person.originalBirthEventDateYear, person.originalDeathEventDateYear,
 			person.dateQualityInformationString,
 			person.dataBaseOwnerId, person.tribeArrayIndex, globalSpringType,
 			person);
@@ -456,15 +462,20 @@ GameObject CreatePersonGameObject(Person person, GlobalSpringType globalSpringTy
 		if (tribeType == TribeType.Ancestry)
 		{
 			NewUpEnoughListOfPersonsPerGeneration(numberOfGenerations);
-			StartCoroutine(GetNextLevelOfAncestryForThisPersonIdDataBaseOnlyAsync(startingIdForTree, numberOfGenerations, xOffSet: 0.0f, xRange: 1.0f));
-
+			StartCoroutine(GetNextLevelOfAncestryForThisPersonIdDataBaseOnlyAsync(startingIdForTree, numberOfGenerations, xOffSet: 0.0f, xRange: 1.0f));			
+			Debug.Log("We are done with Ancestry Recurrsion.");
+			
 			FixUpDatesBasedOffMarriageDates();
+			Debug.Log("We are done with Fix Up Dates Based off marriage.");
 
 			CreatePersonGameObjectForMyTribeOfPeople(startingIdForTree, globalSpringType);
+			Debug.Log("We are done with creating game objects.");
 
 			HookUpTheMarriages();
+			Debug.Log("We are done with hooking up marriages.");
 
 			NowAddChildrenAssignments(tribeType);
+			Debug.Log("We are done adding children assignments.");
 
 			PositionTimeBarrier();
 
@@ -474,14 +485,19 @@ GameObject CreatePersonGameObject(Person person, GlobalSpringType globalSpringTy
 		{
 			NewUpEnoughListOfPersonsPerGeneration(numberOfGenerations);
 			StartCoroutine(GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(startingIdForTree, numberOfGenerations, xOffSet: 0.0f, xRange: 1.0f));
+			Debug.Log("We are done with Descendacy Recurrsion.");
 
 			FixUpDatesBasedOffMarriageDates();
+			Debug.Log("We are done with Fix Up Dates Based off marriage.");
 
 			CreatePersonGameObjectForMyTribeOfPeople(startingIdForTree, globalSpringType);
+			Debug.Log("We are done with creating game objects.");
 
 			HookUpTheMarriages();
+			Debug.Log("We are done with hooking up marriages.");
 
 			NowAddChildrenAssignments(tribeType);
+			Debug.Log("We are done adding children assignments.");
 
 			PositionTimeBarrier();
 

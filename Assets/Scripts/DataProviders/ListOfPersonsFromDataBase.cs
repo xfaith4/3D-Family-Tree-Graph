@@ -53,8 +53,14 @@ namespace Assets.Scripts.DataProviders
                 "LEFT JOIN EventTable eventDeath \n" +
                 "    ON name.OwnerID = eventDeath.OwnerID AND eventDeath.EventType = 2 \n";
             if (JustThisOwnerId != null)
+            {
                 QUERYNAMES +=
                     $"WHERE name.OwnerID = \"{JustThisOwnerId}\" LIMIT 1;";
+                if (JustThisOwnerId == 1032)
+                {
+                    Debug.Log("WE made it to the break point");
+                }
+            }
 
             string sqlQuery = QUERYNAMES;
             dbcmd.CommandText = sqlQuery;
@@ -69,8 +75,12 @@ namespace Assets.Scripts.DataProviders
                     gender: charToPersonGenderType(reader.GetString(1)[0]),
                     given: reader.GetString(2),
                     surname: reader.GetString(3),
+                    birthMonth: StringToNumberProtected(reader.GetString(4), $"birthMonth as GetString(4) for OwnerId: {ownerId}."),
+                    birthDay: StringToNumberProtected(reader.GetString(5), $"birthDay as GetString(5) for OwnerId: {ownerId}."),
                     birthYear: StringToNumberProtected(reader.GetString(6), $"birthYear as GetString(6) for OwnerId: {ownerId}."),
                     isLiving: reader.GetBoolean(7),
+                    deathMonth: StringToNumberProtected(reader.GetString(8), $"deathMonth as GetString(8) for OwnerId: {ownerId}."),
+                    deathDay: StringToNumberProtected(reader.GetString(9), $"deathDay as GetString(9) for OwnerId: {ownerId}."),
                     deathYear: StringToNumberProtected(reader.GetString(10), $"deathYear as GetString(10) for OwnerId: {ownerId}."),
                     generation: generation,
                     xOffset: xOffset,

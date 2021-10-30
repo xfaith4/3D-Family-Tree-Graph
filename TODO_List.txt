@@ -43,12 +43,11 @@ X Add appropriate Male vs Female avatar photo to canvas info panel - right now i
 X Add Persons name to top of platform as well
 X Add Restart button back
 X beginnings of a spinner on start button
-
+X Put full dates into Detail Panel (Birth, Death) - also added data quality tesxt string
 --------------->
 > Still To Do ->
 --------------->
 
-Put full dates into Detail Panel (Birth, Death)
 Make a stand alone version That can run in windows, and be sharable.
 Add Spouse Ramp - or bubbles for transportertation between spouse platforms
 Need to get CoRoutines working.
