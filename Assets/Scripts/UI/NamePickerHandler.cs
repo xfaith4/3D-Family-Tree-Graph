@@ -16,6 +16,7 @@ public class NamePickerHandler : MonoBehaviour
     public Toggle ancestryToggle;
     public Toggle descendancyToggle;
     public Dropdown generationsDropdown;
+    public Button quitButton;
     public Button startButton;
     public int numberOfPeopleInTribe = 1000;
 
@@ -41,6 +42,8 @@ public class NamePickerHandler : MonoBehaviour
 
         generationsDropdown.value = 0;
 
+        quitButton.onClick.AddListener(delegate { quitClicked(); });
+
         startButton.onClick.AddListener(delegate { StartClicked(); });
 
         lastNameFilterField.onEndEdit.AddListener(delegate { LastNameFilterFieldEndEdit(lastNameFilterField); });
@@ -61,22 +64,27 @@ public class NamePickerHandler : MonoBehaviour
         transform.GetComponent<Dropdown>().interactable = enableFlag;
     }
 
+    void quitClicked()
+    {
+        Application.Quit();
+    }
+
     void StartClicked()
     {
         startButton.transform.Find("LoadingCircle").gameObject.SetActive(true);
         Assets.Scripts.CrossSceneInformation.startingDataBaseId = selectedPerson.dataBaseOwnerId;
         Assets.Scripts.CrossSceneInformation.numberOfGenerations = Int32.Parse(generationsDropdown.options[generationsDropdown.value].text);
         Assets.Scripts.CrossSceneInformation.myTribeType = ancestryToggle.isOn ? TribeType.Ancestry : TribeType.Descendancy;
-        //SceneManager.LoadScene("MyTribeScene"); 
-        StartCoroutine(LoadSceneAsync());
+        SceneManager.LoadScene("MyTribeScene"); 
+        //StartCoroutine(LoadSceneAsync());
     }
 
-    private IEnumerator LoadSceneAsync()
-    {
-        var progress = SceneManager.LoadSceneAsync("MyTribeScene", LoadSceneMode.Single);
-        while (!progress.isDone)
-            yield return null;
-    }
+    //private IEnumerator LoadSceneAsync()
+    //{
+    //    var progress = SceneManager.LoadSceneAsync("MyTribeScene", LoadSceneMode.Single);
+    //    while (!progress.isDone)
+    //        yield return null;
+    //}
 
     void ToggleControl(Toggle toggleThatToggled)
     {
@@ -101,7 +109,7 @@ public class NamePickerHandler : MonoBehaviour
         dropdown.options.Clear();
         dropdown.value = 0;
         dropdown.RefreshShownValue();
-        dropdown.options.Add(new Dropdown.OptionData() { text = $"Enter Last Name above, to populate this" });
+        dropdown.options.Add(new Dropdown.OptionData() { text = $"Enter Last Name Filter Text, to populate this" });
 
         searchStatusText.text = "";
 

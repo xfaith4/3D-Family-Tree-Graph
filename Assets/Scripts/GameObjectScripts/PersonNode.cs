@@ -21,7 +21,7 @@ public class PersonNode : MonoBehaviour
     public int arrayIndex;
     public (int original, int updated) birthDateQuality;
     public (int original, int updated) deathDateQuality;
-    public string dateQualityInformationString = "using original dates, all is good";
+    public string dateQualityInformationString = "";
 
     private bool debugAddMotion = false;
     private Rigidbody myRigidbody;
@@ -296,7 +296,7 @@ public class PersonNode : MonoBehaviour
         edge.GetComponent<Edge>().CreateEdge(parentBirthConnectionPoint, childBirthConnectionPoint);
         edge.GetComponent<Edge>().SetEdgeEventLength(marriageLength, marriageConnectionXScale);
         var material = edge.transform.GetChild(0).GetComponent<Renderer>().material;
-        material.SetColor("_Color", new Color(1.0f, 0.92f, 0.01f, 0.2f));
+        material.SetColor("_Color", new Color(1.0f, 0.92f, 0.01f, 0.6f));
         //material.SetOverrideTag("RenderMode", "Transparent");
 
         edge.transform.parent = myPositionThisPlatformTransform;

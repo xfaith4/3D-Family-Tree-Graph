@@ -46,7 +46,7 @@ namespace Assets.Scripts.DataObjects
 			originalDeathEventDateDay = deathDay;
             originalDeathEventDateYear = deathEventDate = deathYear;
             originalIsLiving = this.isLiving = isLiving;
-			dateQualityInformationString = $"For {givenName} {surName}. Original birthDate {originalBirthEventDateYear}, deathDate {originalDeathEventDateYear}. ";
+			dateQualityInformationString = "";
 			this.generation = generation;
 			this.xOffset = xOffset;
 			this.spouseNumber = spouseNumber;
@@ -56,30 +56,37 @@ namespace Assets.Scripts.DataObjects
         {
 			// zero or Bogus MarriageEventDate
 			int dateToReturn = marriageEventDate;
-			dateQualityInformationString += $"MarriageDate is {marriageEventDate}. ";
 			if (marriageEventDate == 0)
 			{
 				dateToReturn = birthEventDate + 20;
-				dateQualityInformationString += $"Was zero, so setting to {birthEventDate} + 20. ";
+				dateQualityInformationString += $"MarriageDate is {marriageEventDate}. Was zero, so setting to {birthEventDate} + 20. New MarriageDate {dateToReturn}.";
 			} else if (marriageEventDate < birthEventDate) {
 				dateToReturn = birthEventDate + 20;
-				dateQualityInformationString += $"Was less than birthdate {birthEventDate}. ";
+				dateQualityInformationString += $"MarriageDate is {marriageEventDate}. Was less than birthdate {birthEventDate}. New MarriageDate {dateToReturn}.";
 			}
-			dateQualityInformationString += $"New MarriageDate {dateToReturn}. ";
 			return dateToReturn;
 		}
 
-		public void FixUpDatesForViewingWithMarriageDate(int marriageEventDate)
+		public void FixUpDatesForViewingWithMarriageDate(int marriageEventDate, Person otherSpouseForSomeDateClues)
         {
 			//  OringinalBirthDate   OriginalDeathDate  IsLiving     Cleanup Action
 			//  0	birth += delta	 0  death += delta   1 or 0        delta = marriageEventDate - (birth + 20)
 			//  0   birth += delta   good
 			// good                  0                            if death < marraige, then death = marriage + 5
 
+			if (dataBaseOwnerId == 1189)
+				Debug.Log("we made it to Rebecca Washington");
+
+			if (marriageEventDate == 0 && originalBirthEventDateYear == 0 && originalDeathEventDateYear == 0 && otherSpouseForSomeDateClues != null && otherSpouseForSomeDateClues.birthEventDate != 0)
+            {
+				birthEventDate = otherSpouseForSomeDateClues.birthEventDate;
+				dateQualityInformationString = $"Fixing up birthDate and matching it to spouse date. ";
+			}
+
 			int fixedUpMarriageDate = FixUpAndReturnMarriageDate(marriageEventDate);
 
 			var deltaFromMarriageAtTwenty = fixedUpMarriageDate - birthEventDate - 20;
-			if (originalBirthEventDateYear == 0)
+			if (originalBirthEventDateYear == 0 && birthEventDate == 0)
 			{
 				dateQualityInformationString += $"Fixing up birthDate using known marriageDate by adding {deltaFromMarriageAtTwenty}. ";
 				birthEventDate += deltaFromMarriageAtTwenty;

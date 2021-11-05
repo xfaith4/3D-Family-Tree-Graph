@@ -86,9 +86,6 @@ namespace Assets.Scripts.DataProviders
                     xOffset: xOffset,
                     spouseNumber: spouseNumber);
 
-                if (nextName.dataBaseOwnerId == 218)
-                    Debug.Log($"We just read in OwnerId {nextName.dataBaseOwnerId}");
-
                 nextName.FixUpDatesForViewing();
 
                 personsList.Add(nextName);
@@ -145,9 +142,6 @@ namespace Assets.Scripts.DataProviders
                     generation: generation,
                     xOffset: xOffset,
                     spouseNumber: spouseNumber);
-
-                if (nextName.dataBaseOwnerId == 218)
-                    Debug.Log($"We just read in OwnerId {nextName.dataBaseOwnerId}");
 
                // nextName.FixUpDatesForViewing();
 

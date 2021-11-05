@@ -9,6 +9,7 @@ using Assets.Scripts.DataObjects;
 using Assets.Scripts.DataProviders;
 using Cinemachine;
 using StarterAssets;
+using UnityEngine.SceneManagement;
 
 public class Tribe : MonoBehaviour
 {
@@ -35,11 +36,12 @@ public class Tribe : MonoBehaviour
 
 	private int maximumNumberOfPeopleInAGeneration = 0;
 	
-	private List<PersonNode> gameObjectNodes = new List<PersonNode>();
 	private ListOfPersonsFromDataBase[] listOfPersonsPerGeneration = new ListOfPersonsFromDataBase[11];
-	//private ListOfPersonsFromDataBase myTribeOfPeople;
+	private int personOfInterestDepth = 0;
+	private int personOfInterestIndexInList = 0;
 
 	const int PlatformChildIndex = 0;
+	private ThirdPersonController thirdPersonContollerScript;
 
 	void Start()
 	{
@@ -104,7 +106,7 @@ public class Tribe : MonoBehaviour
 				parentIndex++;				
 			}
 
-			Debug.Log($"Depth {depth} complete with {parentCount} parents found for personId {personId}.");
+			//Debug.Log($"Depth {depth} complete with {parentCount} parents found for personId {personId}.");
 		}
 		yield return null;
 	}
@@ -133,7 +135,7 @@ public class Tribe : MonoBehaviour
 				StartCoroutine(GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(child.childId, depth - 1, newOffset, newRange));
 				childIndex++;		
 			}
-			Debug.Log($"Depth {depth} complete with {childCount} children found for personId {personId}.");
+			//Debug.Log($"Depth {depth} complete with {childCount} children found for personId {personId}.");
 		}
 		yield return null;
 	}
@@ -171,10 +173,10 @@ public class Tribe : MonoBehaviour
 			listOfPersonsPerGeneration[depth].GetSinglePersonFromDataBase(spouseIdWeAreAdding, generation: numberOfGenerations - depth, spouseXOffset, spouseNumber);
 			var spousePersonWeAreAdding = getPersonForDataBaseOwnerId(spouseIdWeAreAdding, depth);
 			
-			forThisPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
+			forThisPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear, spousePersonWeAreAdding);
 			if (spousePersonWeAreAdding != null)
 			{
-				spousePersonWeAreAdding.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
+				spousePersonWeAreAdding.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear, forThisPerson);
 			}
 			else
 			{
@@ -199,14 +201,14 @@ public class Tribe : MonoBehaviour
 					myListOfMarriages.marriageList.Clear();
 					myListOfMarriages.GetListOfMarriagesWithEventsForPersonFromDataBase(potentialMarriedPerson.dataBaseOwnerId, useHusbandQuery: true);
 					foreach (var marriage in myListOfMarriages.marriageList)
-						potentialMarriedPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
+						potentialMarriedPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear, getPersonForDataBaseOwnerId(marriage.wifeId, depth));
 				}
 				else
 				{
 					myListOfMarriages.marriageList.Clear();
 					myListOfMarriages.GetListOfMarriagesWithEventsForPersonFromDataBase(potentialMarriedPerson.dataBaseOwnerId, useHusbandQuery: false);
 					foreach (var marriage in myListOfMarriages.marriageList)
-						potentialMarriedPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear);
+						potentialMarriedPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear, getPersonForDataBaseOwnerId(marriage.husbandId, depth));
 				}
 			}
 		}
@@ -367,11 +369,35 @@ public class Tribe : MonoBehaviour
 		
 		CreatePlayerFollowCameraObject(target);
 
-		var thirdPersonContollerScript = playerGameObject.GetComponent<ThirdPersonController>();
+		thirdPersonContollerScript = playerGameObject.GetComponent<ThirdPersonController>();
 		thirdPersonContollerScript.TeleportTo(personGameObject.transform, new Vector3(0,0.5f,0), ticksToHoldHere: 100);
 
 		return playerGameObject;
     }
+
+	private void teleportToNextPersonOfInterest()
+	{
+		personOfInterestIndexInList++;
+		for (var depth = personOfInterestDepth; depth <= numberOfGenerations; depth++)
+		{
+			for (var index = personOfInterestIndexInList; index < listOfPersonsPerGeneration[depth]?.personsList.Count; index++)
+			{
+				if (listOfPersonsPerGeneration[depth].personsList[index].dateQualityInformationString != "")
+				{
+					personOfInterestDepth = depth;
+					personOfInterestIndexInList = index;
+					
+					thirdPersonContollerScript.TeleportTo(listOfPersonsPerGeneration[depth].personsList[index].personNodeGameObject.transform, new Vector3(0, 0.5f, 0), ticksToHoldHere: 100);
+					return;
+				}
+			}
+			personOfInterestIndexInList = 0;
+		}
+		personOfInterestDepth = 0;
+
+		if (listOfPersonsPerGeneration[personOfInterestDepth]?.personsList.Count > personOfInterestIndexInList)
+			thirdPersonContollerScript.TeleportTo(listOfPersonsPerGeneration[personOfInterestDepth].personsList[personOfInterestIndexInList].personNodeGameObject.transform, new Vector3(0, 0.5f, 0), ticksToHoldHere: 100);
+	}
 
 	private void CreatePlayerFollowCameraObject(GameObject target)
 	{
@@ -383,7 +409,7 @@ public class Tribe : MonoBehaviour
 	}
 		
 
-GameObject CreatePersonGameObject(Person person, GlobalSpringType globalSpringType = GlobalSpringType.Normal)
+	GameObject CreatePersonGameObject(Person person, GlobalSpringType globalSpringType = GlobalSpringType.Normal)
 	{
 		return CreatePersonGameObject($"{person.givenName} {person.surName}", person.gender, person.birthEventDate,
 			person.isLiving, person.deathEventDate, person.generation, person.numberOfPersonsInThisGeneration, person.indexIntoPersonsInThisGeneration,
@@ -453,6 +479,18 @@ GameObject CreatePersonGameObject(Person person, GlobalSpringType globalSpringTy
 
 	void Update() 
 	{
+
+		//Detect when the F arrow key is pressed down
+		if (Input.GetKeyDown(KeyCode.F))
+		{
+			Debug.Log("F key was pressed.");
+			teleportToNextPersonOfInterest();
+		}
+		if (Input.GetKeyDown(KeyCode.Escape))
+        {
+			SceneManager.LoadScene("NamePicker");
+		}
+
 		if (dataLoadComplete)
 			return;
 
@@ -463,19 +501,19 @@ GameObject CreatePersonGameObject(Person person, GlobalSpringType globalSpringTy
 		{
 			NewUpEnoughListOfPersonsPerGeneration(numberOfGenerations);
 			StartCoroutine(GetNextLevelOfAncestryForThisPersonIdDataBaseOnlyAsync(startingIdForTree, numberOfGenerations, xOffSet: 0.0f, xRange: 1.0f));			
-			Debug.Log("We are done with Ancestry Recurrsion.");
+			//Debug.Log("We are done with Ancestry Recurrsion.");
 			
 			FixUpDatesBasedOffMarriageDates();
-			Debug.Log("We are done with Fix Up Dates Based off marriage.");
+			//Debug.Log("We are done with Fix Up Dates Based off marriage.");
 
 			CreatePersonGameObjectForMyTribeOfPeople(startingIdForTree, globalSpringType);
-			Debug.Log("We are done with creating game objects.");
+			//Debug.Log("We are done with creating game objects.");
 
 			HookUpTheMarriages();
-			Debug.Log("We are done with hooking up marriages.");
+			//Debug.Log("We are done with hooking up marriages.");
 
 			NowAddChildrenAssignments(tribeType);
-			Debug.Log("We are done adding children assignments.");
+			//Debug.Log("We are done adding children assignments.");
 
 			PositionTimeBarrier();
 
@@ -485,19 +523,19 @@ GameObject CreatePersonGameObject(Person person, GlobalSpringType globalSpringTy
 		{
 			NewUpEnoughListOfPersonsPerGeneration(numberOfGenerations);
 			StartCoroutine(GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(startingIdForTree, numberOfGenerations, xOffSet: 0.0f, xRange: 1.0f));
-			Debug.Log("We are done with Descendacy Recurrsion.");
+			//Debug.Log("We are done with Descendacy Recurrsion.");
 
 			FixUpDatesBasedOffMarriageDates();
-			Debug.Log("We are done with Fix Up Dates Based off marriage.");
+			//Debug.Log("We are done with Fix Up Dates Based off marriage.");
 
 			CreatePersonGameObjectForMyTribeOfPeople(startingIdForTree, globalSpringType);
-			Debug.Log("We are done with creating game objects.");
+			//Debug.Log("We are done with creating game objects.");
 
 			HookUpTheMarriages();
-			Debug.Log("We are done with hooking up marriages.");
+			//Debug.Log("We are done with hooking up marriages.");
 
 			NowAddChildrenAssignments(tribeType);
-			Debug.Log("We are done adding children assignments.");
+			//Debug.Log("We are done adding children assignments.");
 
 			PositionTimeBarrier();
 

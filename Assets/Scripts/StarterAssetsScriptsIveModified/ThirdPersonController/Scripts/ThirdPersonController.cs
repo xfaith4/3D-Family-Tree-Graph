@@ -46,6 +46,8 @@ namespace StarterAssets
 		public float GroundedRadius = 0.28f;
 		[Tooltip("What layers the character uses as ground")]
 		public LayerMask GroundLayers;
+		[TooltipAttribute("How far down must I fall to die and regenerate")]
+		public float depthOfFallWhenIDie = -30.0f;
 
 		[Header("Cinemachine")]
 		[Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
@@ -95,6 +97,8 @@ namespace StarterAssets
 		private int tickCountWithNoMovement = 100;
 
 		private PersonDetailsHandler personDetailsHandlerScript;
+		private Transform lastTeleportTransform;
+		private Vector3 lastTeleportOffset;
 
 		private void Awake()
 		{
@@ -118,7 +122,8 @@ namespace StarterAssets
 			_fallTimeoutDelta = FallTimeout;
 
 			GameObject[] personDetailsPanel = GameObject.FindGameObjectsWithTag("PersonDetailsPanel");
-			personDetailsHandlerScript = personDetailsPanel[0].transform.GetComponent<PersonDetailsHandler>();
+			if (personDetailsPanel.Length != 0)
+				personDetailsHandlerScript = personDetailsPanel[0].transform.GetComponent<PersonDetailsHandler>();
 		}
 
 		private void Update()
@@ -131,7 +136,11 @@ namespace StarterAssets
 				GroundedCheck();
 				Move();
 
-				personDetailsHandlerScript.UpdateCurrentDate((int)gameObject.transform.position.z);
+				if (personDetailsHandlerScript != null)
+					personDetailsHandlerScript.UpdateCurrentDate((int)gameObject.transform.position.z);
+
+				if (gameObject.transform.position.y < depthOfFallWhenIDie)
+					RegenAtLastTeleportLocation(10);
 			}
 			else
 			{
@@ -147,8 +156,15 @@ namespace StarterAssets
 
 		public void TeleportTo(Transform teleportTarget, Vector3 teleportOffset, int ticksToHoldHere)
 		{
-			transform.SetParent(teleportTarget.transform, false);
-			transform.localPosition = teleportOffset;
+			lastTeleportTransform = teleportTarget.transform;
+			lastTeleportOffset = teleportOffset;
+			RegenAtLastTeleportLocation(ticksToHoldHere);
+		}
+
+		public void RegenAtLastTeleportLocation(int ticksToHoldHere)
+		{ 
+			transform.SetParent(lastTeleportTransform, false);
+			transform.localPosition = lastTeleportOffset;
 
 			_noMovementThisTick = true;
 			tickCountWithNoMovement = ticksToHoldHere;
