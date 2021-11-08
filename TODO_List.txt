@@ -10,7 +10,7 @@ X Put full dates into Detail Panel (Birth, Death) - also added data quality tesx
 X Make a stand alone version That can run in windows, and be sharable.  Include a Quit Button
 X Add Spouse Ramp - or bubbles for transportertation between spouse platforms
 X make a fall regen point - If you fall off the platform you return to the start point
-X Press F to teleport to next person with 'manufactured dates' - used for debugging
+X Press F (Fly) to teleport to next person with 'manufactured dates' - used for debugging
 X Used Additional Marriage information to fix up spouses with bogus dates
 
 --------------->
@@ -20,16 +20,19 @@ X Used Additional Marriage information to fix up spouses with bogus dates
 Add Child first names to parent platform as well
 Add Spouse name to other spouses platform near the connecting bridge
 Show relationship between "seed person" and current visited platform.
+Have platform colors/material be different for the living and the dead
 
 > Later
 Fix up bogus (or zero) birthdate base on parents birth
 Add female player, Pearl, from Mixamo
+(Spike) Try a WebGL version to see how reading the database from AWS (Dynamo or mysql in S3) might works
 Need to get CoRoutines working so that Loading Spinner will work.
    Make DBLoad Person List / MyTribe Data read be yeildable so that something like a spinner or other animation can play while it loads.
    Spinner on Start button to help give the user an idea that a long process is happily churning away.
-Add Sound effects
+Add cool Sound effects
 Get photo's added
-Add a button or something that let me go get more family information - like got get me Alex's parents
+Particle effects at teleporters
+Add a button or something that lets me go get more family information while standing on a paltform - like go get me Alex's parents
 Better/smoother 'camera control' / 'camera follow' - Perhaps mock the Zelda Breath of the Wild camera movement
 	
 **********************
@@ -38,24 +41,9 @@ Better/smoother 'camera control' / 'camera follow' - Perhaps mock the Zelda Brea
 
 Random Ideas:
 Could we do a virtual terminal into a RootsMagic session from the game??
+This would allow data updates, fixes, or addtions to occur while just taking a 'pause' from the play action.
 
-*** Future Story ----- Date Range
-Another type of date, is a date range, this would include two EventDates as defined above: (Start, End) examples
-(Unknown, specific Date) "before"
-(specific Date, unknown) "after"
-(Rough Date, Rough Date) "Range"
-(Specific, Specific) "range" or an "OR"
 
-*** Future Story ------ Inferred Dates ----
-The caluculated date, or date range can be used when a specific date is unknown,
-or can be used as a validation of a specific date that is also given
-Calculated Date from Age in Records list (when a date is unkown)
-	Age Years
-	Age Month (nullable)
-	Age Days (nullable)
-	Date of record (specific date)
-	Name of Record
-			
 *** Future Story ------ Inferred Dates Range ----			
 Ask person object for Inferred Birthdate range		(Future Story)
 	an Inferred date range (evidences from family connections)
