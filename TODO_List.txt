@@ -17,6 +17,7 @@ X Used Additional Marriage information to fix up spouses with bogus dates
 > Still To Do ->
 --------------->
 >Sooner
+Fix 'Escape' keypress creates a non-responsive Name-Picker dialog box
 Add Child first names to parent platform as well
 Add Spouse name to other spouses platform near the connecting bridge
 Show relationship between "seed person" and current visited platform.

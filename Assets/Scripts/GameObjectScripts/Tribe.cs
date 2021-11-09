@@ -486,10 +486,10 @@ public class Tribe : MonoBehaviour
 			Debug.Log("F key was pressed.");
 			teleportToNextPersonOfInterest();
 		}
-		if (Input.GetKeyDown(KeyCode.Escape))
-        {
-			SceneManager.LoadScene("NamePicker");
-		}
+		//if (Input.GetKeyDown(KeyCode.Escape))
+  //      {
+		//	SceneManager.LoadScene("NamePicker");
+		//}
 
 		if (dataLoadComplete)
 			return;
