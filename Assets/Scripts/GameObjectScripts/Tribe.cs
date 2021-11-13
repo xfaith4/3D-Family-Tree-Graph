@@ -80,11 +80,14 @@ public class Tribe : MonoBehaviour
     {
 		var timeBarrierObject = GameObject.FindGameObjectsWithTag("TimeBarrier")[0];
 		timeBarrierObject.transform.position = new Vector3(0f, 0f, DateTime.Now.Year + 0.5f);
-		timeBarrierObject.transform.localScale = new Vector3((maximumNumberOfPeopleInAGeneration * personSpacing), 0.1f, (maximumNumberOfPeopleInAGeneration * personSpacing));
+		timeBarrierObject.transform.localScale = new Vector3((maximumNumberOfPeopleInAGeneration * personSpacing * 10f), 0.1f, (maximumNumberOfPeopleInAGeneration * personSpacing * 10f));
 	}
 
 	private IEnumerator GetNextLevelOfAncestryForThisPersonIdDataBaseOnlyAsync(int personId, int depth, float xOffSet, float xRange)
-	{		
+	{
+		if (personId == 26)
+			Debug.Log("We made it to 26");
+
 		listOfPersonsPerGeneration[depth].GetSinglePersonFromDataBase(personId, generation: depth, xOffSet + xRange / 2, spouseNumber: 0);
 		var personWeAreAdding = getPersonForDataBaseOwnerId(personId, depth);
 
@@ -112,7 +115,10 @@ public class Tribe : MonoBehaviour
 	}
 
 	private IEnumerator GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(int personId, int depth, float xOffSet, float xRange)
-	{		
+	{
+		if (personId == 26)
+			Debug.Log("We made it to 26");
+
 		listOfPersonsPerGeneration[depth].GetSinglePersonFromDataBase(personId, generation: numberOfGenerations - depth, xOffSet + xRange / 2, spouseNumber: 0);
 		var personWeAreAdding = getPersonForDataBaseOwnerId(personId, depth);
 		var listOfFamilyIds = AddSpousesAndFixUpDates(personWeAreAdding, depth, xOffSet, xRange);
@@ -341,6 +347,7 @@ public class Tribe : MonoBehaviour
 		personObjectScript.SetEdgePrefab(birthConnectionPrefab, marriageConnectionPrefab, bubblepf, parentPlatformBirthBubble, childPlatformReturnToParent, marriageEdgepfXScale);
 		personObjectScript.addMyBirthQualityBubble();
 		personObjectScript.SetGlobalSpringType(globalSpringType);
+		personObjectScript.SetRootsMagicFileName(rootsMagicFileName);
 
 		//TODO use gender to set the color of the platform	
 		//
@@ -486,10 +493,6 @@ public class Tribe : MonoBehaviour
 			Debug.Log("F key was pressed.");
 			teleportToNextPersonOfInterest();
 		}
-		//if (Input.GetKeyDown(KeyCode.Escape))
-  //      {
-		//	SceneManager.LoadScene("NamePicker");
-		//}
 
 		if (dataLoadComplete)
 			return;

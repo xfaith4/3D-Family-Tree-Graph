@@ -12,18 +12,24 @@ X Add Spouse Ramp - or bubbles for transportertation between spouse platforms
 X make a fall regen point - If you fall off the platform you return to the start point
 X Press F (Fly) to teleport to next person with 'manufactured dates' - used for debugging
 X Used Additional Marriage information to fix up spouses with bogus dates
+X Fix 'Escape' keypress creates a non-responsive Name-Picker dialog box
+X Living/not platform differences
+X Add Child first names to parent platform as well
+X Get photo's added (primary portrait thumbnails)
 
 --------------->
 > Still To Do ->
 --------------->
 >Sooner
-Fix 'Escape' keypress creates a non-responsive Name-Picker dialog box
-Add Child first names to parent platform as well
+Better/smoother 'camera control' / 'camera follow' - Perhaps mock the Zelda Breath of the Wild camera movement
 Add Spouse name to other spouses platform near the connecting bridge
 Show relationship between "seed person" and current visited platform.
-Have platform colors/material be different for the living and the dead
+Allow name picker filter text to have the pattern "last, first"  so the filtering extends into the first name, example "Kennedy, J"
 
 > Later
+More Photos
+Overlay a world/region timeline with major world/region events - perhaps the ability to select which categories to include, perhaps categories are
+    Major Wars, USA events, European events, Religious events, political, economic etc
 Fix up bogus (or zero) birthdate base on parents birth
 Add female player, Pearl, from Mixamo
 (Spike) Try a WebGL version to see how reading the database from AWS (Dynamo or mysql in S3) might works
@@ -31,10 +37,9 @@ Need to get CoRoutines working so that Loading Spinner will work.
    Make DBLoad Person List / MyTribe Data read be yeildable so that something like a spinner or other animation can play while it loads.
    Spinner on Start button to help give the user an idea that a long process is happily churning away.
 Add cool Sound effects
-Get photo's added
 Particle effects at teleporters
 Add a button or something that lets me go get more family information while standing on a paltform - like go get me Alex's parents
-Better/smoother 'camera control' / 'camera follow' - Perhaps mock the Zelda Breath of the Wild camera movement
+
 	
 **********************
 *** Future Stories ***

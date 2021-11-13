@@ -1,4 +1,5 @@
 using Assets.Scripts.DataObjects;
+using Assets.Scripts.DataProviders;
 using Assets.Scripts.Enums;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,6 +12,9 @@ public class PersonNode : MonoBehaviour
     private Person person;
     private PersonDetailsHandler personDetailsHandlerScript;
     private GlobalSpringType globalSpringType;
+    private string rootsMagicFileName;
+    private PrimaryPhotoForPerson primaryPhotoForPerson;
+
     
     public float lifeSpan;
     public int birthDate;
@@ -44,23 +48,28 @@ public class PersonNode : MonoBehaviour
     static Color blue = new Color(0.4f, 0.7f, 0.9f, 0.7f);
 
     private Color[] personGenderCapsuleBubbleColors = {
-            clearWhite,   // notset
-            blue,   // male
-            pink    // female
+        clearWhite,   // notset
+        blue,   // male
+        pink    // female
         };
     private Color[] personDateQualityColors = {
-            new Color(0.4f, 0.4f, 0.4f, 0.5f),   // date = orig
-            new Color(0.9f, 0.1f, 0.1f, 0.5f)    // date != orig
+        new Color(0.4f, 0.4f, 0.4f, 0.5f),   // date = orig
+        new Color(0.9f, 0.1f, 0.1f, 0.5f)    // date != orig
         };
 
     private Color[] personGenderPlatformColors = {
-            new Color(0.2f, 0.2f, 0.2f),   // notset
-            new Color(0.3f, 0.6f, 0.9f),   // male
-            new Color(0.7f, 0.4f, 0.9f)    // female
+        new Color(0.2f, 0.2f, 0.2f),   // notset
+        new Color(0.3f, 0.6f, 0.9f),   // male
+        new Color(0.7f, 0.4f, 0.9f)    // female
         };
+    private Color[] livingOrNotPlatformColors = {
+         new Color(0.7903f, 0.8018f, 0.7829f),   // not living
+         new Color(0.6877f, 0.9056f, 0.8028f)   // living
+           
+    };
     private Color[] childRelationshipColors = {
-            new Color(0.9f, 0.9f, 0.9f, 0.9f),   // biological
-            new Color(0.0f, 0.0f, 0.0f, 0.9f)    // adopted
+        new Color(0.9f, 0.9f, 0.9f, 0.3f),   // biological
+        new Color(0.0f, 0.0f, 0.0f, 0.3f)    // adopted
         };
 
     void Start()
@@ -68,9 +77,11 @@ public class PersonNode : MonoBehaviour
         var bothTextMeshProItems = transform.GetComponentsInChildren<TextMeshPro>();
         foreach (var textMeshProItem in bothTextMeshProItems)
         {
-            textMeshProItem.text = name;
+            if (textMeshProItem.tag.Contains("PersonName"))
+                textMeshProItem.text = name;
         }
         GameObject[] personDetailsPanel = GameObject.FindGameObjectsWithTag("PersonDetailsPanel");
+     
         personDetailsHandlerScript = personDetailsPanel[0].transform.GetComponent<PersonDetailsHandler>();
     }
 
@@ -102,6 +113,17 @@ public class PersonNode : MonoBehaviour
         this.bubblePrefabObject = bubble;
         this.parentPlatformBirthBubble = parentPlatformBirthBubble;
         this.childPlatformReturnToParent = childPlatformReturnToParent;
+    }
+
+    public void SetRootsMagicFileName(string rootsMagicFileName)
+    {
+        this.rootsMagicFileName = rootsMagicFileName;
+        primaryPhotoForPerson = new PrimaryPhotoForPerson(rootsMagicFileName);
+    }
+
+    public byte[] GetPrimaryPhoto()
+    {
+        return primaryPhotoForPerson.GetPrimaryPhotoForPersonFromDataBase(this.dataBaseOwnerID);
     }
 
     public void SetGlobalSpringType(GlobalSpringType globalSpringType)
@@ -143,6 +165,14 @@ public class PersonNode : MonoBehaviour
         this.birthDate = birthDate;
         this.endOfPlatformDate = birthDate + (int)age;
         this.isLiving = isLiving;
+
+        var rendererParent = gameObject.GetComponentInChildren<Renderer>();
+        var platforms = rendererParent.GetComponentsInChildren<Renderer>();
+        foreach (var renderer in platforms)
+        {
+            renderer.material.SetColor("_Color", livingOrNotPlatformColors[isLiving ? 1 : 0]);
+        }
+        
     }
 
     public void AddDateQualityInformation((int updated, int original) birthDateQuality, (int updated, int original) deathDateQuality, string dateQualityInformationString)
@@ -205,6 +235,12 @@ public class PersonNode : MonoBehaviour
         //leftConnection.transform.localScale = Vector3.one * 2f;
         parentBirthConnectionPoint.transform.parent = parentPlatformTransform.GetChild(0);  // Point to the ScaleThis Section
         parentBirthConnectionPoint.transform.localPosition = new Vector3(0, 0.5f, myAgeConnectionPointPercent);  // 0.5 top of platform
+
+        var textMeshProItem = parentBirthConnectionPoint.transform.GetComponentsInChildren<TextMeshPro>().First();
+        
+        if (textMeshProItem.tag.Contains("ChildName"))
+            textMeshProItem.text = childPersonNode.person.givenName.Split(' ')[0];
+        
 
         var triggerTeleportToChildScript = parentBirthConnectionPoint.transform.GetChild(0).GetComponent<TriggerTeleportToChild>();
         triggerTeleportToChildScript.teleportTargetChild = childPlatformTransform;

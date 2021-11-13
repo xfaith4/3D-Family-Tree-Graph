@@ -9,6 +9,8 @@ TagManager:
   - PersonDetailsPanel
   - TimeBarrier
   - Spinner
+  - PersonName
+  - ChildName
   layers:
   - Default
   - TransparentFX

@@ -249,7 +249,7 @@ GameObject:
   - component: {fileID: 1669550011552488012}
   m_Layer: 5
   m_Name: Front Text
-  m_TagString: Untagged
+  m_TagString: PersonName
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -575,7 +575,7 @@ GameObject:
   - component: {fileID: 8986931289957503094}
   m_Layer: 5
   m_Name: Top Text
-  m_TagString: Untagged
+  m_TagString: PersonName
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
