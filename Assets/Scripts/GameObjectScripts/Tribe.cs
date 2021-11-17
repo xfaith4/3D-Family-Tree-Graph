@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 using Assets.Scripts.DataObjects;
 using Assets.Scripts.DataProviders;
 using Cinemachine;
+using Cinemachine.Examples;
 using StarterAssets;
 using UnityEngine.SceneManagement;
 
@@ -412,7 +413,9 @@ public class Tribe : MonoBehaviour
 
 		var vCam = playerFollowCameraGameObject.GetComponent<CinemachineVirtualCamera>();
 		vCam.Follow = target.transform;
-		
+
+		var vDistanceModifier = playerFollowCameraGameObject.GetComponent<ThirdPersonFollowDistanceModifier>();
+		vDistanceModifier.SetFollow();
 	}
 		
 
