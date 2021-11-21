@@ -413,6 +413,7 @@ public class Tribe : MonoBehaviour
 
 		var vCam = playerFollowCameraGameObject.GetComponent<CinemachineVirtualCamera>();
 		vCam.Follow = target.transform;
+		vCam.LookAt = target.transform;
 
 		var vDistanceModifier = playerFollowCameraGameObject.GetComponent<ThirdPersonFollowDistanceModifier>();
 		vDistanceModifier.SetFollow();
