@@ -482,7 +482,7 @@ public class Tribe : MonoBehaviour
 	void Update() 
 	{
 
-		//Detect when the F arrow key is pressed down
+		//Detect when the F key is pressed down
 		if (Input.GetKeyDown(KeyCode.F))
 		{
 			Debug.Log("F key was pressed.");

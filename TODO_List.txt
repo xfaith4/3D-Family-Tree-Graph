@@ -23,12 +23,13 @@ X  5/5 display: Show combo of ancestry and descendency from root persons perspec
 X  Simplify Name Picker: 
 X     Get rid of ancestry/descendency radio buttons on name picker
 X	 Get rid of # of generations chooser
+X On any playform - restart with that person as 'root person' resetting to a 5/5 display.
 --------------->
 > Still To Do ->
 --------------->
 >Sooner
-On any playform - restart with that person as 'root person' resetting to a 5/5 display.
- 
+
+Come up with Gamecontroller buttons for menu -> restart & set new root person
 Add Spouse name to other spouses platform near the connecting bridge
 Add a Generic tombstone at the end of peoples platforms that have died - extra credit - figure out how to tag a photo in rootsmagic to be identified as the actual tombstone picture for your ancester.
 

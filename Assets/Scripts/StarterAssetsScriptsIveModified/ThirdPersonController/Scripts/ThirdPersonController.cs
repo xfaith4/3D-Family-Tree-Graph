@@ -147,6 +147,7 @@ namespace StarterAssets
 				if (tickCountWithNoMovement-- < 0)
 					_noMovementThisTick = false;
 			}
+			MenuAndHome();
 		}
 
 		private void LateUpdate()
@@ -270,6 +271,21 @@ namespace StarterAssets
 			}
 		}
 
+		private void MenuAndHome()
+        {
+			if (_input.menu)
+            {
+				Debug.Log("Menu Pressed");
+				_input.menu = false;
+            }
+
+			if (_input.home)
+			{
+				Debug.Log("Home Pressed");
+				_input.home = false;
+			}
+		}
+
 		private void JumpAndGravity()
 		{
 			if (Grounded)
@@ -293,6 +309,7 @@ namespace StarterAssets
 				// Jump
 				if (_input.jump && _jumpTimeoutDelta <= 0.0f)
 				{
+					Debug.Log("Jump Pressed");
 					// the square root of H * -2 * G = how much velocity needed to reach desired height
 					_verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
 

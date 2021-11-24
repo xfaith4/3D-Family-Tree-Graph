@@ -1,8 +1,10 @@
 using Assets.Scripts.DataObjects;
+using Assets.Scripts.Enums;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PersonDetailsHandler : MonoBehaviour
@@ -66,6 +68,17 @@ public class PersonDetailsHandler : MonoBehaviour
         }
     }
 
+    private void resetSceneToThisRootPerson()
+    {
+        if (personObject == null)
+            return;
+
+        recordIdGameObject.GetComponent<Text>().text = (personObject == null) ? "" : $"RootsMagic DB ID: {personObject.dataBaseOwnerId}";
+        Assets.Scripts.CrossSceneInformation.startingDataBaseId = personObject.dataBaseOwnerId;
+        Assets.Scripts.CrossSceneInformation.myTribeType = TribeType.Centered;
+        SceneManager.LoadScene("MyTribeScene");
+    }
+
     public void UpdateCurrentDate(int currentDate)
     {
         currentDateObject.GetComponent<Text>().text = (personObject == null) ? "" : $"Current Date: {currentDate}";
@@ -75,6 +88,12 @@ public class PersonDetailsHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //Detect when the R key is pressed down
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Debug.Log("R key was pressed.");
+            resetSceneToThisRootPerson();
+        }
+
     }
 }

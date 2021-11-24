@@ -11,6 +11,8 @@ namespace StarterAssets
 		public Vector2 move;
 		public Vector2 look;
 		public bool jump;
+		public bool menu;   // Will reset the current platform person to be the Root Person and restart the Scene
+		public bool home;   // Will restart the game to the NamePicker
 		public bool sprint;
 
 		[Header("Movement Settings")]
@@ -41,6 +43,16 @@ namespace StarterAssets
 			JumpInput(value.isPressed);
 		}
 
+		public void OnMenu(InputValue value)
+		{
+			MenuInput(value.isPressed);
+		}
+
+		public void OnHome(InputValue value)
+		{
+			HomeInput(value.isPressed);
+		}
+
 		public void OnSprint(InputValue value)
 		{
 			SprintInput(value.isPressed);
@@ -63,6 +75,16 @@ namespace StarterAssets
 		public void JumpInput(bool newJumpState)
 		{
 			jump = newJumpState;
+		}
+
+		public void MenuInput(bool newMenuState)
+		{
+			menu = newMenuState;
+		}
+
+		public void HomeInput(bool newHomeState)
+		{
+			home = newHomeState;
 		}
 
 		public void SprintInput(bool newSprintState)
