@@ -74,9 +74,6 @@ namespace Assets.Scripts.DataObjects
 			//  0   birth += delta   good
 			// good                  0                            if death < marraige, then death = marriage + 5
 
-			if (dataBaseOwnerId == 1189)
-				Debug.Log("we made it to Rebecca Washington");
-
 			if (marriageEventDate == 0 && originalBirthEventDateYear == 0 && originalDeathEventDateYear == 0 && otherSpouseForSomeDateClues != null && otherSpouseForSomeDateClues.birthEventDate != 0)
             {
 				birthEventDate = otherSpouseForSomeDateClues.birthEventDate;

@@ -18,18 +18,17 @@ X Add Child first names to parent platform as well
 X Get photo's added (primary portrait thumbnails)
 X Better/smoother 'camera control' / 'camera follow' - Perhaps mock the Zelda Breath of the Wild camera movement
 X Slow down camera rotate
-
+X Quick Start into the scene with the default 'root person'
+X  5/5 display: Show combo of ancestry and descendency from root persons perspective (could limit to 5 generations ancestry, 5 generations descendency)
+X  Simplify Name Picker: 
+X     Get rid of ancestry/descendency radio buttons on name picker
+X	 Get rid of # of generations chooser
 --------------->
 > Still To Do ->
 --------------->
 >Sooner
-Quick Start into the scene with the default 'root person'
-  5/5 display: Show combo of ancestry and descendency from root persons perspective (could limit to 5 generations ancestry, 5 generations descendency)
-  on any playform - restart with that person as 'root person' resetting to a 5/5 display.
-  Simplify Name Picker: 
-     Get rid of ancestry/descendency radio buttons on name picker
-	 Get rid of # of generations chooser
-  
+On any playform - restart with that person as 'root person' resetting to a 5/5 display.
+ 
 Add Spouse name to other spouses platform near the connecting bridge
 Add a Generic tombstone at the end of peoples platforms that have died - extra credit - figure out how to tag a photo in rootsmagic to be identified as the actual tombstone picture for your ancester.
 

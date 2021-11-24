@@ -5,6 +5,7 @@
         MadeUpData,
         AllPersons,
         Ancestry,
-        Descendancy
+        Descendancy,
+        Centered
     }
 }

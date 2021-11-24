@@ -37,7 +37,7 @@ public class Tribe : MonoBehaviour
 
 	private int maximumNumberOfPeopleInAGeneration = 0;
 	
-	private ListOfPersonsFromDataBase[] listOfPersonsPerGeneration = new ListOfPersonsFromDataBase[11];
+	private ListOfPersonsFromDataBase[] listOfPersonsPerGeneration = new ListOfPersonsFromDataBase[12];
 	private int personOfInterestDepth = 0;
 	private int personOfInterestIndexInList = 0;
 
@@ -86,9 +86,6 @@ public class Tribe : MonoBehaviour
 
 	private IEnumerator GetNextLevelOfAncestryForThisPersonIdDataBaseOnlyAsync(int personId, int depth, float xOffSet, float xRange)
 	{
-		if (personId == 26)
-			Debug.Log("We made it to 26");
-
 		listOfPersonsPerGeneration[depth].GetSinglePersonFromDataBase(personId, generation: depth, xOffSet + xRange / 2, spouseNumber: 0);
 		var personWeAreAdding = getPersonForDataBaseOwnerId(personId, depth);
 
@@ -115,14 +112,11 @@ public class Tribe : MonoBehaviour
 		yield return null;
 	}
 
-	private IEnumerator GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(int personId, int depth, float xOffSet, float xRange)
+	private IEnumerator GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(int personId, int depth, float xOffSet, float xRange, int centerByThisOffset = 0)
 	{
-		if (personId == 26)
-			Debug.Log("We made it to 26");
-
-		listOfPersonsPerGeneration[depth].GetSinglePersonFromDataBase(personId, generation: numberOfGenerations - depth, xOffSet + xRange / 2, spouseNumber: 0);
-		var personWeAreAdding = getPersonForDataBaseOwnerId(personId, depth);
-		var listOfFamilyIds = AddSpousesAndFixUpDates(personWeAreAdding, depth, xOffSet, xRange);
+		listOfPersonsPerGeneration[numberOfGenerations - depth - centerByThisOffset].GetSinglePersonFromDataBase(personId, generation: numberOfGenerations - depth - centerByThisOffset, xOffSet + xRange / 2, spouseNumber: 0);
+		var personWeAreAdding = getPersonForDataBaseOwnerId(personId, numberOfGenerations - depth - centerByThisOffset);
+		var listOfFamilyIds = AddSpousesAndFixUpDates(personWeAreAdding, numberOfGenerations - depth - centerByThisOffset, xOffSet, xRange);
 		//yield return new WaitForSeconds(0.1f);
 		if (depth > 0)
 		{
@@ -139,7 +133,7 @@ public class Tribe : MonoBehaviour
 				var newOffset = xOffSet + childIndex * newRange;
 				//if (depth > 4) 
 				//	yield return null; 
-				StartCoroutine(GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(child.childId, depth - 1, newOffset, newRange));
+				StartCoroutine(GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(child.childId, depth - 1, newOffset, newRange, centerByThisOffset));
 				childIndex++;		
 			}
 			//Debug.Log($"Depth {depth} complete with {childCount} children found for personId {personId}.");
@@ -177,7 +171,7 @@ public class Tribe : MonoBehaviour
 			var spouseIdWeAreAdding = thisIsAHusbandQuery ? marriage.wifeId : marriage.husbandId;
 
 			var spouseXOffset = xOffset + (xRange / (myListOfMarriages.marriageList.Count + 2)) * spouseNumber;
-			listOfPersonsPerGeneration[depth].GetSinglePersonFromDataBase(spouseIdWeAreAdding, generation: numberOfGenerations - depth, spouseXOffset, spouseNumber);
+			listOfPersonsPerGeneration[depth].GetSinglePersonFromDataBase(spouseIdWeAreAdding, generation: depth, spouseXOffset, spouseNumber);
 			var spousePersonWeAreAdding = getPersonForDataBaseOwnerId(spouseIdWeAreAdding, depth);
 			
 			forThisPerson.FixUpDatesForViewingWithMarriageDate(marriage.marriageYear, spousePersonWeAreAdding);
@@ -287,8 +281,8 @@ public class Tribe : MonoBehaviour
 	{
 		// first came love, then came marriage, then came a baby in a baby carriage
 		var myListOfParents = new ListOfParentsFromDataBase(rootsMagicFileName);
-		for (var depth = (tribeType == TribeType.Ancestry ? 1 : 0);
-			depth <= (tribeType == TribeType.Ancestry ? numberOfGenerations : numberOfGenerations - 1);
+		for (var depth =  1;
+			depth <= numberOfGenerations;
 			depth++)
 		{			
 			foreach (var child in listOfPersonsPerGeneration[depth].personsList)
@@ -299,12 +293,9 @@ public class Tribe : MonoBehaviour
 				foreach (var myParents in myListOfParents.parentList)
 				{
 					AssignParents(
-						getGameObjectForDataBaseOwnerId(child.dataBaseOwnerId, 
-							depth),
-						getGameObjectForDataBaseOwnerId(myParents.motherId,
-							tribeType == TribeType.Ancestry ? depth - 1 : depth + 1),
-						getGameObjectForDataBaseOwnerId(myParents.fatherId,
-							tribeType == TribeType.Ancestry ? depth - 1 : depth + 1),
+						getGameObjectForDataBaseOwnerId(child.dataBaseOwnerId, depth),
+						getGameObjectForDataBaseOwnerId(myParents.motherId, depth - 1),
+						getGameObjectForDataBaseOwnerId(myParents.fatherId, depth - 1),
 						myParents.relationToMother,
 						myParents.relationToFather);
 				}
@@ -378,7 +369,7 @@ public class Tribe : MonoBehaviour
 		CreatePlayerFollowCameraObject(target);
 
 		thirdPersonContollerScript = playerGameObject.GetComponent<ThirdPersonController>();
-		thirdPersonContollerScript.TeleportTo(personGameObject.transform, new Vector3(0,0.5f,0), ticksToHoldHere: 100);
+		thirdPersonContollerScript.TeleportTo(personGameObject.transform, new Vector3(0,0.5f,0), ticksToHoldHere: 25);
 
 		return playerGameObject;
     }
@@ -395,7 +386,7 @@ public class Tribe : MonoBehaviour
 					personOfInterestDepth = depth;
 					personOfInterestIndexInList = index;
 					
-					thirdPersonContollerScript.TeleportTo(listOfPersonsPerGeneration[depth].personsList[index].personNodeGameObject.transform, new Vector3(0, 0.5f, 0), ticksToHoldHere: 100);
+					thirdPersonContollerScript.TeleportTo(listOfPersonsPerGeneration[depth].personsList[index].personNodeGameObject.transform, new Vector3(0, 0.5f, 0), ticksToHoldHere: 25);
 					return;
 				}
 			}
@@ -404,7 +395,7 @@ public class Tribe : MonoBehaviour
 		personOfInterestDepth = 0;
 
 		if (listOfPersonsPerGeneration[personOfInterestDepth]?.personsList.Count > personOfInterestIndexInList)
-			thirdPersonContollerScript.TeleportTo(listOfPersonsPerGeneration[personOfInterestDepth].personsList[personOfInterestIndexInList].personNodeGameObject.transform, new Vector3(0, 0.5f, 0), ticksToHoldHere: 100);
+			thirdPersonContollerScript.TeleportTo(listOfPersonsPerGeneration[personOfInterestDepth].personsList[personOfInterestIndexInList].personNodeGameObject.transform, new Vector3(0, 0.5f, 0), ticksToHoldHere: 25);
 	}
 
 	private void CreatePlayerFollowCameraObject(GameObject target)
@@ -531,6 +522,32 @@ public class Tribe : MonoBehaviour
 			NewUpEnoughListOfPersonsPerGeneration(numberOfGenerations);
 			StartCoroutine(GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(startingIdForTree, numberOfGenerations, xOffSet: 0.0f, xRange: 1.0f));
 			//Debug.Log("We are done with Descendacy Recurrsion.");
+
+			FixUpDatesBasedOffMarriageDates();
+			//Debug.Log("We are done with Fix Up Dates Based off marriage.");
+
+			CreatePersonGameObjectForMyTribeOfPeople(startingIdForTree, globalSpringType);
+			//Debug.Log("We are done with creating game objects.");
+
+			HookUpTheMarriages();
+			//Debug.Log("We are done with hooking up marriages.");
+
+			NowAddChildrenAssignments(tribeType);
+			//Debug.Log("We are done adding children assignments.");
+
+			PositionTimeBarrier();
+
+			dataLoadComplete = true;
+		}
+		else if (tribeType == TribeType.Centered)
+        {
+			// Lets do a 5/5 split 5 generations of Ancsecters and 5 generations of Descendants
+			var generationsOnEachSide = 5;
+			numberOfGenerations = generationsOnEachSide + generationsOnEachSide + 1;
+			NewUpEnoughListOfPersonsPerGeneration(numberOfGenerations);
+			StartCoroutine(GetNextLevelOfAncestryForThisPersonIdDataBaseOnlyAsync(startingIdForTree, generationsOnEachSide, xOffSet: 0.0f, xRange: 1.0f));
+			StartCoroutine(GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(startingIdForTree, generationsOnEachSide, xOffSet: 0.0f, xRange: 1.0f, centerByThisOffset: 1));
+			//Debug.Log("We are done with Ancestry Recurrsion.");
 
 			FixUpDatesBasedOffMarriageDates();
 			//Debug.Log("We are done with Fix Up Dates Based off marriage.");

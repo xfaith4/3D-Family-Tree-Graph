@@ -159,7 +159,7 @@ public class PersonNode : MonoBehaviour
     public void SetLifeSpan(int birthDate, float age, bool isLiving)
     {
         var myScaleThisPlatformComponent = gameObject.transform.GetChild(ScaleThisChildIndex);
-        myScaleThisPlatformComponent.transform.localScale = new Vector3(1.0f, 1.0f, age);
+        myScaleThisPlatformComponent.transform.localScale = new Vector3(1.0f, 1.0f, Mathf.Max(0.01f, age));
         //myPlatformComponent.transform.localPosition = new Vector3(0, 0, age / 2f);
         lifeSpan = age;
         this.birthDate = birthDate;
@@ -244,7 +244,7 @@ public class PersonNode : MonoBehaviour
 
         var triggerTeleportToChildScript = parentBirthConnectionPoint.transform.GetChild(0).GetComponent<TriggerTeleportToChild>();
         triggerTeleportToChildScript.teleportTargetChild = childPlatformTransform;
-        triggerTeleportToChildScript.teleportOffset = new Vector3(0, 0.5f, 0);
+        triggerTeleportToChildScript.teleportOffset = new Vector3(0, 2.5f, 0);
 
         childBirthConnectionPoint = //GameObject.CreatePrimitive(PrimitiveType.Sphere);
             Instantiate(this.bubblePrefabObject, Vector3.zero, Quaternion.identity);
@@ -263,7 +263,7 @@ public class PersonNode : MonoBehaviour
             returnToFatherRenderer.material.SetColor("_Color", blue);
             var triggerTeleportToFatherScript = returnToFatherBirthConnectionPoint.transform.GetChild(0).GetComponent<TriggerTeleportToChild>();
             triggerTeleportToFatherScript.teleportTargetChild = parentPlatformTransform;
-            triggerTeleportToFatherScript.teleportOffset = new Vector3(-3f, .5f, myAgeConnectionPointPercent * this.lifeSpan);
+            triggerTeleportToFatherScript.teleportOffset = new Vector3(-3f, 2.5f, myAgeConnectionPointPercent * this.lifeSpan);
             //returnToFatherBirthConnectionPoint.transform.localScale = Vector3.one * 2f;
             returnToFatherBirthConnectionPoint.transform.parent = childPlatformTransform.GetChild(0); // Point to the ScaleThis Section
             returnToFatherBirthConnectionPoint.transform.localPosition = new Vector3(-3f, 0, 0);
@@ -276,7 +276,7 @@ public class PersonNode : MonoBehaviour
             returnToMotherRenderer.material.SetColor("_Color", pink);
             var triggerTeleportToMotherScript = returnToMotherBirthConnectionPoint.transform.GetChild(0).GetComponent<TriggerTeleportToChild>();
             triggerTeleportToMotherScript.teleportTargetChild = parentPlatformTransform;
-            triggerTeleportToMotherScript.teleportOffset = new Vector3(3f, .5f, myAgeConnectionPointPercent * this.lifeSpan);
+            triggerTeleportToMotherScript.teleportOffset = new Vector3(3f, 2.5f, myAgeConnectionPointPercent * this.lifeSpan);
 
             //returnToMotherBirthConnectionPoint.transform.localScale = Vector3.one * 2f;
             returnToMotherBirthConnectionPoint.transform.parent = childPlatformTransform.GetChild(0); // Point to the ScaleThis Section

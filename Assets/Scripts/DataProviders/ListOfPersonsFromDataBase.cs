@@ -56,10 +56,6 @@ namespace Assets.Scripts.DataProviders
             {
                 QUERYNAMES +=
                     $"WHERE name.OwnerID = \"{JustThisOwnerId}\" LIMIT 1;";
-                if (JustThisOwnerId == 1032)
-                {
-                    Debug.Log("WE made it to the break point");
-                }
             }
 
             string sqlQuery = QUERYNAMES;

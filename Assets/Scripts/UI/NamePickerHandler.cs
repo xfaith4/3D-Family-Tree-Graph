@@ -15,6 +15,7 @@ public class NamePickerHandler : MonoBehaviour
     public InputField lastNameFilterField;
     public Toggle ancestryToggle;
     public Toggle descendancyToggle;
+    public Toggle rootPersonToggle;
     public Dropdown generationsDropdown;
     public Button quitButton;
     public Button startButton;
@@ -53,6 +54,7 @@ public class NamePickerHandler : MonoBehaviour
 
         ancestryToggle.onValueChanged.AddListener(delegate { ToggleControl(ancestryToggle); });
         descendancyToggle.onValueChanged.AddListener(delegate { ToggleControl(descendancyToggle); });
+        rootPersonToggle.onValueChanged.AddListener(delegate { ToggleControl(rootPersonToggle); });
 
         transform.GetComponent<Dropdown>().onValueChanged.AddListener(delegate { DropDownItemSelected(transform.GetComponent<Dropdown>()); });
         ResetDropDown();
@@ -74,7 +76,9 @@ public class NamePickerHandler : MonoBehaviour
         startButton.transform.Find("LoadingCircle").gameObject.SetActive(true);
         Assets.Scripts.CrossSceneInformation.startingDataBaseId = selectedPerson.dataBaseOwnerId;
         Assets.Scripts.CrossSceneInformation.numberOfGenerations = Int32.Parse(generationsDropdown.options[generationsDropdown.value].text);
-        Assets.Scripts.CrossSceneInformation.myTribeType = ancestryToggle.isOn ? TribeType.Ancestry : TribeType.Descendancy;
+        Assets.Scripts.CrossSceneInformation.myTribeType = ancestryToggle.isOn ? TribeType.Ancestry 
+            : descendancyToggle.isOn ? TribeType.Descendancy 
+            : rootPersonToggle.isOn ? TribeType.Centered : TribeType.AllPersons; 
         SceneManager.LoadScene("MyTribeScene"); 
         //StartCoroutine(LoadSceneAsync());
     }
@@ -88,13 +92,23 @@ public class NamePickerHandler : MonoBehaviour
 
     void ToggleControl(Toggle toggleThatToggled)
     {
-        if (toggleThatToggled.name.StartsWith("A"))
+        if (toggleThatToggled.isOn)
         {
-            descendancyToggle.isOn = !ancestryToggle.isOn;
-        }
-        if (toggleThatToggled.name.StartsWith("D"))
-        {
-            ancestryToggle.isOn = !descendancyToggle.isOn;
+            if (toggleThatToggled.name.StartsWith("A"))
+            {
+                descendancyToggle.isOn = false;
+                rootPersonToggle.isOn = false;
+            }
+            if (toggleThatToggled.name.StartsWith("D"))
+            {
+                ancestryToggle.isOn = false;
+                rootPersonToggle.isOn = false;
+            }
+            if (toggleThatToggled.name.StartsWith("R"))
+            {
+                ancestryToggle.isOn = false;
+                descendancyToggle.isOn = false;
+            }
         }
     }
 
