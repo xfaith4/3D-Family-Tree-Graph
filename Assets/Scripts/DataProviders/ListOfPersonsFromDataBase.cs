@@ -18,6 +18,7 @@ namespace Assets.Scripts.DataProviders
             _dataBaseFileName = DataBaseFileName;
             personsList = new List<Person>();
         }
+
         public void GetSinglePersonFromDataBase(int ownerId, int generation, float xOffset, int spouseNumber)
         {
             // only if this person is not in the Tribe yet

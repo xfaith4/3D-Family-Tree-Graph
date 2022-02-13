@@ -30,32 +30,61 @@ X On any playform - restart with that person as 'root person' resetting to a 5/5
 >Sooner
 
 Come up with Gamecontroller buttons for menu -> restart & set new root person
+Improve the performance of this 'reset' root person operation
 Add Spouse name to other spouses platform near the connecting bridge
 Add a Generic tombstone at the end of peoples platforms that have died - extra credit - figure out how to tag a photo in rootsmagic to be identified as the actual tombstone picture for your ancester.
-
 Show relationship between "root person" and current visited platform.
-
-
 Allow name picker filter text to have the pattern "last, first"  so the filtering extends into the first name, example "Kennedy, J"
+
+>In Progress  "Hall of History"
+Overlay a world/region timeline with major world/region events - perhaps the ability to select which categories to include, perhaps categories are
+    Major Wars, USA events, European events, Religious events, political, economic etc
+Have options for displaying Fashion, Art Styles, Architecture, Science/Inventions, Sports, Famous people (intertainment/politics/culture/sports)
+Make each panel interactible, once the panel has 'focus' Left (previous event) Right (next event) Fire - jump to Wikipage
+
 
 > Later
 More Photos
-Overlay a world/region timeline with major world/region events - perhaps the ability to select which categories to include, perhaps categories are
-    Major Wars, USA events, European events, Religious events, political, economic etc
+Can photo's be synced from FamilySearch to RootsMagic?
+>>Photo Gaminization: Gamify Organization - Use local or cloud repository of photos and Resource Description Framework (RDF) concept to link photos to their correct context
+Premise: I have a lot of photos with just a little bit of built in context
+If I put my photo's into a Frozen Read only state, I can begin with some simple Semantic (RDF) links, including:
+  Branch of Family that the photo's are from
+  Date Range
+  File Names (or other tagged into in the file)
+  Perhaps location or rough location.
+Now imagine a Hall of History type of display along a persons timeline (perhaps left side), where photos that at least rougly match that person are displayed.
+One key: random distribution within the known context.
+ - Randomly distribute photos along the persons timeline. The more context that a photo has, the more restrictive its placement will be, for example:
+ A photo with no Context at all could randomly be place anywhere (any time slot) on any persons timeline.
+ A photo with some context will be restricted to that context, for example photos beloging to a family branch.  Or taken in a specific year. Or photos of that specific person.
+ The hope is that this will 'gamify' itself, as a user plays though their family history, they will see a picture that does not belong, and they will add more context to the picture.
+ - Perhaps each photo would need a context meter (green through red)  Green indicating that the photo has enough context to deserve to be placed on a specific persons timeline at that specific time.
+ and red meaning - this is a random photo placement
+ So the context(s) that the user might add are:
+ - this photo is too old/new for this placement (move it back or forward in time)
+ - this photo is not for this family branch - perhaps its a cousin's
+ - this photo does not contain this person or this person's family
+ - this is not a family history photo (random photo that does not belong)
+ - The user may recognize people in the photo, and go ahead and tag them.
+ - The user may recognize the date or location of the photo and go ahead and tag that.
+
+
+Optionally - Show LDS ordenances
 Fix up bogus (or zero) birthdate base on parents birth
 Add female player, Pearl, from Mixamo
 (Spike) Try a WebGL version to see how reading the database from AWS (Dynamo or mysql in S3) might works
+(Spike) Try a Mac version - need access to a Mac
 Need to get CoRoutines working so that Loading Spinner will work.
    Make DBLoad Person List / MyTribe Data read be yeildable so that something like a spinner or other animation can play while it loads.
    Spinner on Start button to help give the user an idea that a long process is happily churning away.
 Add cool Sound effects
 Particle effects at teleporters
-Add a button or something that lets me go get more family information while standing on a paltform - like go get me Alex's parents
 
-	
 **********************
 *** Future Stories ***
 **********************
+Add a button or something that lets me go get more family information while standing on a paltform - like go get me Alex's parents.  Note that the reset root person functionality kind or replaces the need for this.
 
 Random Ideas:
 Could we do a virtual terminal into a RootsMagic session from the game??

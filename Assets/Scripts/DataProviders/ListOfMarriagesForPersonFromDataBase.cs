@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Mono.Data.Sqlite;
 using System.Data;
+using System.Diagnostics;
 
 namespace Assets.Scripts.DataProviders
 {
@@ -58,6 +59,8 @@ namespace Assets.Scripts.DataProviders
 
                 marriageList.Add(MarriageName);                
             }
+            if (ownerId == 8)
+                Debug.WriteLine("Got here");
             reader.Close();
             reader = null;
             dbcmd.Dispose();

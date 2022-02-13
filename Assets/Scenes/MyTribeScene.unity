@@ -202,6 +202,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 25786825}
   m_CullTransparentMesh: 1
+--- !u!1 &53005343
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 53005345}
+  - component: {fileID: 53005344}
+  m_Layer: 0
+  m_Name: HallOfHistory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &53005344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53005343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3f93fe9fb86a79449f478b90dfdaaac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  focusPerson: {fileID: 0}
+  previousFocusPerson: {fileID: 0}
+  topEventHallPanelPrefab: {fileID: 8225834857136903422, guid: 4b18bf796c6f7ce49af75217102d7088, type: 3}
+--- !u!4 &53005345
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53005343}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &156349872
 GameObject:
   m_ObjectHideFlags: 0
@@ -461,10 +507,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   personPrefab: {fileID: 5941765939252972054, guid: 5e0a7b6b97087d64ba65ee58eb6dedaa, type: 3}
-  playerControllerPrefab: {fileID: 4416926081852918481, guid: 2c9188450b497ec448078d2fbb297f26, type: 3}
+  playerControllerPrefab: {fileID: 1436149188537377315, guid: d6c6db37bd8152b469b58389e1e93487, type: 3}
   playerFollowCameraPrefab: {fileID: 2070925441746177671, guid: a1a802ecaf6775746bb2a929fb554ad8, type: 3}
   birthConnectionPrefab: {fileID: 2006701754031461468, guid: 285eaa547166bce5bbdeb2d0d90b4b4c, type: 3}
   marriageConnectionPrefab: {fileID: 2006701754031461468, guid: eac9d8e935b98264ba7de1b6921f363b, type: 3}
+  hallOfHistoryGameObject: {fileID: 53005343}
   marriageEdgepfXScale: 0.4
   bubblepf: {fileID: 557405875712316749, guid: a27690feb6cc0e74c95759bc7baff389, type: 3}
   parentPlatformBirthBubble: {fileID: 557405875712316749, guid: 4cb9e513d2f90084c942a0eb65d8eaaf, type: 3}
@@ -1081,7 +1128,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -2002,17 +2049,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.2
-  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_PointAction: {fileID: 1054132383583890850, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_MoveAction: {fileID: 3710738434707379630, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_SubmitAction: {fileID: 2064916234097673511, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_CancelAction: {fileID: -1967631576421560919, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_LeftClickAction: {fileID: 8056856818456041789, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_MiddleClickAction: {fileID: 3279352641294131588, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_RightClickAction: {fileID: 3837173908680883260, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_ScrollWheelAction: {fileID: 4502412055082496612, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_TrackedDevicePositionAction: {fileID: 4754684134866288074, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_TrackedDeviceOrientationAction: {fileID: 1025543830046995696, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_ActionsAsset: {fileID: -944628639613478452, guid: 97210cd740af04df697b1fa71c9c9623, type: 3}
+  m_PointAction: {fileID: 0}
+  m_MoveAction: {fileID: -3191349354230456957, guid: 97210cd740af04df697b1fa71c9c9623, type: 3}
+  m_SubmitAction: {fileID: 0}
+  m_CancelAction: {fileID: 0}
+  m_LeftClickAction: {fileID: 0}
+  m_MiddleClickAction: {fileID: 0}
+  m_RightClickAction: {fileID: 0}
+  m_ScrollWheelAction: {fileID: 0}
+  m_TrackedDevicePositionAction: {fileID: 0}
+  m_TrackedDeviceOrientationAction: {fileID: 0}
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
 --- !u!114 &1960841147

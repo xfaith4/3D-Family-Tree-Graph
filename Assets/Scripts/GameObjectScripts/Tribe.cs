@@ -21,10 +21,13 @@ public class Tribe : MonoBehaviour
 	private int startingIdForTree;
 	private int numberOfGenerations = 5;
 	public GameObject personPrefab;
+	[SerializeField]
+	[Tooltip("PlayerJasper Prefab goes here")]
 	public GameObject playerControllerPrefab;
 	public GameObject playerFollowCameraPrefab;
 	public GameObject birthConnectionPrefab;
 	public GameObject marriageConnectionPrefab;
+	public GameObject hallOfHistoryGameObject;
 	public float marriageEdgepfXScale = 0.4f;
 	public GameObject bubblepf;
 	public GameObject parentPlatformBirthBubble;
@@ -37,12 +40,12 @@ public class Tribe : MonoBehaviour
 
 	private int maximumNumberOfPeopleInAGeneration = 0;
 	
-	private ListOfPersonsFromDataBase[] listOfPersonsPerGeneration = new ListOfPersonsFromDataBase[12];
+	private ListOfPersonsFromDataBase[] listOfPersonsPerGeneration = new ListOfPersonsFromDataBase[25];
 	private int personOfInterestDepth = 0;
 	private int personOfInterestIndexInList = 0;
 
 	const int PlatformChildIndex = 0;
-	private ThirdPersonController thirdPersonContollerScript;
+	private StarterAssets.ThirdPersonController thirdPersonContollerScript;
 
 	void Start()
 	{
@@ -55,15 +58,15 @@ public class Tribe : MonoBehaviour
 
 		if (tribeType == TribeType.MadeUpData || rootsMagicFileName == null)
 		{
-			var adam = CreatePersonGameObject("Adam", PersonGenderType.Male, 10, false,60, xOffset:10, generation: 0);
+			var adam = CreatePersonGameObject("Adam", PersonGenderType.Male, 1400, false,1500, xOffset:10, generation: 0);
 
 			//SetDemoMotionMode(adam);
 
 			CreatePlayerOnThisPersonObject(adam);
 
-			var eve = CreatePersonGameObject("Eve", PersonGenderType.Female, 10, false, 60, xOffset: 30, generation: 0);
+			var eve = CreatePersonGameObject("Eve", PersonGenderType.Female, 1410, false, 1520, xOffset: 30, generation: 0);
 
-            CreateMarriage(eve, adam, 30);
+            CreateMarriage(eve, adam, 1430);
 			dataLoadComplete = true;
       
         } 		
@@ -80,7 +83,7 @@ public class Tribe : MonoBehaviour
 	void PositionTimeBarrier()
     {
 		var timeBarrierObject = GameObject.FindGameObjectsWithTag("TimeBarrier")[0];
-		timeBarrierObject.transform.position = new Vector3(0f, 0f, DateTime.Now.Year + 0.5f);
+		timeBarrierObject.transform.position = new Vector3(0f, 0f, DateTime.Now.Year * 5 + 0.5f);
 		timeBarrierObject.transform.localScale = new Vector3((maximumNumberOfPeopleInAGeneration * personSpacing * 10f), 0.1f, (maximumNumberOfPeopleInAGeneration * personSpacing * 10f));
 	}
 
@@ -327,7 +330,7 @@ public class Tribe : MonoBehaviour
 		var x = indexIntoPersonsInThisGeneration * personSpacing - (numberOfPersonsInThisGeneration * personSpacing) / 2 + personSpacing / 2;
 		var y = generation * generationGap + spouseNumber * spouseGap;
 		
-		var newPersonGameObject = Instantiate(personPrefab, new Vector3(x, y, birthEventDate), Quaternion.identity);		
+		var newPersonGameObject = Instantiate(personPrefab, new Vector3(x, y, birthEventDate * 5), Quaternion.identity);		
 		newPersonGameObject.transform.parent = transform;
 		newPersonGameObject.name = name;
 		var personObjectScript = newPersonGameObject.GetComponent<PersonNode>();
@@ -340,6 +343,7 @@ public class Tribe : MonoBehaviour
 		personObjectScript.addMyBirthQualityBubble();
 		personObjectScript.SetGlobalSpringType(globalSpringType);
 		personObjectScript.SetRootsMagicFileName(rootsMagicFileName);
+		personObjectScript.SetHallOfHistoryGameObject(hallOfHistoryGameObject);
 
 		//TODO use gender to set the color of the platform	
 		//
@@ -353,7 +357,7 @@ public class Tribe : MonoBehaviour
 
 	GameObject CreatePlayerOnThisPersonObject(GameObject personGameObject)
     {
-		personGameObject.GetComponent<Rigidbody>().isKinematic = true;  // Lets make this on stay put
+		personGameObject.GetComponent<Rigidbody>().isKinematic = true;  // Lets make this one stay put
 
 		GameObject playerGameObject = Instantiate(playerControllerPrefab);
 
@@ -368,9 +372,13 @@ public class Tribe : MonoBehaviour
 		
 		CreatePlayerFollowCameraObject(target);
 
-		thirdPersonContollerScript = playerGameObject.GetComponent<ThirdPersonController>();
+		thirdPersonContollerScript = playerGameObject.GetComponent<StarterAssets.ThirdPersonController>();
 		thirdPersonContollerScript.TeleportTo(personGameObject.transform, new Vector3(0,0.5f,0), ticksToHoldHere: 25);
 
+		var personObjectScript = personGameObject.GetComponent<PersonNode>();
+
+		hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(personObjectScript);
+		
 		return playerGameObject;
     }
 
@@ -387,6 +395,9 @@ public class Tribe : MonoBehaviour
 					personOfInterestIndexInList = index;
 					
 					thirdPersonContollerScript.TeleportTo(listOfPersonsPerGeneration[depth].personsList[index].personNodeGameObject.transform, new Vector3(0, 0.5f, 0), ticksToHoldHere: 25);
+					var personObjectScript = listOfPersonsPerGeneration[depth].personsList[index].personNodeGameObject.GetComponent<PersonNode>();
+
+					hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(personObjectScript);
 					return;
 				}
 			}
@@ -395,7 +406,12 @@ public class Tribe : MonoBehaviour
 		personOfInterestDepth = 0;
 
 		if (listOfPersonsPerGeneration[personOfInterestDepth]?.personsList.Count > personOfInterestIndexInList)
+		{
 			thirdPersonContollerScript.TeleportTo(listOfPersonsPerGeneration[personOfInterestDepth].personsList[personOfInterestIndexInList].personNodeGameObject.transform, new Vector3(0, 0.5f, 0), ticksToHoldHere: 25);
+			var personObjectScript = listOfPersonsPerGeneration[personOfInterestDepth].personsList[personOfInterestIndexInList].personNodeGameObject.GetComponent<PersonNode>();
+
+			hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(personObjectScript);
+		}
 	}
 
 	private void CreatePlayerFollowCameraObject(GameObject target)
@@ -407,6 +423,8 @@ public class Tribe : MonoBehaviour
 		vCam.LookAt = target.transform;
 
 		var vDistanceModifier = playerFollowCameraGameObject.GetComponent<ThirdPersonFollowDistanceModifier>();
+		if (vDistanceModifier == null)
+			Debug.Log("The Player Follow Camera Prefab needs the Third Person Follow Distance Monifier script added.");
 		vDistanceModifier.SetFollow();
 	}
 		
@@ -542,11 +560,12 @@ public class Tribe : MonoBehaviour
 		else if (tribeType == TribeType.Centered)
         {
 			// Lets do a 5/5 split 5 generations of Ancsecters and 5 generations of Descendants
-			var generationsOnEachSide = 5;
+			var generationsOnEachSide = 10;
 			numberOfGenerations = generationsOnEachSide + generationsOnEachSide + 1;
 			NewUpEnoughListOfPersonsPerGeneration(numberOfGenerations);
-			StartCoroutine(GetNextLevelOfAncestryForThisPersonIdDataBaseOnlyAsync(startingIdForTree, generationsOnEachSide, xOffSet: 0.0f, xRange: 1.0f));
 			StartCoroutine(GetNextLevelOfDescendancyForThisPersonIdDataBaseOnlyAsync(startingIdForTree, generationsOnEachSide, xOffSet: 0.0f, xRange: 1.0f, centerByThisOffset: 1));
+			StartCoroutine(GetNextLevelOfAncestryForThisPersonIdDataBaseOnlyAsync(startingIdForTree, generationsOnEachSide, xOffSet: 0.0f, xRange: 1.0f));
+
 			//Debug.Log("We are done with Ancestry Recurrsion.");
 
 			FixUpDatesBasedOffMarriageDates();

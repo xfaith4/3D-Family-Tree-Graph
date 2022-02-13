@@ -9,6 +9,8 @@ public class Restart : MonoBehaviour
     private void Start()
     {
         transform.GetComponent<Button>().onClick.AddListener(delegate { RestartClicked(); });
+        transform.GetComponent<Button>().onClick.AddListener(delegate { RestartClicked(); });
+
 
     }
     void RestartClicked()

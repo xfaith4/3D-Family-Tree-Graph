@@ -81,6 +81,7 @@ public class PersonDetailsHandler : MonoBehaviour
 
     public void UpdateCurrentDate(int currentDate)
     {
+        currentDate = currentDate / 5;
         currentDateObject.GetComponent<Text>().text = (personObject == null) ? "" : $"Current Date: {currentDate}";
         currentAgeObject.GetComponent<Text>().text = (personObject == null) ? "" : $"Current Age: {Mathf.Max(0f, (currentDate - personObject.birthEventDate))}";
     }
