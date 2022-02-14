@@ -24,28 +24,43 @@ X  Simplify Name Picker:
 X     Get rid of ancestry/descendency radio buttons on name picker
 X	 Get rid of # of generations chooser
 X On any playform - restart with that person as 'root person' resetting to a 5/5 display.
+X Wikidata farmed Top Events shown on Person's Platform (Top History Panels)
+X Overlay a timeline with major world events
+X Why is 'Sprint' input doing the "Previous" actions?
+X Get sprint back to doing sprint
+
 --------------->
 > Still To Do ->
 --------------->
 >Sooner
+Improve performace of loading history panels, perhaps being able to re-use panels already loaded
+
+History Panel should get <<  >> markings to tell user that Previous and Next buttons will act on this object.
+History Panel: Make each panel interactible, once the panel has 'focus' Left (previous event) Right (next event) Fire - jump to Wikipage
 
 Come up with Gamecontroller buttons for menu -> restart & set new root person
+
 Improve the performance of this 'reset' root person operation
 Add Spouse name to other spouses platform near the connecting bridge
 Add a Generic tombstone at the end of peoples platforms that have died - extra credit - figure out how to tag a photo in rootsmagic to be identified as the actual tombstone picture for your ancester.
 Show relationship between "root person" and current visited platform.
 Allow name picker filter text to have the pattern "last, first"  so the filtering extends into the first name, example "Kennedy, J"
+Fix scrolling of the "Choose a person" scrolling drop down.
+> Brick Walls displayed at dead ends
 
 >In Progress  "Hall of History"
-Overlay a world/region timeline with major world/region events - perhaps the ability to select which categories to include, perhaps categories are
-    Major Wars, USA events, European events, Religious events, political, economic etc
+Perhaps get History Panels to be sensitive to region (location) with major region events focused on persons locations
+Perhaps the ability to select which categories to include, perhaps categories are
+    Major Wars (done), USA events, European events, Religious events, political, economic etc
+
+>> Future
 Have options for displaying Fashion, Art Styles, Architecture, Science/Inventions, Sports, Famous people (intertainment/politics/culture/sports)
-Make each panel interactible, once the panel has 'focus' Left (previous event) Right (next event) Fire - jump to Wikipage
 
 
 > Later
 More Photos
 Can photo's be synced from FamilySearch to RootsMagic?
+
 >>Photo Gaminization: Gamify Organization - Use local or cloud repository of photos and Resource Description Framework (RDF) concept to link photos to their correct context
 Premise: I have a lot of photos with just a little bit of built in context
 If I put my photo's into a Frozen Read only state, I can begin with some simple Semantic (RDF) links, including:
@@ -84,6 +99,7 @@ Particle effects at teleporters
 **********************
 *** Future Stories ***
 **********************
+RootsMagic Launch to Person Page - Is it possible?
 Add a button or something that lets me go get more family information while standing on a paltform - like go get me Alex's parents.  Note that the reset root person functionality kind or replaces the need for this.
 
 Random Ideas:

@@ -235,17 +235,6 @@
                 },
                 {
                     "name": "",
-                    "id": "ba28cd9e-cddb-44ab-8928-1f0c68668231",
-                    "path": "<Keyboard>/rightShift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "KeyboardMouse",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "dc65b89f-9bd3-43fb-92af-d0d87ba5faa4",
                     "path": "<Keyboard>/leftShift",
                     "interactions": "",

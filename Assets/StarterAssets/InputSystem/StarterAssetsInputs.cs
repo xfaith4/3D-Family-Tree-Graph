@@ -14,6 +14,9 @@ namespace StarterAssets
 		public bool sprint;
 		public bool previous;
 		public bool next;
+		public bool select;
+		public bool start;
+		public bool interact;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -25,12 +28,9 @@ namespace StarterAssets
 #endif
 
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
-		public void OnMove(InputValue value)
-		{
-			MoveInput(value.Get<Vector2>());
-		}
+        public void OnMove(InputValue value) => MoveInput(value.Get<Vector2>());
 
-		public void OnLook(InputValue value)
+        public void OnLook(InputValue value)
 		{
 			if(cursorInputForLook)
 			{
@@ -38,74 +38,49 @@ namespace StarterAssets
 			}
 		}
 
-		public void OnJump(InputValue value)
-		{
-			JumpInput(value.isPressed);
-		}
+        public void OnJump(InputValue value) => JumpInput(value.isPressed);
 
-		public void OnSprint(InputValue value)
-		{
-			SprintInput(value.isPressed);
-		}
+        public void OnSprint(InputValue value) => SprintInput(value.isPressed);
 
-		public void OnPrevious(InputValue value)
-		{
-			PreviousInput(value.isPressed);
-		}
+        public void OnPrevious(InputValue value) => PreviousInput(value.isPressed);
 
-		public void OnNext(InputValue value)
-		{
-			NextInput(value.isPressed);
-		}
+        public void OnNext(InputValue value) => NextInput(value.isPressed);
+
+        public void OnSelect(InputValue value) => SelectInput(value.isPressed);
+
+        public void OnStart(InputValue value) => StartInput(value.isPressed);
+
+        public void OnInteract(InputValue value) => InteractInput(value.isPressed);
 #else
 	// old input sys if we do decide to have it (most likely wont)...
 #endif
 
+        public void MoveInput(Vector2 newMoveDirection) => move = newMoveDirection;
 
-		public void MoveInput(Vector2 newMoveDirection)
-		{
-			move = newMoveDirection;
-		} 
+        public void LookInput(Vector2 newLookDirection) => look = newLookDirection;
 
-		public void LookInput(Vector2 newLookDirection)
-		{
-			look = newLookDirection;
-		}
+        public void JumpInput(bool newVal) => jump = newVal;
 
-		public void JumpInput(bool newVal)
-		{
-			jump = newVal;
-		}
+        public void SprintInput(bool newVal) => sprint = newVal;
 
-		public void SprintInput(bool newVal)
-		{
-			previous = newVal;
-		}
+        public void PreviousInput(bool newVal) => previous = newVal;
 
-		public void PreviousInput(bool newVal)
-		{
-			previous = newVal;
-		}
+        public void NextInput(bool newVal) => next = newVal;
 
-		public void NextInput(bool newVal)
-		{
-			next = newVal;
-		}
+		public void SelectInput(bool newVal) => select = newVal;
+
+		public void StartInput(bool newVal) => start = newVal;
+
+		public void InteractInput(bool newVal) => interact = newVal;
 
 #if !UNITY_IOS || !UNITY_ANDROID
 
-		private void OnApplicationFocus(bool hasFocus)
-		{
-			SetCursorState(cursorLocked);
-		}
+        private void OnApplicationFocus(bool hasFocus) => SetCursorState(cursorLocked);
 
-		private void SetCursorState(bool newState)
-		{
-			Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
-		}
+        private void SetCursorState(bool newState) => Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
 
 #endif
 
-	}
+    }
 	
 }
