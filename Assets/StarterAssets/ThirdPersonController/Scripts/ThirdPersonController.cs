@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -60,7 +61,6 @@ namespace StarterAssets
 		public float CameraAngleOverride = 0.0f;
 		[Tooltip("For locking the camera position on all axis")]
 		public bool LockCameraPosition = false;
-
 		// cinemachine
 		private float _cinemachineTargetYaw;
 		private float _cinemachineTargetPitch;
@@ -135,6 +135,7 @@ namespace StarterAssets
 				JumpAndGravity();
 				GroundedCheck();
 				Move();
+				MenuAndStart();
 
 				if (personDetailsHandlerScript != null)
 					personDetailsHandlerScript.UpdateCurrentDate((int)gameObject.transform.position.z);
@@ -147,7 +148,6 @@ namespace StarterAssets
 				if (tickCountWithNoMovement-- < 0)
 					_noMovementThisTick = false;
 			}
-			MenuAndHome();
 		}
 
 		private void LateUpdate()
@@ -198,8 +198,8 @@ namespace StarterAssets
 			// if there is an input and camera position is not fixed
 			if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
 			{
-				_cinemachineTargetYaw += _input.look.x * Time.deltaTime;
-				_cinemachineTargetPitch += _input.look.y * Time.deltaTime;
+				_cinemachineTargetYaw += _input.look.x * Time.deltaTime / 3f;
+				_cinemachineTargetPitch += _input.look.y * Time.deltaTime / 6f;
 			}
 
 			// clamp our rotations so our values are limited 360 degrees
@@ -270,22 +270,24 @@ namespace StarterAssets
 				_animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
 			}
 		}
+		
+		private void MenuAndStart()
+		{
+            if (_input.menu)
+            {
+                Debug.Log("Menu Pressed");
+				SceneManager.LoadScene("NamePicker");
+				_input.menu = false;
+            }
 
-		private void MenuAndHome()
-        {
-			//if (_input.menu)
-   //         {
-			//	Debug.Log("Menu Pressed");
-			//	_input.menu = false;
-   //         }
-
-			//if (_input.home)
-			//{
-			//	Debug.Log("Home Pressed");
-			//	_input.home = false;
-			//}
-		}
-
+            if (_input.start)
+            {
+                Debug.Log("Start Pressed");
+				if (personDetailsHandlerScript != null)
+					personDetailsHandlerScript.OnStartInputAction();
+				_input.start = false;
+            }
+        }
 		private void JumpAndGravity()
 		{
 			if (Grounded)
@@ -355,8 +357,6 @@ namespace StarterAssets
 				_verticalVelocity += Gravity * Time.deltaTime;
 			}
 		}
-
-
 
 		private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
 		{

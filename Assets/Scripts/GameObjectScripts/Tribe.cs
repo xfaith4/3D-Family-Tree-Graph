@@ -46,6 +46,8 @@ public class Tribe : MonoBehaviour
 
 	const int PlatformChildIndex = 0;
 	private StarterAssets.ThirdPersonController thirdPersonContollerScript;
+	private StarterAssetsInputs _input;
+
 
 	void Start()
 	{

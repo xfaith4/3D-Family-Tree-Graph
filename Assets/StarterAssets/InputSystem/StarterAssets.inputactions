@@ -70,7 +70,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Select",
+                    "name": "Menu",
                     "type": "Button",
                     "id": "d66d7b24-9a8b-4bed-bbdd-8ea9b1725863",
                     "expectedControlType": "Button",
@@ -334,12 +334,34 @@
                 },
                 {
                     "name": "",
+                    "id": "835475f3-159e-4990-baee-f37face90d83",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "Start",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "d36c8c20-f2bf-4f40-bbf8-647c47094fa2",
                     "path": "<Gamepad>/select",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Select",
+                    "action": "Menu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b0b251e8-8401-4c68-9f91-8a032c6ae5bb",
+                    "path": "<Keyboard>/m",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "Menu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

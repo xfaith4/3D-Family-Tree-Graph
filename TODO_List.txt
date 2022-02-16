@@ -28,17 +28,16 @@ X Wikidata farmed Top Events shown on Person's Platform (Top History Panels)
 X Overlay a timeline with major world events
 X Why is 'Sprint' input doing the "Previous" actions?
 X Get sprint back to doing sprint
+X History Panel: Make each panel interactible, once the panel has 'focus' Left (previous event) Right 
+X Come up with Gamecontroller buttons for menu (back / left small black button) -> restart (start / right small black button) & set new root person
 
 --------------->
 > Still To Do ->
 --------------->
 >Sooner
 Improve performace of loading history panels, perhaps being able to re-use panels already loaded
-
 History Panel should get <<  >> markings to tell user that Previous and Next buttons will act on this object.
-History Panel: Make each panel interactible, once the panel has 'focus' Left (previous event) Right (next event) Fire - jump to Wikipage
-
-Come up with Gamecontroller buttons for menu -> restart & set new root person
+History Panel: Make each panel interactible (E key or north button) visit to Wikipage
 
 Improve the performance of this 'reset' root person operation
 Add Spouse name to other spouses platform near the connecting bridge

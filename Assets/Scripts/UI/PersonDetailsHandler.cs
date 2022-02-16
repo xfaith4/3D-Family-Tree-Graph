@@ -1,5 +1,6 @@
 using Assets.Scripts.DataObjects;
 using Assets.Scripts.Enums;
+using StarterAssets;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,9 +23,13 @@ public class PersonDetailsHandler : MonoBehaviour
     public GameObject currentAgeObject;
     public GameObject dateQualityInformationGameObject;
     public GameObject recordIdGameObject;
+
+    private StarterAssetsInputs _input;
+
     // Start is called before the first frame update
     void Start()
     {
+        _input = GetComponent<StarterAssetsInputs>();
     }
 
     public void ClearPersonDisplay()
@@ -86,15 +91,15 @@ public class PersonDetailsHandler : MonoBehaviour
         currentAgeObject.GetComponent<Text>().text = (personObject == null) ? "" : $"Current Age: {Mathf.Max(0f, (currentDate - personObject.birthEventDate))}";
     }
 
+    public void OnStartInputAction()
+    {
+        Debug.Log("Got to OnStartInputAction inside PersonDetailsHandler.");
+        resetSceneToThisRootPerson();
+    }
+
     // Update is called once per frame
     void Update()
     {
-        //Detect when the R key is pressed down
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Debug.Log("R key was pressed.");
-            resetSceneToThisRootPerson();
-        }
 
     }
 }

@@ -14,7 +14,7 @@ namespace StarterAssets
 		public bool sprint;
 		public bool previous;
 		public bool next;
-		public bool select;
+		public bool menu;
 		public bool start;
 		public bool interact;
 
@@ -46,7 +46,7 @@ namespace StarterAssets
 
         public void OnNext(InputValue value) => NextInput(value.isPressed);
 
-        public void OnSelect(InputValue value) => SelectInput(value.isPressed);
+        public void OnMenu(InputValue value) => SelectMenu(value.isPressed);
 
         public void OnStart(InputValue value) => StartInput(value.isPressed);
 
@@ -67,7 +67,7 @@ namespace StarterAssets
 
         public void NextInput(bool newVal) => next = newVal;
 
-		public void SelectInput(bool newVal) => select = newVal;
+		public void SelectMenu(bool newVal) => menu = newVal;
 
 		public void StartInput(bool newVal) => start = newVal;
 
