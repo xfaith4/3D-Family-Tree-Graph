@@ -11,6 +11,7 @@ TagManager:
   - Spinner
   - PersonName
   - ChildName
+  - EventDetailsPanel
   layers:
   - Default
   - TransparentFX

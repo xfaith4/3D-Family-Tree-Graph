@@ -11,24 +11,33 @@ using UnityEngine.Networking;
 public class TopEventHallPanel : MonoBehaviour
 {    
     public string topEventsDataBaseFileName;
-    public Texture2D NoEventsThisYear_Texture;
-    public Texture2D NoImageThisEvent_Texture;
-
+    public Texture2D noEventsThisYear_Texture;
+    public Texture2D noImageThisEvent_Texture;
+    
     private ListOfTopEventsFromDataBase topEventsDataProvider;
     private List<TopEvent> topEventsForYear;
     private int year;
     private int currentEventIndex = 0;
     private int numberOfEvents = 0;
+    private TextMeshPro dateTextFieldName;
     private TextMeshPro titleTextFieldName;
-    private TextMeshPro descriptionTextFieldName;
-
+    private EventDetailsHandler eventDetailsHandlerScript;
+    private Texture2D eventImage_Texture;
 
     // Awake is called when instantiated
     void Awake()
     {
         var textMeshProObjects = gameObject.GetComponentsInChildren<TextMeshPro>();
-        titleTextFieldName = textMeshProObjects[0];
-        descriptionTextFieldName = textMeshProObjects[1];
+
+        dateTextFieldName = textMeshProObjects[0];
+        titleTextFieldName = textMeshProObjects[1];
+        eventImage_Texture = noImageThisEvent_Texture;
+    }
+
+    private void Start()
+    {
+        GameObject[] eventDetailsPanel = GameObject.FindGameObjectsWithTag("EventDetailsPanel");
+        eventDetailsHandlerScript = eventDetailsPanel[0].transform.GetComponent<EventDetailsHandler>();
     }
 
     public void LoadTopEventsForYear_fromDataBase(int year)
@@ -41,57 +50,48 @@ public class TopEventHallPanel : MonoBehaviour
         topEventsForYear = topEventsDataProvider.topEventsList;
         numberOfEvents = topEventsForYear.Count;
         DisplayHallPanelImageTexture();
+        dateTextFieldName.text = year.ToString();
         titleTextFieldName.text = currentlySelectedEventTitle();
     }
 
-    public void DisplayDescriptionText()
+    public void DisplayDetailsInEventDetailsPanel()
     {
-        descriptionTextFieldName.text = currentlySelectedEventDescription();
+        eventDetailsHandlerScript.DisplayThisEvent(topEventsForYear[currentEventIndex],
+                                                   currentEventIndex,
+                                                   numberOfEvents,
+                                                   eventImage_Texture);
     }
 
-    public void ClearDescriptionText()
+    public void ClearEventDetailsPanel()
     {
-        descriptionTextFieldName.text = null;
+        eventDetailsHandlerScript.ClearEventDisplay();
     }
 
     public void DisplayHallPanelImageTexture()
     {
         if (numberOfEvents == 0)
         {
-            this.gameObject.GetComponent<Renderer>().material.mainTexture = NoEventsThisYear_Texture;
+            setPanelTexture(noEventsThisYear_Texture);
             return;
         }
         var eventToShow = topEventsForYear[currentEventIndex];
         if (string.IsNullOrEmpty(eventToShow.picture))
         {
-            this.gameObject.GetComponent<Renderer>().material.mainTexture = NoImageThisEvent_Texture;
+            setPanelTexture(noImageThisEvent_Texture);
             return;
         }
 
         StartCoroutine(DownloadImage(eventToShow.picture + "?width=400px"));
     }
 
-    public string currentlySelectedEventDescription()
-    {
-        if (numberOfEvents == 0)
-            return $"Year {year}: No top events this year";
-
-        return topEventsForYear[currentEventIndex].description;
-    }
-
     public string currentlySelectedEventTitle()
     {
         if (numberOfEvents == 0)
-            return null;
-        var eventTally = numberOfEvents == 0 ? "0 / 0" : $"{currentEventIndex + 1} / {numberOfEvents}";
-        var stringToReturn = $"Year {year}, Event {eventTally}";
-        stringToReturn += "\n" + topEventsForYear[currentEventIndex].itemLabel;
-        if (!String.IsNullOrEmpty(topEventsForYear[currentEventIndex].eventStartDate))
-            stringToReturn = stringToReturn + "\n" + JsonConvert.DeserializeObject<DateTime>(("\"" + topEventsForYear[currentEventIndex].eventStartDate + "\"")).ToString("dd MMM yyyy");
-        if (!String.IsNullOrEmpty(topEventsForYear[currentEventIndex].eventEndDate))
-            stringToReturn = stringToReturn + " - " + JsonConvert.DeserializeObject<DateTime>(("\"" + topEventsForYear[currentEventIndex].eventEndDate + "\"")).ToString("dd MMM yyyy");
-
-        return stringToReturn;
+            return $"Year {year}: No events.";
+        var stringToReturn = topEventsForYear[currentEventIndex].itemLabel;
+        if (string.IsNullOrEmpty(stringToReturn))
+            return "No title found for this event";
+        return stringToReturn[0].ToString().ToUpper() + stringToReturn.Substring(1);
     }
 
     public void NextEventInPanel()
@@ -126,6 +126,12 @@ public class TopEventHallPanel : MonoBehaviour
         if (request.result == UnityWebRequest.Result.ProtocolError)
             Debug.Log(request.error);
         else
-            this.gameObject.GetComponent<Renderer>().material.mainTexture = ((DownloadHandlerTexture)request.downloadHandler).texture;
+            setPanelTexture(((DownloadHandlerTexture)request.downloadHandler).texture);
+    }
+
+    void setPanelTexture(Texture textureToSet)
+    {
+        this.gameObject.transform.Find("ImagePanel").GetComponent<Renderer>().material.mainTexture = textureToSet;
+        eventImage_Texture = (Texture2D)textureToSet;
     }
 }

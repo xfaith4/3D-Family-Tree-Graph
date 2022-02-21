@@ -36,14 +36,14 @@ public class HallOfHistory : MonoBehaviour
 
         for (int age = 0; age < lifeSpan; age++)
         {
-            GameObject newPanel = Instantiate(topEventHallPanelPrefab, new Vector3(x + 5.5f, y + 3f, (birthDate + age) * 5 + 2.5f), Quaternion.Euler(90, -180, -90));
+            GameObject newPanel = Instantiate(topEventHallPanelPrefab, new Vector3(x + 5.5f, y + 2f, (birthDate + age) * 5 + 2.5f), Quaternion.Euler(90, -180, -90));
 
             newPanel.transform.parent = transform;
             newPanel.name = $"HistoryPanelfor{birthDate+age}";
 
             var topEventHallPanelScript = newPanel.GetComponent<TopEventHallPanel>();
             topEventHallPanelScript.LoadTopEventsForYear_fromDataBase(birthDate + age);
-            topEventHallPanelScript.DisplayHallPanelImageTexture();
+   //         topEventHallPanelScript.DisplayHallPanelImageTexture();
    
         }
         

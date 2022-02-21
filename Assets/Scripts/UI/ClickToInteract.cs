@@ -66,14 +66,14 @@ public class ClickToInteract : MonoBehaviour
         // Clear Previous if applicable
         if (previousItemToInteractWith != null && previousItemToInteractWith != itemToInteractWith)
         {
-            previousItemToInteractWith.ClearDescriptionText();
+            previousItemToInteractWith.ClearEventDetailsPanel();
             previousItemToInteractWith = null;
         }
         // Select Current if applicable
         if (itemToInteractWith != null)
         {
             previousItemToInteractWith = itemToInteractWith;
-            itemToInteractWith.DisplayDescriptionText();
+            itemToInteractWith.DisplayDetailsInEventDetailsPanel();
         }
     }
 
