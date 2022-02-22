@@ -233,7 +233,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   focusPerson: {fileID: 0}
   previousFocusPerson: {fileID: 0}
-  topEventHallPanelPrefab: {fileID: 1579663936856624987, guid: c00493e8946c45a4bb7223552aecddf9, type: 3}
+  topEventHallPanelPrefab: {fileID: 1579663936856624987, guid: 2f35a5fefbf44b84995d138d1489b2d5, type: 3}
 --- !u!4 &53005345
 Transform:
   m_ObjectHideFlags: 0
@@ -1483,6 +1483,7 @@ GameObject:
   - component: {fileID: 952269494}
   - component: {fileID: 952269493}
   - component: {fileID: 952269492}
+  - component: {fileID: 952269495}
   m_Layer: 5
   m_Name: EventDetailsPanel
   m_TagString: EventDetailsPanel
@@ -1573,6 +1574,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 952269490}
   m_CullTransparentMesh: 1
+--- !u!225 &952269495
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 952269490}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &989099309
 GameObject:
   m_ObjectHideFlags: 0

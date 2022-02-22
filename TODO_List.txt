@@ -9,11 +9,12 @@ X History Panel: Make each panel interactible, once the panel has 'focus' Left (
 X Come up with Gamecontroller buttons for menu (back / left small black button) -> restart (start / right small black button) & set new root person
 X History Panel should get <<  >> markings to tell user that Previous and Next buttons will act on this object.
 X Separate Canvas Panel for Event Details
+X Make Event Details Panel vanish when not "in view"
+
 --------------->
 > Still To Do ->
 --------------->
 >Sooner
-Make Event Details Panel vanish when not "in view"
 Improve performace of loading history panels, perhaps being able to re-use panels already loaded
 Last chosen viewed event for that year maintains when jumping to another person
 History Panel: Make each panel interactible (E key or north button) visit to Wikipage

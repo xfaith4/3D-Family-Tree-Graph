@@ -20,17 +20,18 @@ public class EventDetailsHandler : MonoBehaviour
     public GameObject additionalInstructionsGameObject;
 
     private TopEvent topEventObject;
+    private CanvasGroup canvasGroup;
+
 
     // Start is called before the first frame update
     void Start()
     {
-
+        HideDetailsDialog();
     }
 
     public void ClearEventDisplay()
     {
-        // set text items to ""
-        // make the panel not visible
+        HideDetailsDialog();
 
         topEventObject = null;
         yearAndTitleGameObject.GetComponent<Text>().text = null;
@@ -65,11 +66,28 @@ public class EventDetailsHandler : MonoBehaviour
         var yStart = (eventImage_Texture.height - cropSize) / 2;
 
         imageGameObject.GetComponent<Image>().sprite = Sprite.Create(eventImage_Texture, new Rect(xStart, yStart, cropSize, cropSize), new Vector2(0.5f, 0.5f), 100f);
+        ShowDetailsDialog();
     }
 
     // Update is called once per frame
     void Update()
     {
 
+    }
+
+    private void ShowDetailsDialog()
+    {
+        if (!canvasGroup) canvasGroup = GetComponent<CanvasGroup>();
+        canvasGroup.alpha = 1;
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
+    }
+
+    private void HideDetailsDialog()
+    {
+        if (!canvasGroup) canvasGroup = GetComponent<CanvasGroup>();
+        canvasGroup.alpha = 0;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
     }
 }

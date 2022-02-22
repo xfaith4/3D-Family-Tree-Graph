@@ -980,7 +980,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 8
-  maxDistance: 20
+  maxDistance: 10
   nameOfInteractableDescriptionfield: InteractableDescription
 --- !u!114 &8916545566975811900
 MonoBehaviour:
@@ -1030,6 +1030,11 @@ MonoBehaviour:
   look: {x: 0, y: 0}
   jump: 0
   sprint: 0
+  previous: 0
+  next: 0
+  menu: 0
+  start: 0
+  interact: 0
   analogMovement: 0
   cursorLocked: 1
   cursorInputForLook: 1

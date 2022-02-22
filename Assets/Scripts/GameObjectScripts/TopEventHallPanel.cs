@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class TopEventHallPanel : MonoBehaviour
 {    
@@ -37,7 +38,7 @@ public class TopEventHallPanel : MonoBehaviour
     private void Start()
     {
         GameObject[] eventDetailsPanel = GameObject.FindGameObjectsWithTag("EventDetailsPanel");
-        eventDetailsHandlerScript = eventDetailsPanel[0].transform.GetComponent<EventDetailsHandler>();
+        eventDetailsHandlerScript = eventDetailsPanel[0].transform.GetComponent<EventDetailsHandler>();     
     }
 
     public void LoadTopEventsForYear_fromDataBase(int year)
@@ -122,14 +123,40 @@ public class TopEventHallPanel : MonoBehaviour
     {
         UnityWebRequest request = UnityWebRequestTexture.GetTexture(MediaUrl);
         yield return request.SendWebRequest();
-        //if (request.isNetworkError || request.isHttpError)
         if (request.result == UnityWebRequest.Result.ProtocolError)
             Debug.Log(request.error);
         else
             setPanelTexture(((DownloadHandlerTexture)request.downloadHandler).texture);
+        
     }
 
-    void setPanelTexture(Texture textureToSet)
+    void setPanelTexture(Texture textureToSet, bool crop = true)
+    {
+        RenderTexture tempTex;
+
+        RenderTexture rTex = RenderTexture.GetTemporary(textureToSet.width, textureToSet.height, 24, RenderTextureFormat.Default);
+        Graphics.Blit(textureToSet, rTex);
+        if (crop)
+        {
+            var cropSize = Math.Min(textureToSet.width, textureToSet.height);
+            var xStart = (textureToSet.width - cropSize) / 2;
+            var yStart = (textureToSet.height - cropSize) / 2;
+
+            tempTex = RenderTexture.GetTemporary(cropSize, cropSize, 24, RenderTextureFormat.Default);
+
+            Graphics.CopyTexture(rTex, 0, 0, xStart, yStart, cropSize, cropSize, tempTex, 0, 0, 0, 0);
+
+            RenderTexture.ReleaseTemporary(rTex);
+            rTex = RenderTexture.GetTemporary(cropSize, cropSize, 24, RenderTextureFormat.Default);
+            Graphics.Blit(tempTex, rTex);
+            RenderTexture.ReleaseTemporary(tempTex);
+        }
+
+        this.gameObject.transform.Find("ImagePanel").GetComponent<Renderer>().material.mainTexture = rTex;
+        this.eventImage_Texture = (Texture2D)textureToSet;
+    }
+
+    void setPanelTextureOld(Texture textureToSet)
     {
         this.gameObject.transform.Find("ImagePanel").GetComponent<Renderer>().material.mainTexture = textureToSet;
         eventImage_Texture = (Texture2D)textureToSet;

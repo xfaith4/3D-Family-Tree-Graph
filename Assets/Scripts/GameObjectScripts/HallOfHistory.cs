@@ -42,9 +42,7 @@ public class HallOfHistory : MonoBehaviour
             newPanel.name = $"HistoryPanelfor{birthDate+age}";
 
             var topEventHallPanelScript = newPanel.GetComponent<TopEventHallPanel>();
-            topEventHallPanelScript.LoadTopEventsForYear_fromDataBase(birthDate + age);
-   //         topEventHallPanelScript.DisplayHallPanelImageTexture();
-   
+            topEventHallPanelScript.LoadTopEventsForYear_fromDataBase(birthDate + age);   
         }
         
     }
