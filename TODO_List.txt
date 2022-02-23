@@ -10,13 +10,12 @@ X Come up with Gamecontroller buttons for menu (back / left small black button) 
 X History Panel should get <<  >> markings to tell user that Previous and Next buttons will act on this object.
 X Separate Canvas Panel for Event Details
 X Make Event Details Panel vanish when not "in view"
-
+X Improve performace of loading history panels, perhaps being able to re-use panels already loaded - Used a Dictionary
+X THis came for free: Last chosen viewed event for that year maintains when jumping to another person
 --------------->
 > Still To Do ->
 --------------->
 >Sooner
-Improve performace of loading history panels, perhaps being able to re-use panels already loaded
-Last chosen viewed event for that year maintains when jumping to another person
 History Panel: Make each panel interactible (E key or north button) visit to Wikipage
 Improve the performance of this 'reset' root person operation
 

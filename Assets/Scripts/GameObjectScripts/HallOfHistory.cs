@@ -10,6 +10,8 @@ public class HallOfHistory : MonoBehaviour
     public PersonNode previousFocusPerson;
     public GameObject topEventHallPanelPrefab;
 
+    private IDictionary<int, GameObject> eventPanelDictionary = new Dictionary<int, GameObject>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,9 +22,9 @@ public class HallOfHistory : MonoBehaviour
         if (previousFocusPerson != null && newfocusPerson.dataBaseOwnerID == previousFocusPerson.dataBaseOwnerID)
             return;
 
-        foreach (Transform child in transform)
+        foreach (var panelsToDisable in eventPanelDictionary)
         {
-            Destroy(child.gameObject);
+            panelsToDisable.Value.SetActive(false);
         }
 
         previousFocusPerson = newfocusPerson;
@@ -33,18 +35,28 @@ public class HallOfHistory : MonoBehaviour
         var x = focusPerson.transform.position.x;
         var y = focusPerson.transform.position.y;
 
-
         for (int age = 0; age < lifeSpan; age++)
         {
-            GameObject newPanel = Instantiate(topEventHallPanelPrefab, new Vector3(x + 5.5f, y + 2f, (birthDate + age) * 5 + 2.5f), Quaternion.Euler(90, -180, -90));
+            int year = birthDate + age;
 
-            newPanel.transform.parent = transform;
-            newPanel.name = $"HistoryPanelfor{birthDate+age}";
+            if (eventPanelDictionary.ContainsKey(year))
+            {
+                eventPanelDictionary[year].SetActive(true);
+                eventPanelDictionary[year].transform.SetPositionAndRotation(new Vector3(x + 5.5f, y + 2f, (year) * 5 + 2.5f), Quaternion.Euler(90, -180, -90));
+            }
+            else
+            {
+                GameObject newPanel = Instantiate(topEventHallPanelPrefab, new Vector3(x + 5.5f, y + 2f, (year) * 5 + 2.5f), Quaternion.Euler(90, -180, -90));
 
-            var topEventHallPanelScript = newPanel.GetComponent<TopEventHallPanel>();
-            topEventHallPanelScript.LoadTopEventsForYear_fromDataBase(birthDate + age);   
-        }
-        
+                newPanel.transform.parent = transform;
+                newPanel.name = $"HistoryPanelfor{year}";
+
+                var topEventHallPanelScript = newPanel.GetComponent<TopEventHallPanel>();
+                topEventHallPanelScript.LoadTopEventsForYear_fromDataBase(year);
+
+                eventPanelDictionary.Add(year, newPanel);
+            }
+        }   
     }
 
     // Update is called once per frame
