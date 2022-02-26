@@ -15,12 +15,16 @@ X This came for free: Last chosen viewed event for that year maintains when jump
 X History Panel: Make each panel interactible (E key or north button) visit to Wikipage
 X Create a ReadOnly Folder on an External drive with all my family history photos. (PhotoArchiveRoot)
 X Populate left side of person platform with random (or in sequense) photos.  
+X Get All photos envolved.
+
 --------------->
 > Still To Do ->
 --------------->
 >Sooner
-Get All photos envolved.
 Eventually Next Step implement the "Photo Gamification" section below
+Allow both TopEvent and FamilyPhoto HallPanels to be Interactable with Details Panel Support.
+Need a subclass for InteractibleInfoPanels, TopEventHallPanel and FamilyPhotoHallPanel will use this
+  Subclass will have these functions: PreviousPanelItem, NextPanelItem, InteractWithPanelItem, ClearDetailsPanel, SetDetailsPanel
 
 Improve the performance of this 'reset' root person operation
 

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.17907804, g: 0.2242305, b: 0.3060236, a: 1}
+  m_IndirectSpecularColor: {r: 0.18298887, g: 0.22867718, b: 0.30680168, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -808,7 +808,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -859,13 +859,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 317169403}
-  m_LocalRotation: {x: 0.45599118, y: -0.049921982, z: 0.047521386, w: 0.88731146}
+  m_LocalRotation: {x: 0.41554168, y: -0.19428144, z: -0.2411132, w: 0.8552452}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 54.484, y: -4.468, z: 3.83}
+  m_LocalEulerAnglesHint: {x: 38.104, y: -42.607, z: -46.828}
 --- !u!1 &326257435
 GameObject:
   m_ObjectHideFlags: 0
@@ -2714,7 +2714,7 @@ MonoBehaviour:
   focusPerson: {fileID: 0}
   previousFocusPerson: {fileID: 0}
   familyPhotoPanelPrefab: {fileID: 1579663936856624987, guid: e78581a219092584a9957302997ac827, type: 3}
-  photoArchiveDrivePath: C:\Users\Scott\Pictures\Family History\Edith
+  photoArchiveDrivePath: C:\Users\Scott\Pictures\Family History\Hughes Reunion
   thumbnailSubFolderName: Thumb400
 --- !u!4 &1917470389
 Transform:

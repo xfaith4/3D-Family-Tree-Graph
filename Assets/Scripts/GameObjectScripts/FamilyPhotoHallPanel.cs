@@ -10,6 +10,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class FamilyPhotoHallPanel : MonoBehaviour
 {    
@@ -17,19 +18,20 @@ public class FamilyPhotoHallPanel : MonoBehaviour
     public Texture2D noImageThisEvent_Texture;
     
     private List<FamilyPhoto> familyPhotos = new List<FamilyPhoto>();
+    private List<string> onlyThumbnails = new List<string>();
     private int year;
     private int currentEventIndex = 0;
     private int numberOfEvents = 0;
     private TextMeshPro dateTextFieldName;
     private TextMeshPro titleTextFieldName;
     private FamilyPhotoDetailsHandler familyPhotoDetailsHandlerScript;
-    private Texture2D familyPhotoImage_Texture;
+    private Texture2D familyPhotoImage_Texture;    
 
     // Awake is called when instantiated
     void Awake()
     {
         var textMeshProObjects = gameObject.GetComponentsInChildren<TextMeshPro>();
-
+        
         dateTextFieldName = textMeshProObjects[0];
         titleTextFieldName = textMeshProObjects[1];
         familyPhotoImage_Texture = noImageThisEvent_Texture;
@@ -38,17 +40,19 @@ public class FamilyPhotoHallPanel : MonoBehaviour
     private void Start()
     {
         GameObject[] familyPhotoDetailsPanel = GameObject.FindGameObjectsWithTag("FamilyPhotoDetailsPanel");
-        familyPhotoDetailsHandlerScript = familyPhotoDetailsPanel[0].transform.GetComponent<FamilyPhotoDetailsHandler>();     
+        familyPhotoDetailsHandlerScript = familyPhotoDetailsPanel[0].transform.GetComponent<FamilyPhotoDetailsHandler>();        
     }
 
-    public void LoadFamilyPhotosForYearAndPerson(int year, string photoArchiveDrivePath)   // TODO should add pointer to Person
+    public void LoadFamilyPhotosForYearAndPerson(int year, string photoArchiveDrivePath, string thumbnailSubFolderName)   // TODO should add pointer to Person
     {
-        var filteredFiles = Directory.GetFiles(photoArchiveDrivePath, "*.*")
+        this.year = year;
+        var filteredFiles = Directory.GetFiles(photoArchiveDrivePath, "*.*", SearchOption.AllDirectories)
                 .Where(file => file.ToLower().EndsWith("jpg") || file.ToLower().EndsWith("gif")
                 || file.ToLower().EndsWith("png") || file.ToLower().EndsWith("bmp")).ToList();
 
-        this.year = year;
-        var fileToUse = filteredFiles[year % filteredFiles.Count];
+        onlyThumbnails = filteredFiles.Where(file => file.ToLower().Contains(thumbnailSubFolderName.ToLower())).ToList();
+
+        var fileToUse = onlyThumbnails[Random.Range(0, onlyThumbnails.Count)];
         var fileNameString =  Path.GetFileName(fileToUse);
         var familyPhoto = new FamilyPhoto(this.year.ToString(), fileNameString, fileToUse, "temp Description", "temp Locations", "temp Contries", "", "", "");
         familyPhotos.Add(familyPhoto);
