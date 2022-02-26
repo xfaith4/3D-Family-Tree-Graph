@@ -11,12 +11,17 @@ X History Panel should get <<  >> markings to tell user that Previous and Next b
 X Separate Canvas Panel for Event Details
 X Make Event Details Panel vanish when not "in view"
 X Improve performace of loading history panels, perhaps being able to re-use panels already loaded - Used a Dictionary
-X THis came for free: Last chosen viewed event for that year maintains when jumping to another person
+X This came for free: Last chosen viewed event for that year maintains when jumping to another person
+X History Panel: Make each panel interactible (E key or north button) visit to Wikipage
+X Create a ReadOnly Folder on an External drive with all my family history photos. (PhotoArchiveRoot)
+X Populate left side of person platform with random (or in sequense) photos.  
 --------------->
 > Still To Do ->
 --------------->
 >Sooner
-History Panel: Make each panel interactible (E key or north button) visit to Wikipage
+Get All photos envolved.
+Eventually Next Step implement the "Photo Gamification" section below
+
 Improve the performance of this 'reset' root person operation
 
 Add Spouse name to other spouses platform near the connecting bridge
@@ -34,19 +39,18 @@ Perhaps the ability to select which categories to include, perhaps categories ar
 >> Future
 Have options for displaying Fashion, Art Styles, Architecture, Science/Inventions, Sports, Famous people (intertainment/politics/culture/sports)
 
-
 > Later
 More Photos
 Can photo's be synced from FamilySearch to RootsMagic?
 
->>Photo Gaminization: Gamify Organization - Use local or cloud repository of photos and Resource Description Framework (RDF) concept to link photos to their correct context
+>>Photo (Gamification) Gaminization: Gamify Organization - Use local or cloud repository of photos and Resource Description Framework (RDF) concept to link photos to their correct context
 Premise: I have a lot of photos with just a little bit of built in context
 If I put my photo's into a Frozen Read only state, I can begin with some simple Semantic (RDF) links, including:
   Branch of Family that the photo's are from
   Date Range
-  File Names (or other tagged into in the file)
+  File Names (or other info tagged into in the file)
   Perhaps location or rough location.
-Now imagine a Hall of History type of display along a persons timeline (perhaps left side), where photos that at least rougly match that person are displayed.
+Now imagine a Hall of History type of display along a persons timeline (perhaps left side), where photos that at least roughly match that person are displayed.
 One key: random distribution within the known context.
  - Randomly distribute photos along the persons timeline. The more context that a photo has, the more restrictive its placement will be, for example:
  A photo with no Context at all could randomly be place anywhere (any time slot) on any persons timeline.

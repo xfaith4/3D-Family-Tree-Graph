@@ -4,26 +4,26 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class TopEventHallPanel : MonoBehaviour
+public class FamilyPhotoHallPanel : MonoBehaviour
 {    
-    public string topEventsDataBaseFileName;
-    public Texture2D noEventsThisYear_Texture;
+    public Texture2D noPhotosThisYear_Texture;
     public Texture2D noImageThisEvent_Texture;
     
-    private ListOfTopEventsFromDataBase topEventsDataProvider;
-    private List<TopEvent> topEventsForYear;
+    private List<FamilyPhoto> familyPhotos = new List<FamilyPhoto>();
     private int year;
     private int currentEventIndex = 0;
     private int numberOfEvents = 0;
     private TextMeshPro dateTextFieldName;
     private TextMeshPro titleTextFieldName;
-    private EventDetailsHandler eventDetailsHandlerScript;
-    private Texture2D eventImage_Texture;
+    private FamilyPhotoDetailsHandler familyPhotoDetailsHandlerScript;
+    private Texture2D familyPhotoImage_Texture;
 
     // Awake is called when instantiated
     void Awake()
@@ -32,66 +32,68 @@ public class TopEventHallPanel : MonoBehaviour
 
         dateTextFieldName = textMeshProObjects[0];
         titleTextFieldName = textMeshProObjects[1];
-        eventImage_Texture = noImageThisEvent_Texture;
+        familyPhotoImage_Texture = noImageThisEvent_Texture;
     }
 
     private void Start()
     {
-        GameObject[] eventDetailsPanel = GameObject.FindGameObjectsWithTag("EventDetailsPanel");
-        eventDetailsHandlerScript = eventDetailsPanel[0].transform.GetComponent<EventDetailsHandler>();     
+        GameObject[] familyPhotoDetailsPanel = GameObject.FindGameObjectsWithTag("FamilyPhotoDetailsPanel");
+        familyPhotoDetailsHandlerScript = familyPhotoDetailsPanel[0].transform.GetComponent<FamilyPhotoDetailsHandler>();     
     }
 
-    public void LoadTopEventsForYear_fromDataBase(int year)
+    public void LoadFamilyPhotosForYearAndPerson(int year, string photoArchiveDrivePath)   // TODO should add pointer to Person
     {
-        var dataPath = Application.streamingAssetsPath + "/";
-        topEventsDataProvider = new ListOfTopEventsFromDataBase(dataPath + topEventsDataBaseFileName);
+        var filteredFiles = Directory.GetFiles(photoArchiveDrivePath, "*.*")
+                .Where(file => file.ToLower().EndsWith("jpg") || file.ToLower().EndsWith("gif")
+                || file.ToLower().EndsWith("png") || file.ToLower().EndsWith("bmp")).ToList();
 
         this.year = year;
-        topEventsDataProvider.GetListOfTopEventsFromDataBase(this.year);
-        topEventsForYear = topEventsDataProvider.topEventsList;
-        numberOfEvents = topEventsForYear.Count;
+        var fileToUse = filteredFiles[year % filteredFiles.Count];
+        var fileNameString =  Path.GetFileName(fileToUse);
+        var familyPhoto = new FamilyPhoto(this.year.ToString(), fileNameString, fileToUse, "temp Description", "temp Locations", "temp Contries", "", "", "");
+        familyPhotos.Add(familyPhoto);
+        numberOfEvents = 1;
         DisplayHallPanelImageTexture();
         dateTextFieldName.text = year.ToString();
         titleTextFieldName.text = currentlySelectedEventTitle();
     }
 
-    public void DisplayDetailsInEventDetailsPanel()
+    public void DisplayDetailsInFamilyPhotoDetailsPanel()
     {
-        eventDetailsHandlerScript.DisplayThisEvent(topEventsForYear[currentEventIndex],
+        familyPhotoDetailsHandlerScript.DisplayThisEvent(familyPhotos[currentEventIndex],
                                                    currentEventIndex,
                                                    numberOfEvents,
-                                                   eventImage_Texture);
+                                                   familyPhotoImage_Texture);
     }
 
     public void ClearEventDetailsPanel()
     {
-        eventDetailsHandlerScript.ClearEventDisplay();
+        familyPhotoDetailsHandlerScript.ClearEventDisplay();
     }
 
     public void DisplayHallPanelImageTexture()
     {
         if (numberOfEvents == 0)
         {
-            setPanelTexture(noEventsThisYear_Texture);
+            setPanelTexture(noPhotosThisYear_Texture);
             return;
         }
-        var eventToShow = topEventsForYear[currentEventIndex];
-        if (string.IsNullOrEmpty(eventToShow.picture))
+        var eventToShow = familyPhotos[currentEventIndex];
+        if (string.IsNullOrEmpty(eventToShow.picturePathInArchive))
         {
             setPanelTexture(noImageThisEvent_Texture);
             return;
         }
-
-        StartCoroutine(DownloadImage(eventToShow.picture + "?width=400px"));
+        StartCoroutine(GetPhotoFromPhotoArchive(eventToShow.picturePathInArchive));
     }
 
     public string currentlySelectedEventTitle()
     {
         if (numberOfEvents == 0)
-            return $"Year {year}: No events.";
-        var stringToReturn = topEventsForYear[currentEventIndex].itemLabel;
+            return $"Year {year}: No photos.";
+        var stringToReturn = familyPhotos[currentEventIndex].itemLabel;
         if (string.IsNullOrEmpty(stringToReturn))
-            return "No title found for this event";
+            return "No title found for this photo";
         return stringToReturn[0].ToString().ToUpper() + stringToReturn.Substring(1);
     }
 
@@ -106,7 +108,7 @@ public class TopEventHallPanel : MonoBehaviour
 
     public void InteractWithPanel()
     {
-        Application.OpenURL(topEventsForYear[currentEventIndex].wikiLink);
+        // What would this be? perhaps a full screen - zoomable/pannable image viewer ??
     }
 
     public void PreviousEventInPanel()
@@ -124,15 +126,14 @@ public class TopEventHallPanel : MonoBehaviour
 
     }
 
-    IEnumerator DownloadImage(string MediaUrl)
-    {
-        UnityWebRequest request = UnityWebRequestTexture.GetTexture(MediaUrl);
+    IEnumerator GetPhotoFromPhotoArchive(string fullPathtoPhotoInArchive)
+    {        
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(fullPathtoPhotoInArchive);
         yield return request.SendWebRequest();
         if (request.result == UnityWebRequest.Result.ProtocolError)
             Debug.Log(request.error);
         else
             setPanelTexture(((DownloadHandlerTexture)request.downloadHandler).texture);
-        
     }
 
     void setPanelTexture(Texture textureToSet, bool crop = true)
@@ -158,12 +159,12 @@ public class TopEventHallPanel : MonoBehaviour
         }
 
         this.gameObject.transform.Find("ImagePanel").GetComponent<Renderer>().material.mainTexture = rTex;
-        this.eventImage_Texture = (Texture2D)textureToSet;
+        this.familyPhotoImage_Texture = (Texture2D)textureToSet;
     }
 
     void setPanelTextureOld(Texture textureToSet)
     {
         this.gameObject.transform.Find("ImagePanel").GetComponent<Renderer>().material.mainTexture = textureToSet;
-        eventImage_Texture = (Texture2D)textureToSet;
+        familyPhotoImage_Texture = (Texture2D)textureToSet;
     }
 }

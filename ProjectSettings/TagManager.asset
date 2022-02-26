@@ -12,6 +12,7 @@ TagManager:
   - PersonName
   - ChildName
   - EventDetailsPanel
+  - FamilyPhotoDetailsPanel
   layers:
   - Default
   - TransparentFX

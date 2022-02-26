@@ -45,6 +45,12 @@ public class ClickToInteract : MonoBehaviour
             itemToInteractWith.NextEventInPanel();
         _input.next = false;
     }
+    private void DoInteract()
+    {
+        if (_input.interact && itemToInteractWith != null)
+            itemToInteractWith.InteractWithPanel();
+        _input.interact = false;
+    }
 
     private void Start()
     {
@@ -59,6 +65,7 @@ public class ClickToInteract : MonoBehaviour
         doPanelSelectDeselect();
         DoPrevious();
         DoNext();
+        DoInteract();
     }
 
     private void doPanelSelectDeselect()

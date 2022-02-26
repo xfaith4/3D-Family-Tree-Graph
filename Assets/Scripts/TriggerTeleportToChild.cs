@@ -8,6 +8,8 @@ public class TriggerTeleportToChild : MonoBehaviour
     public Transform teleportTargetChild;
     public Vector3 teleportOffset = Vector3.zero;
     public GameObject hallOfHistoryGameObject;
+    public GameObject hallOfFamilyPhotosGameObject;
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -20,6 +22,7 @@ public class TriggerTeleportToChild : MonoBehaviour
             var personObjectScript = teleportTargetChild.GetComponent<PersonNode>();
 
             hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(personObjectScript);
+            hallOfFamilyPhotosGameObject.GetComponent<HallOfFamilyPhotos>().SetFocusPersonNode(personObjectScript);
         }
     }
 }

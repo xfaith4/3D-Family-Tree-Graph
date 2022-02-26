@@ -28,6 +28,7 @@ public class Tribe : MonoBehaviour
 	public GameObject birthConnectionPrefab;
 	public GameObject marriageConnectionPrefab;
 	public GameObject hallOfHistoryGameObject;
+	public GameObject hallOfFamilyPhotosGameObject;
 	public float marriageEdgepfXScale = 0.4f;
 	public GameObject bubblepf;
 	public GameObject parentPlatformBirthBubble;
@@ -346,6 +347,7 @@ public class Tribe : MonoBehaviour
 		personObjectScript.SetGlobalSpringType(globalSpringType);
 		personObjectScript.SetRootsMagicFileName(rootsMagicFileName);
 		personObjectScript.SetHallOfHistoryGameObject(hallOfHistoryGameObject);
+		personObjectScript.SetHallOfFamilyPhotosGameObject(hallOfFamilyPhotosGameObject);
 
 		//TODO use gender to set the color of the platform	
 		//

@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class EventDetailsHandler : MonoBehaviour
+public class FamilyPhotoDetailsHandler : MonoBehaviour
 {
     public Sprite noImageForThisEvent;    
     public GameObject imageGameObject;
@@ -19,7 +19,7 @@ public class EventDetailsHandler : MonoBehaviour
     public GameObject panelCountGameObject;
     public GameObject additionalInstructionsGameObject;
 
-    private TopEvent topEventObject;
+    private FamilyPhoto familyPhotoObject;
     private CanvasGroup canvasGroup;
 
 
@@ -33,7 +33,7 @@ public class EventDetailsHandler : MonoBehaviour
     {
         HideDetailsDialog();
 
-        topEventObject = null;
+        familyPhotoObject = null;
         yearAndTitleGameObject.GetComponent<Text>().text = null;
         descriptionGameObject.GetComponent<Text>().text = null;
         dateRangeGameObject.GetComponent<Text>().text = null;
@@ -43,18 +43,18 @@ public class EventDetailsHandler : MonoBehaviour
         imageGameObject.GetComponent<Image>().sprite = noImageForThisEvent;
     }
 
-    public void DisplayThisEvent(TopEvent eventToDisplay, int currentEventIndex, int numberOfEvents, Texture2D eventImage_Texture)
+    public void DisplayThisEvent(FamilyPhoto eventToDisplay, int currentEventIndex, int numberOfEvents, Texture2D familyPhotoImage_Texture)
     {
         //make the panel visible
-        topEventObject = eventToDisplay;
+        familyPhotoObject = eventToDisplay;
 
-        yearAndTitleGameObject.GetComponent<Text>().text =  topEventObject.year + " " + topEventObject.itemLabel;
-        descriptionGameObject.GetComponent<Text>().text =  topEventObject.description;
+        yearAndTitleGameObject.GetComponent<Text>().text = familyPhotoObject.year + " " + familyPhotoObject.itemLabel;
+        descriptionGameObject.GetComponent<Text>().text = familyPhotoObject.description;
         string dateRangeString = "";
-        if (!String.IsNullOrEmpty(topEventObject.eventStartDate)) 
-            dateRangeString = JsonConvert.DeserializeObject<DateTime>(("\"" + topEventObject.eventStartDate + "\"")).ToString("dd MMM yyyy");
-        if (!String.IsNullOrEmpty(topEventObject.eventEndDate))
-            dateRangeString = dateRangeString + " - " + JsonConvert.DeserializeObject<DateTime>(("\"" + topEventObject.eventEndDate + "\"")).ToString("dd MMM yyyy");
+        if (!String.IsNullOrEmpty(familyPhotoObject.eventStartDate)) 
+            dateRangeString = JsonConvert.DeserializeObject<DateTime>(("\"" + familyPhotoObject.eventStartDate + "\"")).ToString("dd MMM yyyy");
+        if (!String.IsNullOrEmpty(familyPhotoObject.eventEndDate))
+            dateRangeString = dateRangeString + " - " + JsonConvert.DeserializeObject<DateTime>(("\"" + familyPhotoObject.eventEndDate + "\"")).ToString("dd MMM yyyy");
         dateRangeGameObject.GetComponent<Text>().text =  dateRangeString;
         var eventTally = numberOfEvents == 0 ? "0 / 0" : $"{currentEventIndex + 1} / {numberOfEvents}";
         panelCountGameObject.GetComponent<Text>().text =  $"Event: {eventTally}";
@@ -62,11 +62,11 @@ public class EventDetailsHandler : MonoBehaviour
         additionalInstructionsGameObject.GetComponent<Text>().text = "            ^   or E to interact\n" + 
                                                                      " Previous < or > Next";
 
-        var cropSize = Math.Min(eventImage_Texture.width, eventImage_Texture.height);
-        var xStart = (eventImage_Texture.width - cropSize) / 2;
-        var yStart = (eventImage_Texture.height - cropSize) / 2;
+        var cropSize = Math.Min(familyPhotoImage_Texture.width, familyPhotoImage_Texture.height);
+        var xStart = (familyPhotoImage_Texture.width - cropSize) / 2;
+        var yStart = (familyPhotoImage_Texture.height - cropSize) / 2;
 
-        imageGameObject.GetComponent<Image>().sprite = Sprite.Create(eventImage_Texture, new Rect(xStart, yStart, cropSize, cropSize), new Vector2(0.5f, 0.5f), 100f);
+        imageGameObject.GetComponent<Image>().sprite = Sprite.Create(familyPhotoImage_Texture, new Rect(xStart, yStart, cropSize, cropSize), new Vector2(0.5f, 0.5f), 100f);
         ShowDetailsDialog();
     }
 

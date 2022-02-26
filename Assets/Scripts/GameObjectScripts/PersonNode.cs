@@ -33,6 +33,7 @@ public class PersonNode : MonoBehaviour
     GameObject birthConnectionPrefabObject;
     GameObject marriageConnectionPrefabObject;
     GameObject hallOfHistoryGameObject;
+    GameObject hallOfFamilyPhotosGameObject;
 
     float marriageConnectionXScale;
     GameObject bubblePrefabObject;
@@ -101,6 +102,7 @@ public class PersonNode : MonoBehaviour
         personDetailsHandlerScript.DisplayThisPerson(person, currentDate);
 
         hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(this);
+        hallOfFamilyPhotosGameObject.GetComponent<HallOfFamilyPhotos>().SetFocusPersonNode(this);
     }
 
     public void ClearPersonDetails()
@@ -121,6 +123,11 @@ public class PersonNode : MonoBehaviour
     public void SetHallOfHistoryGameObject(GameObject hallOfHistory)
     {
         this.hallOfHistoryGameObject = hallOfHistory;
+    }
+
+    public void SetHallOfFamilyPhotosGameObject(GameObject hallOfFamilyPhotos)
+    {
+        this.hallOfFamilyPhotosGameObject = hallOfFamilyPhotos;
     }
 
     public void SetRootsMagicFileName(string rootsMagicFileName)
@@ -254,6 +261,7 @@ public class PersonNode : MonoBehaviour
         triggerTeleportToChildScript.teleportTargetChild = childPlatformTransform;
         triggerTeleportToChildScript.teleportOffset = new Vector3(0, 2.5f, 0);
         triggerTeleportToChildScript.hallOfHistoryGameObject = hallOfHistoryGameObject;
+        triggerTeleportToChildScript.hallOfFamilyPhotosGameObject = hallOfFamilyPhotosGameObject;
 
         childBirthConnectionPoint = //GameObject.CreatePrimitive(PrimitiveType.Sphere);
             Instantiate(this.bubblePrefabObject, Vector3.zero, Quaternion.identity);
@@ -274,6 +282,7 @@ public class PersonNode : MonoBehaviour
             triggerTeleportToFatherScript.teleportTargetChild = parentPlatformTransform;
             triggerTeleportToFatherScript.teleportOffset = new Vector3(-3f, 2.5f, myAgeConnectionPointPercent * this.lifeSpan * 5);
             triggerTeleportToFatherScript.hallOfHistoryGameObject = hallOfHistoryGameObject;
+            triggerTeleportToFatherScript.hallOfFamilyPhotosGameObject = hallOfFamilyPhotosGameObject;
 
             //returnToFatherBirthConnectionPoint.transform.localScale = Vector3.one * 2f;
             returnToFatherBirthConnectionPoint.transform.parent = childPlatformTransform.GetChild(0); // Point to the ScaleThis Section
@@ -289,6 +298,7 @@ public class PersonNode : MonoBehaviour
             triggerTeleportToMotherScript.teleportTargetChild = parentPlatformTransform;
             triggerTeleportToMotherScript.teleportOffset = new Vector3(3f, 2.5f, myAgeConnectionPointPercent * this.lifeSpan * 5);
             triggerTeleportToMotherScript.hallOfHistoryGameObject = hallOfHistoryGameObject;
+            triggerTeleportToMotherScript.hallOfFamilyPhotosGameObject = hallOfFamilyPhotosGameObject;
 
             //returnToMotherBirthConnectionPoint.transform.localScale = Vector3.one * 2f;
             returnToMotherBirthConnectionPoint.transform.parent = childPlatformTransform.GetChild(0); // Point to the ScaleThis Section
