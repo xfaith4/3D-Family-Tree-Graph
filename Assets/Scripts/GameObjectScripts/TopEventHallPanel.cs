@@ -57,10 +57,13 @@ public class TopEventHallPanel : MonoBehaviour
 
     public void DisplayDetailsInEventDetailsPanel()
     {
-        eventDetailsHandlerScript.DisplayThisEvent(topEventsForYear[currentEventIndex],
-                                                   currentEventIndex,
-                                                   numberOfEvents,
-                                                   eventImage_Texture);
+        if (numberOfEvents != 0)
+        {
+            eventDetailsHandlerScript.DisplayThisEvent(topEventsForYear[currentEventIndex],
+                                                       currentEventIndex,
+                                                       numberOfEvents,
+                                                       eventImage_Texture);
+        }
     }
 
     public void ClearEventDetailsPanel()
@@ -78,11 +81,11 @@ public class TopEventHallPanel : MonoBehaviour
         var eventToShow = topEventsForYear[currentEventIndex];
         if (string.IsNullOrEmpty(eventToShow.picture))
         {
-            setPanelTexture(noImageThisEvent_Texture);
+             setPanelTexture(noImageThisEvent_Texture);
             return;
         }
-
         StartCoroutine(DownloadImage(eventToShow.picture + "?width=400px"));
+        //DownloadImage(eventToShow.picture + "?width=400px");
     }
 
     public string currentlySelectedEventTitle()
@@ -106,7 +109,8 @@ public class TopEventHallPanel : MonoBehaviour
 
     public void InteractWithPanel()
     {
-        Application.OpenURL(topEventsForYear[currentEventIndex].wikiLink);
+        if (numberOfEvents != 0)
+            Application.OpenURL(topEventsForYear[currentEventIndex].wikiLink);
     }
 
     public void PreviousEventInPanel()
@@ -132,7 +136,6 @@ public class TopEventHallPanel : MonoBehaviour
             Debug.Log(request.error);
         else
             setPanelTexture(((DownloadHandlerTexture)request.downloadHandler).texture);
-        
     }
 
     void setPanelTexture(Texture textureToSet, bool crop = true)
@@ -154,7 +157,7 @@ public class TopEventHallPanel : MonoBehaviour
             RenderTexture.ReleaseTemporary(rTex);
             rTex = RenderTexture.GetTemporary(cropSize, cropSize, 24, RenderTextureFormat.Default);
             Graphics.Blit(tempTex, rTex);
-            RenderTexture.ReleaseTemporary(tempTex);
+            RenderTexture.ReleaseTemporary(tempTex);            
         }
 
         this.gameObject.transform.Find("ImagePanel").GetComponent<Renderer>().material.mainTexture = rTex;

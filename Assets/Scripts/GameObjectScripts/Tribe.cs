@@ -20,6 +20,9 @@ public class Tribe : MonoBehaviour
 	private int updateFramesToWaist = 120;
 	private int startingIdForTree;
 	private int numberOfGenerations = 5;
+	[SerializeField]
+	[Tooltip("Time Barrier year, 0 for current year")]
+	private int timeBarrierYear = 0;
 	public GameObject personPrefab;
 	[SerializeField]
 	[Tooltip("PlayerJasper Prefab goes here")]
@@ -86,7 +89,9 @@ public class Tribe : MonoBehaviour
 	void PositionTimeBarrier()
     {
 		var timeBarrierObject = GameObject.FindGameObjectsWithTag("TimeBarrier")[0];
-		timeBarrierObject.transform.position = new Vector3(0f, 0f, DateTime.Now.Year * 5 + 0.5f);
+		if (timeBarrierYear == 0)
+			timeBarrierYear = DateTime.Now.Year;
+		timeBarrierObject.transform.position = new Vector3(0f, 0f, timeBarrierYear * 5 + 0.5f);
 		timeBarrierObject.transform.localScale = new Vector3((maximumNumberOfPeopleInAGeneration * personSpacing * 10f), 0.1f, (maximumNumberOfPeopleInAGeneration * personSpacing * 10f));
 	}
 
@@ -381,7 +386,7 @@ public class Tribe : MonoBehaviour
 
 		var personObjectScript = personGameObject.GetComponent<PersonNode>();
 
-		hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(personObjectScript);
+		StartCoroutine(hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(personObjectScript));
 		
 		return playerGameObject;
     }
@@ -401,7 +406,7 @@ public class Tribe : MonoBehaviour
 					thirdPersonContollerScript.TeleportTo(listOfPersonsPerGeneration[depth].personsList[index].personNodeGameObject.transform, new Vector3(0, 0.5f, 0), ticksToHoldHere: 25);
 					var personObjectScript = listOfPersonsPerGeneration[depth].personsList[index].personNodeGameObject.GetComponent<PersonNode>();
 
-					hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(personObjectScript);
+					StartCoroutine(hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(personObjectScript));
 					return;
 				}
 			}
@@ -414,7 +419,7 @@ public class Tribe : MonoBehaviour
 			thirdPersonContollerScript.TeleportTo(listOfPersonsPerGeneration[personOfInterestDepth].personsList[personOfInterestIndexInList].personNodeGameObject.transform, new Vector3(0, 0.5f, 0), ticksToHoldHere: 25);
 			var personObjectScript = listOfPersonsPerGeneration[personOfInterestDepth].personsList[personOfInterestIndexInList].personNodeGameObject.GetComponent<PersonNode>();
 
-			hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(personObjectScript);
+			StartCoroutine(hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(personObjectScript));
 		}
 	}
 

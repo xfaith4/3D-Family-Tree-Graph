@@ -21,8 +21,8 @@ public class TriggerTeleportToChild : MonoBehaviour
             thirdPersonContollerScript.TeleportTo(teleportTargetChild, teleportOffset, 25);
             var personObjectScript = teleportTargetChild.GetComponent<PersonNode>();
 
-            hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(personObjectScript);
-            hallOfFamilyPhotosGameObject.GetComponent<HallOfFamilyPhotos>().SetFocusPersonNode(personObjectScript);
+            StartCoroutine(hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(personObjectScript));
+            StartCoroutine(hallOfFamilyPhotosGameObject.GetComponent<HallOfFamilyPhotos>().SetFocusPersonNode(personObjectScript));
         }
     }
 }

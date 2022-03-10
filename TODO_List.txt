@@ -16,12 +16,20 @@ X History Panel: Make each panel interactible (E key or north button) visit to W
 X Create a ReadOnly Folder on an External drive with all my family history photos. (PhotoArchiveRoot)
 X Populate left side of person platform with random (or in sequense) photos.  
 X Get All photos envolved.
+X Got CoRoutines working for loading Hall of History and Hall of Family Photos
 
 --------------->
 > Still To Do ->
 --------------->
 >Sooner
 Eventually Next Step implement the "Photo Gamification" section below
+Face detection - Allows a "portrait" only veiw on the left wall.
+Perhaps details view and Interaction (E) key would bring into view the entire photo.
+While on a person's platform you can 'capture' a portrait - this action lets you identify with portraits belong to the person.
+Perhaps these get a green boarder, Grey boarder indicates, not identified.
+Another action "shoot" alows you to indicate that the portrait does not belong to this person. Green->Grey->Red 
+And then takes on a Red Boarder
+
 Allow both TopEvent and FamilyPhoto HallPanels to be Interactable with Details Panel Support.
 Need a subclass for InteractibleInfoPanels, TopEventHallPanel and FamilyPhotoHallPanel will use this
   Subclass will have these functions: PreviousPanelItem, NextPanelItem, InteractWithPanelItem, ClearDetailsPanel, SetDetailsPanel
@@ -50,6 +58,7 @@ Can photo's be synced from FamilySearch to RootsMagic?
 >>Photo (Gamification) Gaminization: Gamify Organization - Use local or cloud repository of photos and Resource Description Framework (RDF) concept to link photos to their correct context
 Premise: I have a lot of photos with just a little bit of built in context
 If I put my photo's into a Frozen Read only state, I can begin with some simple Semantic (RDF) links, including:
+>>>EDIT perhaps these associations just come down to who else has been identified in the picture? Self or a close relative or ancester/descendant??
   Branch of Family that the photo's are from
   Date Range
   File Names (or other info tagged into in the file)

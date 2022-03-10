@@ -101,8 +101,8 @@ public class PersonNode : MonoBehaviour
     {
         personDetailsHandlerScript.DisplayThisPerson(person, currentDate);
 
-        hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(this);
-        hallOfFamilyPhotosGameObject.GetComponent<HallOfFamilyPhotos>().SetFocusPersonNode(this);
+        StartCoroutine(hallOfFamilyPhotosGameObject.GetComponent<HallOfFamilyPhotos>().SetFocusPersonNode(this));
+        StartCoroutine(hallOfHistoryGameObject.GetComponent<HallOfHistory>().SetFocusPersonNode(this));        
     }
 
     public void ClearPersonDetails()
