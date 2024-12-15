@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts.DataObjects;
 using System.Collections.Generic;
-using System.Linq;
 using Mono.Data.Sqlite;
 using System.Data;
 using UnityEngine;
@@ -8,13 +7,13 @@ using Assets.Scripts.Enums;
 
 namespace Assets.Scripts.DataProviders
 {
-    class PrimaryPhotoForPerson : DataProviderBase
+    class PrimaryPhotoForPersonRM : DataProviderBase
     {       
-        private string _dataBaseFileName;
+        private string _rootsMagicDataBaseFileName;
 
-        public PrimaryPhotoForPerson(string DataBaseFileName)           
+        public PrimaryPhotoForPersonRM(string RootsMagicDataBaseFileName)           
         {
-            _dataBaseFileName = DataBaseFileName;            
+            _rootsMagicDataBaseFileName = RootsMagicDataBaseFileName;   
         }
 
         public byte[] GetPrimaryPhotoForPersonFromDataBase(int ownerId)
@@ -22,7 +21,7 @@ namespace Assets.Scripts.DataProviders
             byte[] imageToReturn = null;
 
             int limitListSizeTo = 1;
-            string conn = "URI=file:" + _dataBaseFileName;
+            string conn = "URI=file:" + _rootsMagicDataBaseFileName;
             IDbConnection dbconn;
             dbconn = (IDbConnection)new SqliteConnection(conn);
             dbconn.Open();

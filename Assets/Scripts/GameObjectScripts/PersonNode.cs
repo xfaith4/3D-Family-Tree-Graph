@@ -13,7 +13,10 @@ public class PersonNode : MonoBehaviour
     private PersonDetailsHandler personDetailsHandlerScript;
     private GlobalSpringType globalSpringType;
     private string rootsMagicFileName;
-    private PrimaryPhotoForPerson primaryPhotoForPerson;
+    private string digiKamFileName;
+    private PrimaryThumbnailForPersonFromDigiKam digiKamThumbnailForPerson;
+    private DigiKamConnector digiKamConnector;
+    private PrimaryPhotoForPersonRM primaryPhotoForPersonRM;
 
     
     public float lifeSpan;
@@ -130,15 +133,21 @@ public class PersonNode : MonoBehaviour
         this.hallOfFamilyPhotosGameObject = hallOfFamilyPhotos;
     }
 
-    public void SetRootsMagicFileName(string rootsMagicFileName)
+    public void SetThumbnailForPerson(string rootsMagicFileName, string digiKamFileName)
     {
         this.rootsMagicFileName = rootsMagicFileName;
-        primaryPhotoForPerson = new PrimaryPhotoForPerson(rootsMagicFileName);
+        this.digiKamFileName = digiKamFileName;
+       // digiKamThumbnailForPerson = new PrimaryThumbnailForPersonFromDigiKam(rootsMagicFileName, digiKamFileName);
+        digiKamConnector = new DigiKamConnector(rootsMagicFileName, digiKamFileName);
+        primaryPhotoForPersonRM = new PrimaryPhotoForPersonRM(rootsMagicFileName);
     }
+
 
     public byte[] GetPrimaryPhoto()
     {
-        return primaryPhotoForPerson.GetPrimaryPhotoForPersonFromDataBase(this.dataBaseOwnerID);
+        //return digiKamThumbnailForPerson.GetPrimaryThumbnailForPersonFromDataBase(this.dataBaseOwnerID);
+        //return primaryPhotoForPersonRM.GetPrimaryPhotoForPersonFromDataBase(this.dataBaseOwnerID);
+        return digiKamConnector.GetPrimaryThumbnailForPersonFromDataBase(this.dataBaseOwnerID);
     }
 
     public void SetGlobalSpringType(GlobalSpringType globalSpringType)

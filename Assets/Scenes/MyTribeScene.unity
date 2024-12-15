@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18298887, g: 0.22867718, b: 0.30680168, a: 1}
+  m_IndirectSpecularColor: {r: 0.1829888, g: 0.2286771, b: 0.3068015, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2715,7 +2715,8 @@ MonoBehaviour:
   focusPerson: {fileID: 0}
   previousFocusPerson: {fileID: 0}
   familyPhotoPanelPrefab: {fileID: 1579663936856624987, guid: e78581a219092584a9957302997ac827, type: 3}
-  photoArchiveDrivePath: C:\Users\Scott\Pictures\Family History\Hughes Reunion
+  photoArchiveDrivePath: C:\Users\shuskey\OneDrive\Pictures\Family History\Hughes
+    Reunion
   thumbnailSubFolderName: Thumb400
 --- !u!4 &1917470389
 Transform:

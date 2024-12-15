@@ -16,6 +16,7 @@ public class Tribe : MonoBehaviour
 {
 	private TribeType tribeType;
 	private String rootsMagicFileName;
+	private String digiKamFileName;
 	private bool dataLoadComplete = false;
 	private int updateFramesToWaist = 120;
 	private int startingIdForTree;
@@ -61,6 +62,7 @@ public class Tribe : MonoBehaviour
 		numberOfGenerations = Assets.Scripts.CrossSceneInformation.numberOfGenerations;
 		startingIdForTree = Assets.Scripts.CrossSceneInformation.startingDataBaseId;
 		rootsMagicFileName = Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath;
+		digiKamFileName = Assets.Scripts.CrossSceneInformation.digiKamDataFileNameWithFullPath;
 
 		if (tribeType == TribeType.MadeUpData || rootsMagicFileName == null)
 		{
@@ -350,7 +352,7 @@ public class Tribe : MonoBehaviour
 		personObjectScript.SetEdgePrefab(birthConnectionPrefab, marriageConnectionPrefab, bubblepf, parentPlatformBirthBubble, childPlatformReturnToParent, marriageEdgepfXScale);
 		personObjectScript.addMyBirthQualityBubble();
 		personObjectScript.SetGlobalSpringType(globalSpringType);
-		personObjectScript.SetRootsMagicFileName(rootsMagicFileName);
+		personObjectScript.SetThumbnailForPerson(rootsMagicFileName, digiKamFileName);
 		personObjectScript.SetHallOfHistoryGameObject(hallOfHistoryGameObject);
 		personObjectScript.SetHallOfFamilyPhotosGameObject(hallOfFamilyPhotosGameObject);
 

@@ -8,5 +8,15 @@ namespace Assets.Scripts
         public static TribeType myTribeType { get; set; }
         public static int numberOfGenerations { get; set; }
         public static string rootsMagicDataFileNameWithFullPath { get; set; }
+
+
+
+
+
+
+
+
+
+        public static string digiKamDataFileNameWithFullPath { get; set; }
     }
 }

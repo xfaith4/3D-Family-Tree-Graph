@@ -57,7 +57,7 @@ public class HallOfFamilyPhotos : MonoBehaviour
                     newPanel.name = $"FamilyPhotoPanelfor{year}";
 
                     var familyPhotoHallPanelScript = newPanel.GetComponent<FamilyPhotoHallPanel>();
-                    familyPhotoHallPanelScript.LoadFamilyPhotosForYearAndPerson(year, photoArchiveDrivePath, thumbnailSubFolderName);
+                    familyPhotoHallPanelScript.LoadFamilyPhotosForYearAndPerson(newfocusPerson.dataBaseOwnerID, year, photoArchiveDrivePath, thumbnailSubFolderName);
 
                     familyPhotoPanelDictionary.Add(year, newPanel);
                 }
