@@ -15,7 +15,7 @@ public class Restart : MonoBehaviour
     }
     void RestartClicked()
     {
-        SceneManager.LoadScene("NamePicker");
+        SceneManager.LoadScene("aaStart RootsMagicNamePicker");
     }
 
 }

@@ -5,7 +5,7 @@ using SimpleFileBrowser;
 using UnityEngine.UI;
 using Assets.Scripts.DataProviders;
 
-public class FileBrowserHandler : MonoBehaviour
+public class RootsMagicFileBrowserHandler : MonoBehaviour
 {
 
 	public Text fileSelectedText;
@@ -47,11 +47,12 @@ public class FileBrowserHandler : MonoBehaviour
 			initialFilename = Path.GetFileName(Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath);
 			initialPath = Path.GetDirectoryName(Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath);
 			fileSelectedText.text = initialFilename;
-			personPickerDropdownGameObject.GetComponent<NamePickerHandler>().FileSelectedNowEnableUserInterface();
-			Debug.Log("Game data loaded!");
+	//		personPickerDropdownGameObject.GetComponent<PersonPickerHandler>().FileSelectedNowEnableUserInterface(true);
+            Debug.Log("Game data from RootsMagic loaded!");
+
 		}
 		else
-			Debug.Log("There is no save data!");
+			Debug.Log("There is no RootsMagic save data!");
 
 		// Show a save file dialog 
 		// onSuccess event: not registered (which means this dialog is pretty useless)
@@ -110,10 +111,10 @@ public class FileBrowserHandler : MonoBehaviour
 					Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath = result;
 					fileSelectedText.text = Path.GetFileName(result);
 					Debug.Log("Data File Path Chosen: " + fileSelectedText.text);
-					PlayerPrefs.SetString("LastUsedRootsMagicDataFilePath", result);
-					PlayerPrefs.Save();
+					PlayerPrefs.SetString("LastUsedRootsMagicDataFilePath", Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath);
+                    PlayerPrefs.Save();
 					Debug.Log("Game data saved!");
-					personPickerDropdownGameObject.GetComponent<NamePickerHandler>().FileSelectedNowEnableUserInterface(true);
+					personPickerDropdownGameObject.GetComponent<PersonPickerHandler>().CheckIfFileSelectedAndEnableUserInterface();
 				}
 				
 			}
@@ -123,7 +124,7 @@ public class FileBrowserHandler : MonoBehaviour
 				Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath = null;
 				fileSelectedText.text = "> File Failure <  Please try again.";
 				Debug.Log("Bad Data File Path Chosen: " + result);
-				personPickerDropdownGameObject.GetComponent<NamePickerHandler>().FileSelectedNowEnableUserInterface(false);
+				personPickerDropdownGameObject.GetComponent<PersonPickerHandler>().CheckIfFileSelectedAndEnableUserInterface();
 			}
 
 			

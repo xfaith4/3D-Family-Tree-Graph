@@ -276,7 +276,7 @@ namespace StarterAssets
             if (_input.menu)
             {
                 Debug.Log("Menu Pressed");
-				SceneManager.LoadScene("NamePicker");
+				SceneManager.LoadScene("aaStart RootsMagicNamePicker");
 				_input.menu = false;
             }
 

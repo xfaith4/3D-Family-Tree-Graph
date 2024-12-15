@@ -4,12 +4,13 @@ using Assets.Scripts.Enums;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class NamePickerHandler : MonoBehaviour
+public class PersonPickerHandler : MonoBehaviour
 {
     public Text searchStatusText;
     public InputField lastNameFilterField;
@@ -18,34 +19,26 @@ public class NamePickerHandler : MonoBehaviour
     public Toggle rootPersonToggle;
     public Dropdown generationsDropdown;
     public Button quitButton;
-    public Button startButton;
+    public Button nextButton;
     public int numberOfPeopleInTribe = 1000;
 
     private ListOfPersonsFromDataBase myTribeOfPeople;
     private Person selectedPerson;
+    private int selectedPersonId;
+    private string selectedPersonFullName;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        startButton.transform.Find("LoadingCircle").gameObject.SetActive(false);
-        startButton.interactable = false;
-        FileSelectedNowEnableUserInterface(false);
-
-        if (PlayerPrefs.HasKey("LastUsedRootsMagicDataFilePath"))
-        {
-            Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath = PlayerPrefs.GetString("LastUsedRootsMagicDataFilePath");
-            FileSelectedNowEnableUserInterface();
-            Debug.Log("Game data loaded!");
-        }
-        else
-            Debug.Log("There is no save data!");
+        nextButton.transform.Find("LoadingCircle").gameObject.SetActive(false);
+        nextButton.interactable = false;
 
         generationsDropdown.value = 0;
 
         quitButton.onClick.AddListener(delegate { quitClicked(); });
 
-        startButton.onClick.AddListener(delegate { StartClicked(); });
+        nextButton.onClick.AddListener(delegate { NextClicked(); });
 
         lastNameFilterField.onEndEdit.AddListener(delegate { LastNameFilterFieldEndEdit(lastNameFilterField); });
         lastNameFilterField.onSubmit.AddListener(delegate { LastNameFilterFieldEndEdit(lastNameFilterField); });
@@ -58,12 +51,31 @@ public class NamePickerHandler : MonoBehaviour
 
         transform.GetComponent<Dropdown>().onValueChanged.AddListener(delegate { DropDownItemSelected(transform.GetComponent<Dropdown>()); });
         ResetDropDown();
+
+        // See if we have a previously selected Base PersonId
+        CheckIfFileSelectedAndEnableUserInterface();
+       
     }
 
-    public void FileSelectedNowEnableUserInterface(bool enableFlag = true)
+    public void CheckIfFileSelectedAndEnableUserInterface()
     {
-        lastNameFilterField.interactable = enableFlag;
-        transform.GetComponent<Dropdown>().interactable = enableFlag;
+        if (PlayerPrefs.HasKey("LastUsedRootsMagicDataFilePath")) {
+            lastNameFilterField.interactable = true;
+            transform.GetComponent<Dropdown>().interactable = true;
+            if (PlayerPrefs.HasKey("LastSelectedRootsMagicBasePersonId") && PlayerPrefs.HasKey("LastSelectedRootsMagicBasePersonFullName")) {
+                selectedPersonId = PlayerPrefs.GetInt("LastSelectedRootsMagicBasePersonId");
+                selectedPersonFullName = PlayerPrefs.GetString("LastSelectedRootsMagicBasePersonFullName");
+                Debug.Log("Previously Selected Base PersonId identified");
+                SetStatusTextEnableNext(selectedPersonId, selectedPersonFullName);
+            }
+            else
+                Debug.Log("There is no previously selected Base PerdonId save data!");
+        } else {
+            lastNameFilterField.interactable = false;
+            transform.GetComponent<Dropdown>().interactable = false;
+
+            Debug.Log("There is no RootsMagic DataFile Path save data!");
+        }
     }
 
     void quitClicked()
@@ -71,24 +83,26 @@ public class NamePickerHandler : MonoBehaviour
         Application.Quit();
     }
 
-    void StartClicked()
+    void NextClicked()
     {
-        startButton.transform.Find("LoadingCircle").gameObject.SetActive(true);
-        Assets.Scripts.CrossSceneInformation.startingDataBaseId = selectedPerson.dataBaseOwnerId;
+        nextButton.transform.Find("LoadingCircle").gameObject.SetActive(true);
+        SaveBasePersonIdToPlayerPrefs(selectedPersonId, selectedPersonFullName);
+        Assets.Scripts.CrossSceneInformation.startingDataBaseId = selectedPersonId;
         Assets.Scripts.CrossSceneInformation.numberOfGenerations = Int32.Parse(generationsDropdown.options[generationsDropdown.value].text);
-        Assets.Scripts.CrossSceneInformation.myTribeType = ancestryToggle.isOn ? TribeType.Ancestry 
-            : descendancyToggle.isOn ? TribeType.Descendancy 
-            : rootPersonToggle.isOn ? TribeType.Centered : TribeType.AllPersons; 
-        SceneManager.LoadScene("MyTribeScene"); 
-        //StartCoroutine(LoadSceneAsync());
+        Assets.Scripts.CrossSceneInformation.myTribeType = ancestryToggle.isOn ? TribeType.Ancestry
+            : descendancyToggle.isOn ? TribeType.Descendancy
+            : rootPersonToggle.isOn ? TribeType.Centered : TribeType.AllPersons;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
-    //private IEnumerator LoadSceneAsync()
-    //{
-    //    var progress = SceneManager.LoadSceneAsync("MyTribeScene", LoadSceneMode.Single);
-    //    while (!progress.isDone)
-    //        yield return null;
-    //}
+    private void SaveBasePersonIdToPlayerPrefs(int basePersonId, string basePersonFullName)
+    {
+        Debug.Log("Base PersonId Chosen: " + basePersonFullName);
+        PlayerPrefs.SetInt("LastSelectedRootsMagicBasePersonId", basePersonId);
+        PlayerPrefs.SetString("LastSelectedRootsMagicBasePersonFullName", basePersonFullName);
+        PlayerPrefs.Save();
+        Debug.Log("Game data saved!");
+    }
 
     void ToggleControl(Toggle toggleThatToggled)
     {
@@ -127,7 +141,7 @@ public class NamePickerHandler : MonoBehaviour
 
         searchStatusText.text = "";
 
-        startButton.interactable = false;
+        nextButton.interactable = false;
     }
 
     void LastNameFilterFieldEndEdit(InputField input)
@@ -160,8 +174,16 @@ public class NamePickerHandler : MonoBehaviour
     {
         var index = dropdown.value;
         selectedPerson = myTribeOfPeople.personsList[index];
-        startButton.interactable = true;
-        searchStatusText.text = $"{selectedPerson.givenName} {selectedPerson.surName} selected. Press Start.";
+        SetStatusTextEnableNext(selectedPerson.dataBaseOwnerId,
+            $"{selectedPerson.surName}, {selectedPerson.givenName} b{selectedPerson.birthEventDate} id {selectedPerson.dataBaseOwnerId}");        
+    }
+
+    void SetStatusTextEnableNext(int basePersonId, string basePersonFullName)
+    {   
+        selectedPersonId = basePersonId;
+        selectedPersonFullName = basePersonFullName;
+        searchStatusText.text = $"Selected: {basePersonFullName}. Press Next, or Choose another.";
+        nextButton.interactable = true;
     }
 
     void PopulateDropDownWithMyTribeSubSet(string filterText)

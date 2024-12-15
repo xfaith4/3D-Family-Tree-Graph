@@ -43,7 +43,7 @@ public class FamilyPhotoHallPanel : MonoBehaviour
         familyPhotoDetailsHandlerScript = familyPhotoDetailsPanel[0].transform.GetComponent<FamilyPhotoDetailsHandler>();        
     }
 
-    public void LoadFamilyPhotosForYearAndPerson(int year, string photoArchiveDrivePath, string thumbnailSubFolderName)   // TODO should add pointer to Person
+    public void LoadFamilyPhotosForYearAndPerson(int personOwnerID, int year, string photoArchiveDrivePath, string thumbnailSubFolderName)
     {
         this.year = year;
         var filteredFiles = Directory.GetFiles(photoArchiveDrivePath, "*.*", SearchOption.AllDirectories)
@@ -54,7 +54,7 @@ public class FamilyPhotoHallPanel : MonoBehaviour
 
         var fileToUse = onlyThumbnails[Random.Range(0, onlyThumbnails.Count)];
         var fileNameString =  Path.GetFileName(fileToUse);
-        var familyPhoto = new FamilyPhoto(this.year.ToString(), fileNameString, fileToUse, "temp Description", "temp Locations", "temp Contries", "", "", "");
+        var familyPhoto = new FamilyPhoto(this.year.ToString(), fileNameString, fileToUse, "temp Description", "temp Locations", "temp Countries", "", "", "");
         familyPhotos.Add(familyPhoto);
         numberOfEvents = 1;
         DisplayHallPanelImageTexture();
@@ -133,6 +133,17 @@ public class FamilyPhotoHallPanel : MonoBehaviour
     IEnumerator GetPhotoFromPhotoArchive(string fullPathtoPhotoInArchive)
     {        
         UnityWebRequest request = UnityWebRequestTexture.GetTexture(fullPathtoPhotoInArchive);
+        yield return request.SendWebRequest();
+        if (request.result == UnityWebRequest.Result.ProtocolError)
+            Debug.Log(request.error);
+        else
+            setPanelTexture(((DownloadHandlerTexture)request.downloadHandler).texture);
+    }
+
+    // an overload to GetPhotoFromPhotoArchive that takes a DigiKam thumbnailId
+    IEnumerator GetPhotoFromPhotoArchive(int thumbnailId)
+    {
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture($"http://localhost:8080/thumbnail/{thumbnailId}");
         yield return request.SendWebRequest();
         if (request.result == UnityWebRequest.Result.ProtocolError)
             Debug.Log(request.error);

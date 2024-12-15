@@ -11,11 +11,11 @@ namespace Assets.Scripts.DataProviders
     class ListOfPersonsFromDataBase : DataProviderBase
     {
         public List<Person> personsList;
-        private string _dataBaseFileName;
+        private string _rootsMagicDataBaseFileName;
 
-        public ListOfPersonsFromDataBase(string DataBaseFileName)           
+        public ListOfPersonsFromDataBase(string RootMagicDataBaseFileName)           
         {
-            _dataBaseFileName = DataBaseFileName;
+            _rootsMagicDataBaseFileName = RootMagicDataBaseFileName;
             personsList = new List<Person>();
         }
 
@@ -29,7 +29,7 @@ namespace Assets.Scripts.DataProviders
         public void GetListOfPersonsFromDataBase(int limitListSizeTo, int? JustThisOwnerId = null, int generation = 0,
             float xOffset = 0.0f, int spouseNumber = 0)
         {
-            string conn = "URI=file:" + _dataBaseFileName;
+            string conn = "URI=file:" + _rootsMagicDataBaseFileName;
             IDbConnection dbconn;
             dbconn = (IDbConnection)new SqliteConnection(conn);
             dbconn.Open();
@@ -102,7 +102,7 @@ namespace Assets.Scripts.DataProviders
         public void GetListOfPersonsFromDataBaseWithLastNameFilter(int limitListSizeTo, int? JustThisOwnerId = null, int generation = 0,
     float xOffset = 0.0f, int spouseNumber = 0, string lastNameFilterString = null)
         {
-            string conn = "URI=file:" + _dataBaseFileName;
+            string conn = "URI=file:" + _rootsMagicDataBaseFileName;
             List<Person> unsortedPersonList = new List<Person>();
 
             IDbConnection dbconn;
@@ -162,7 +162,7 @@ namespace Assets.Scripts.DataProviders
         {
             bool returnThisStatus = true;
 
-            string conn = "URI=file:" + _dataBaseFileName;
+            string conn = "URI=file:" + _rootsMagicDataBaseFileName;
 
             IDbConnection dbconn;
             dbconn = (IDbConnection)new SqliteConnection(conn);
