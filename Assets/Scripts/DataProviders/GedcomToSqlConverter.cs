@@ -330,6 +330,8 @@ namespace Assets.Scripts.DataProviders
         {
             using (IDbCommand dbcmd = dbconn.CreateCommand())
             {
+                string formattedDate = FormatDateForRootsMagic(date);
+                
                 dbcmd.CommandText = @"
                     INSERT INTO EventTable (EventType, OwnerType, OwnerID, FamilyID, Date, IsPrimary, IsPrivate)
                     VALUES (@EventType, 0, @OwnerID, @FamilyID, @Date, 1, 0)";
@@ -337,7 +339,7 @@ namespace Assets.Scripts.DataProviders
                 AddParameter(dbcmd, "@EventType", eventType);
                 AddParameter(dbcmd, "@OwnerID", ownerId);
                 AddParameter(dbcmd, "@FamilyID", familyId);
-                AddParameter(dbcmd, "@Date", date ?? "");
+                AddParameter(dbcmd, "@Date", formattedDate);
                 
                 dbcmd.ExecuteNonQuery();
             }
@@ -364,6 +366,53 @@ namespace Assets.Scripts.DataProviders
             }
 
             return 0;
+        }
+
+        private string FormatDateForRootsMagic(string gedcomDate)
+        {
+            if (string.IsNullOrEmpty(gedcomDate))
+                return "";
+
+            // GEDCOM date format examples: "17 January 1959", "6 June 1933", "Abt 1907"
+            // RootsMagic date format: "D.+YYYYMMDD..+00000000.."
+            
+            // Try to parse the date
+            var dayMatch = System.Text.RegularExpressions.Regex.Match(gedcomDate, @"\b(\d{1,2})\b");
+            var monthMatch = System.Text.RegularExpressions.Regex.Match(gedcomDate, @"\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            var yearMatch = System.Text.RegularExpressions.Regex.Match(gedcomDate, @"\b(\d{4})\b");
+
+            string year = yearMatch.Success ? yearMatch.Groups[1].Value : "0000";
+            string month = "00";
+            string day = "00";
+
+            if (monthMatch.Success)
+            {
+                string monthName = monthMatch.Groups[1].Value.ToLower();
+                switch (monthName.Substring(0, 3))
+                {
+                    case "jan": month = "01"; break;
+                    case "feb": month = "02"; break;
+                    case "mar": month = "03"; break;
+                    case "apr": month = "04"; break;
+                    case "may": month = "05"; break;
+                    case "jun": month = "06"; break;
+                    case "jul": month = "07"; break;
+                    case "aug": month = "08"; break;
+                    case "sep": month = "09"; break;
+                    case "oct": month = "10"; break;
+                    case "nov": month = "11"; break;
+                    case "dec": month = "12"; break;
+                }
+            }
+
+            if (dayMatch.Success)
+            {
+                int dayNum = int.Parse(dayMatch.Groups[1].Value);
+                day = dayNum.ToString("D2");
+            }
+
+            // RootsMagic format: "D.+YYYYMMDD..+00000000.."
+            return $"D.+{year}{month}{day}..+00000000..";
         }
     }
 }
