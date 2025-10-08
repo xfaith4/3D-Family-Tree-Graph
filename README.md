@@ -86,5 +86,34 @@ This project now supports two primary data formats:
 
 For more details on GEDCOM implementation, see [GEDCOM_IMPLEMENTATION.md](GEDCOM_IMPLEMENTATION.md).
 
+## Troubleshooting
+
+### Unity Version Mismatch
+If Unity prompts you about version differences:
+- Download and install Unity 2021.1.16f1 specifically from the Unity Archive
+- Unity Hub can manage multiple Unity versions simultaneously
+
+### Missing Dependencies
+If you encounter errors about missing packages:
+- Unity should automatically import required packages on first project load
+- Check the Console window for specific error messages
+- Required packages should be resolved automatically by Unity's Package Manager
+
+### File Browser Not Showing
+If the file browser doesn't appear on launch:
+- Ensure `HofstetterFamilyTree.rmtree` is in the project root directory
+- Check PlayerPrefs hasn't stored an invalid file path (delete PlayerPrefs in Unity Editor via Edit > Clear All PlayerPrefs)
+
+### Performance Issues
+For better performance with large family trees:
+- Reduce the number of generations to display
+- Close other applications to free up RAM
+- Use a built standalone application instead of running in Unity Editor
+
+## Additional Resources
+- **Example Data**: HofstetterFamilyTree.rmtree and "Hofstetter Family Tree.ged" are included
+- **Documentation**: See [GEDCOM_IMPLEMENTATION.md](GEDCOM_IMPLEMENTATION.md) for GEDCOM support details
+- **Development Notes**: Check [TODO_List.txt](TODO_List.txt) for planned features and known issues
+
 Screen Shot:
 ![alt text](https://github.com/shuskey/3D-Family-Tree-Graph/blob/main/ScreenShots/JosephWithPhotoAndNames.JPG?raw=true)
