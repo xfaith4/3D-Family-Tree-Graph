@@ -23,7 +23,7 @@ public class RootsMagicFileBrowserHandler : MonoBehaviour
 		// Set filters (optional)
 		// It is sufficient to set the filters just once (instead of each time before showing the file browser dialog), 
 		// if all the dialogs will be using the same filters
-		FileBrowser.SetFilters(true, new FileBrowser.Filter("RootsMagic", ".rmgc", ".rmtree"));
+		FileBrowser.SetFilters(true, new FileBrowser.Filter("RootsMagic", ".rmgc", ".rmtree"), new FileBrowser.Filter("GEDCOM", ".ged"));
 
 		// Set default filter that is selected when the dialog is shown (optional)
 		// Returns true if the default filter is set successfully
@@ -41,6 +41,11 @@ public class RootsMagicFileBrowserHandler : MonoBehaviour
 		// Path: C:\Users
 		// Icon: default (folder icon)
 		FileBrowser.AddQuickLink("Users", "C:\\Users", null);
+		
+		// Check for default HofstetterFamilyTree.rmtree file in the project root
+		string projectRoot = Application.dataPath.Replace("/Assets", "");
+		string defaultDbPath = Path.Combine(projectRoot, "HofstetterFamilyTree.rmtree");
+		
 		if (PlayerPrefs.HasKey("LastUsedRootsMagicDataFilePath"))
 		{
 			Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath = PlayerPrefs.GetString("LastUsedRootsMagicDataFilePath");
@@ -50,6 +55,17 @@ public class RootsMagicFileBrowserHandler : MonoBehaviour
 	//		personPickerDropdownGameObject.GetComponent<PersonPickerHandler>().FileSelectedNowEnableUserInterface(true);
             Debug.Log("Game data from RootsMagic loaded!");
 
+		}
+		else if (File.Exists(defaultDbPath))
+		{
+			// Auto-load the default HofstetterFamilyTree.rmtree file
+			Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath = defaultDbPath;
+			initialFilename = Path.GetFileName(defaultDbPath);
+			initialPath = Path.GetDirectoryName(defaultDbPath);
+			fileSelectedText.text = initialFilename;
+			PlayerPrefs.SetString("LastUsedRootsMagicDataFilePath", defaultDbPath);
+			PlayerPrefs.Save();
+			Debug.Log("Default HofstetterFamilyTree.rmtree loaded!");
 		}
 		else
 			Debug.Log("There is no RootsMagic save data!");
@@ -105,11 +121,29 @@ public class RootsMagicFileBrowserHandler : MonoBehaviour
 				if (!File.Exists(result))
 					throw new FileNotFoundException($"{result} file was not found.");
 
-				myTribeOfPeople = new ListOfPersonsFromDataBase(result);
+				string databasePath = result;
+				
+				// Check if this is a GEDCOM file
+				if (Path.GetExtension(result).ToLower() == ".ged")
+				{
+					Debug.Log("GEDCOM file detected. Converting to SQLite database...");
+					
+					// Create output database path
+					string gedcomFileName = Path.GetFileNameWithoutExtension(result);
+					databasePath = Path.Combine(Path.GetDirectoryName(result), gedcomFileName + "_converted.rmtree");
+					
+					// Convert GEDCOM to SQLite
+					var converter = new GedcomToSqlConverter();
+					converter.ConvertGedcomToDatabase(result, databasePath);
+					
+					Debug.Log($"GEDCOM converted to database: {databasePath}");
+				}
+
+				myTribeOfPeople = new ListOfPersonsFromDataBase(databasePath);
 				if (myTribeOfPeople.QuickDataBaseIntergetyCheck())
 				{
-					Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath = result;
-					fileSelectedText.text = Path.GetFileName(result);
+					Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath = databasePath;
+					fileSelectedText.text = Path.GetFileName(databasePath);
 					Debug.Log("Data File Path Chosen: " + fileSelectedText.text);
 					PlayerPrefs.SetString("LastUsedRootsMagicDataFilePath", Assets.Scripts.CrossSceneInformation.rootsMagicDataFileNameWithFullPath);
                     PlayerPrefs.Save();
